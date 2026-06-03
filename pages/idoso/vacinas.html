@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vacinas do idoso | Home Care 4.0</title>
+  <meta name="description" content="Carteira de vacinação do idoso com próximas doses, vacinas aplicadas, pendências, filtros e lembretes." />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+
+  <style>
+    .hc-page-content { max-width: 1180px; margin: 0 auto; }
+    .hc-hero-card {
+      border: 0;
+      border-radius: 1.5rem;
+      background: linear-gradient(135deg, rgba(13, 110, 253, .10), rgba(25, 135, 84, .08));
+      box-shadow: 0 .75rem 2rem rgba(15, 23, 42, .06);
+      overflow: hidden;
+    }
+    .hc-kicker { color: #0d6efd; font-weight: 700; letter-spacing: .01em; }
+    .hc-title { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.05; letter-spacing: -.035em; }
+    .hc-lead { font-size: clamp(1.05rem, 2vw, 1.25rem); line-height: 1.55; }
+    .hc-metric-card, .hc-filter-card, .hc-list-card, .hc-side-card {
+      border: 0;
+      border-radius: 1.25rem;
+      box-shadow: 0 .5rem 1.5rem rgba(15, 23, 42, .06);
+      background: #fff;
+    }
+    .hc-metric-card { height: 100%; }
+    .hc-metric-label { color: #64748b; font-size: .95rem; margin-bottom: .35rem; }
+    .hc-metric-value { font-size: clamp(1.7rem, 3vw, 2.35rem); font-weight: 800; letter-spacing: -.035em; margin-bottom: 0; }
+    .hc-vaccine-item {
+      border: 1px solid rgba(15, 23, 42, .08);
+      border-radius: 1.25rem;
+      background: #fff;
+      padding: 1rem;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .hc-vaccine-item:hover { transform: translateY(-1px); box-shadow: 0 .75rem 1.75rem rgba(15, 23, 42, .07); border-color: rgba(13, 110, 253, .2); }
+    .hc-status-dot { width: .75rem; height: .75rem; border-radius: 999px; display: inline-block; }
+    .hc-dot-ok { background: #198754; }
+    .hc-dot-warning { background: #ffc107; }
+    .hc-dot-info { background: #0d6efd; }
+    .hc-touch-btn { min-height: 3rem; font-weight: 700; }
+    .hc-timeline { position: relative; padding-left: 1.25rem; }
+    .hc-timeline::before { content: ""; position: absolute; top: .2rem; bottom: .2rem; left: .35rem; width: 2px; background: rgba(15, 23, 42, .12); }
+    .hc-timeline-item { position: relative; padding-bottom: 1rem; }
+    .hc-timeline-item::before { content: ""; position: absolute; left: -1.08rem; top: .35rem; width: .75rem; height: .75rem; border-radius: 999px; background: #0d6efd; border: 2px solid #fff; box-shadow: 0 0 0 2px rgba(13, 110, 253, .25); }
+    .hc-empty-state { border: 1px dashed rgba(15, 23, 42, .18); border-radius: 1.25rem; background: rgba(248, 250, 252, .9); }
+  </style>
+</head>
+
+<body data-active-profile="idoso" data-profile-page="idoso">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container-fluid px-3 px-lg-4 py-4">
+        <div class="hc-page-content">
+
+          <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080;">
+            <div id="appToast" class="toast align-items-center border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+              <div class="d-flex">
+                <div class="toast-body" id="toastMessage">Ação realizada.</div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+              </div>
+            </div>
+          </div>
+
+          <section class="hc-hero-card mb-4">
+            <div class="card-body p-4 p-lg-5">
+              <div class="row g-4 align-items-center">
+                <div class="col-lg-8">
+                  <p class="hc-kicker mb-2"><i class="bi bi-shield-plus me-2" aria-hidden="true"></i>Carteira de vacinas</p>
+                  <h1 class="hc-title fw-bold mb-3">Vacinas organizadas, com lembretes claros.</h1>
+                  <p class="hc-lead text-muted mb-0">Acompanhe doses aplicadas, vacinas pendentes, próximas datas e comprovantes da pessoa acompanhada.</p>
+                </div>
+                <div class="col-lg-4">
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-primary hc-touch-btn" type="button" data-bs-toggle="modal" data-bs-target="#modalVacina">Agendar vacina</button>
+                    <button class="btn btn-outline-primary hc-touch-btn" type="button" id="btnExportar">Exportar carteira</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="alert alert-warning border-0 rounded-4 shadow-sm mb-4">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+              <div>
+                <h2 class="h6 fw-bold mb-1">Vacina próxima do prazo</h2>
+                <p class="mb-0">Maria tem reforço da <strong>Influenza</strong> recomendado para <strong>esta semana</strong>.</p>
+              </div>
+              <div class="d-flex flex-column flex-sm-row gap-2">
+                <button class="btn btn-primary" type="button" data-toast="Lembrete da vacina Influenza ativado.">Ativar lembrete</button>
+                <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalVacina">Agendar agora</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="row g-3 mb-4" aria-label="Resumo da carteira de vacinas">
+            <div class="col-6 col-xl-3"><div class="hc-metric-card p-3"><p class="hc-metric-label">Vacinas em dia</p><p class="hc-metric-value text-success" id="metricEmDia">0</p><small class="text-muted">sem pendências</small></div></div>
+            <div class="col-6 col-xl-3"><div class="hc-metric-card p-3"><p class="hc-metric-label">Pendentes</p><p class="hc-metric-value text-warning" id="metricPendentes">0</p><small class="text-muted">precisam de atenção</small></div></div>
+            <div class="col-6 col-xl-3"><div class="hc-metric-card p-3"><p class="hc-metric-label">Próxima dose</p><p class="hc-metric-value" style="font-size:1.5rem;" id="metricProxima">28/06</p><small class="text-muted">Influenza</small></div></div>
+            <div class="col-6 col-xl-3"><div class="hc-metric-card p-3"><p class="hc-metric-label">Pessoas acompanhadas</p><p class="hc-metric-value" id="metricPessoas">3</p><small class="text-muted">com carteira ativa</small></div></div>
+          </section>
+
+          <section class="hc-filter-card p-3 p-lg-4 mb-4">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-4">
+                <label for="buscaVacina" class="form-label fw-semibold">Buscar vacina</label>
+                <input type="search" class="form-control" id="buscaVacina" placeholder="Ex.: influenza, covid, tétano" />
+              </div>
+              <div class="col-md-3">
+                <label for="filtroPessoa" class="form-label fw-semibold">Pessoa acompanhada</label>
+                <select id="filtroPessoa" class="form-select">
+                  <option value="todos">Todas</option>
+                  <option value="Maria">Maria</option>
+                  <option value="Antônio">Antônio</option>
+                  <option value="Eu">Eu</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="filtroStatus" class="form-label fw-semibold">Status</label>
+                <select id="filtroStatus" class="form-select">
+                  <option value="todos">Todos</option>
+                  <option value="pendente">Pendente</option>
+                  <option value="em-dia">Em dia</option>
+                  <option value="agendada">Agendada</option>
+                </select>
+              </div>
+              <div class="col-md-2 d-grid">
+                <button class="btn btn-outline-secondary" type="button" id="btnLimpar">Limpar</button>
+              </div>
+            </div>
+          </section>
+
+          <div class="row g-4">
+            <div class="col-xl-8">
+              <section class="hc-list-card p-3 p-lg-4 mb-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Vacinas cadastradas</h2>
+                    <p class="text-muted mb-0" id="contadorVacinas">Exibindo carteira completa.</p>
+                  </div>
+                  <div class="btn-group" role="group" aria-label="Filtro rápido de vacina">
+                    <button class="btn btn-outline-primary active quick-filter" type="button" data-status="todos" aria-pressed="true">Todas</button>
+                    <button class="btn btn-outline-primary quick-filter" type="button" data-status="pendente" aria-pressed="false">Pendentes</button>
+                    <button class="btn btn-outline-primary quick-filter" type="button" data-status="em-dia" aria-pressed="false">Em dia</button>
+                  </div>
+                </div>
+
+                <div id="listaVacinas" class="d-grid gap-3"></div>
+                <div id="estadoVazio" class="hc-empty-state text-center p-5 d-none">
+                  <h3 class="h5 fw-bold">Nenhuma vacina encontrada</h3>
+                  <p class="text-muted mb-0">Tente limpar os filtros ou cadastrar uma nova vacina.</p>
+                </div>
+              </section>
+            </div>
+
+            <aside class="col-xl-4">
+              <section class="hc-side-card p-3 p-lg-4 mb-4">
+                <h2 class="h5 fw-bold mb-3">Linha do tempo</h2>
+                <div class="hc-timeline" id="linhaDoTempo"></div>
+              </section>
+
+              <section class="hc-side-card p-3 p-lg-4">
+                <h2 class="h5 fw-bold mb-3">Ações rápidas</h2>
+                <div class="d-grid gap-2">
+                  <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalVacina">Agendar vacina</button>
+                  <button class="btn btn-outline-primary" type="button" data-toast="Comprovante preparado para envio ao familiar.">Enviar comprovante</button>
+                  <button class="btn btn-outline-secondary" type="button" id="btnResumo">Gerar resumo</button>
+                </div>
+              </section>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="modal fade" id="modalVacina" tabindex="-1" aria-labelledby="modalVacinaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="modalVacinaLabel">Agendar ou registrar vacina</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formVacina" class="row g-3">
+            <div class="col-md-6"><label for="novaVacina" class="form-label">Vacina</label><input type="text" id="novaVacina" class="form-control" placeholder="Ex.: Influenza" required /></div>
+            <div class="col-md-6"><label for="novaPessoa" class="form-label">Pessoa acompanhada</label><select id="novaPessoa" class="form-select" required><option value="">Selecione</option><option>Maria</option><option>Antônio</option><option>Eu</option></select></div>
+            <div class="col-md-4"><label for="novaData" class="form-label">Data</label><input type="date" id="novaData" class="form-control" required /></div>
+            <div class="col-md-4"><label for="novoStatus" class="form-label">Status</label><select id="novoStatus" class="form-select"><option value="agendada">Agendada</option><option value="em-dia">Aplicada</option><option value="pendente">Pendente</option></select></div>
+            <div class="col-md-4"><label for="novoLocal" class="form-label">Local</label><input type="text" id="novoLocal" class="form-control" placeholder="Ex.: UBS Central" /></div>
+            <div class="col-12"><label for="novaObservacao" class="form-label">Observação</label><textarea id="novaObservacao" class="form-control" rows="3" placeholder="Ex.: levar comprovante anterior, dose de reforço, orientação médica..."></textarea></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="btnSalvarVacina">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header"><h2 class="modal-title h5" id="modalDetalhesLabel">Detalhes da vacina</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
+        <div class="modal-body" id="detalhesVacina"></div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const vacinas = [
+      { id: 1, nome: "Influenza", pessoa: "Maria", status: "pendente", data: "2026-06-28", local: "UBS Central", descricao: "Reforço recomendado para idosos e pessoas com comorbidades." },
+      { id: 2, nome: "COVID-19", pessoa: "Maria", status: "em-dia", data: "2026-04-15", local: "UBS Central", descricao: "Última dose registrada com comprovante." },
+      { id: 3, nome: "Hepatite B", pessoa: "Antônio", status: "agendada", data: "2026-07-02", local: "Clínica Parceira", descricao: "Dose agendada às 09:00." },
+      { id: 4, nome: "Dupla adulto — dT", pessoa: "Eu", status: "em-dia", data: "2025-03-08", local: "UBS Santa Paula", descricao: "Próximo reforço previsto para 2035." },
+      { id: 5, nome: "Pneumocócica", pessoa: "Maria", status: "pendente", data: "2026-07-10", local: "A definir", descricao: "Verificar disponibilidade antes do agendamento." }
+    ];
+
+    function formatarData(dataIso) {
+      const partes = dataIso.split("-");
+      return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : dataIso;
+    }
+
+    function statusInfo(status) {
+      const mapa = {
+        "pendente": { label: "Pendente", badge: "text-bg-warning", dot: "hc-dot-warning" },
+        "em-dia": { label: "Em dia", badge: "text-bg-success", dot: "hc-dot-ok" },
+        "agendada": { label: "Agendada", badge: "text-bg-primary", dot: "hc-dot-info" }
+      };
+      return mapa[status] || mapa["pendente"];
+    }
+
+    function mostrarToast(mensagem) {
+      const toastEl = document.getElementById("appToast");
+      const toastMessage = document.getElementById("toastMessage");
+      if (!toastEl || !toastMessage || !window.bootstrap) return;
+      toastMessage.textContent = mensagem;
+      bootstrap.Toast.getOrCreateInstance(toastEl).show();
+    }
+
+    function vacinaTemplate(item) {
+      const info = statusInfo(item.status);
+      return `
+        <article class="hc-vaccine-item" data-nome="${item.nome.toLowerCase()}" data-pessoa="${item.pessoa}" data-status="${item.status}" data-id="${item.id}">
+          <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+            <div>
+              <span class="badge ${info.badge} mb-2">${info.label}</span>
+              <h3 class="h5 fw-bold mb-1">${item.nome}</h3>
+              <p class="text-muted mb-0">${item.pessoa} • ${item.status === "em-dia" ? "Última dose" : "Data prevista"} em ${formatarData(item.data)} • ${item.local}</p>
+            </div>
+            <div class="d-flex flex-column flex-sm-row gap-2 align-self-md-center">
+              ${item.status === "pendente" ? `<button class="btn btn-primary btn-sm btnAgendar" type="button" data-id="${item.id}">Agendar</button>` : ""}
+              ${item.status === "agendada" ? `<button class="btn btn-outline-primary btn-sm" type="button" data-toast="Lembrete ativado para ${item.nome}.">Lembrar</button>` : ""}
+              <button class="btn btn-outline-primary btn-sm btnDetalhes" type="button" data-id="${item.id}">Detalhes</button>
+              ${item.status === "em-dia" ? `<button class="btn btn-outline-secondary btn-sm" type="button" data-toast="Comprovante de ${item.nome} disponível.">Comprovante</button>` : ""}
+            </div>
+          </div>
+        </article>`;
+    }
+
+    function atualizarMetricas(lista) {
+      document.getElementById("metricEmDia").textContent = vacinas.filter(v => v.status === "em-dia").length;
+      document.getElementById("metricPendentes").textContent = vacinas.filter(v => v.status === "pendente").length;
+      document.getElementById("metricPessoas").textContent = new Set(vacinas.map(v => v.pessoa)).size;
+      document.getElementById("contadorVacinas").textContent = `${lista.length} vacina(s) exibida(s).`;
+    }
+
+    function renderizarLinhaDoTempo() {
+      const timeline = document.getElementById("linhaDoTempo");
+      timeline.innerHTML = vacinas.slice(0, 4).map(item => `
+        <div class="hc-timeline-item">
+          <strong class="d-block">${item.nome}</strong>
+          <small class="text-muted">${item.pessoa} • ${formatarData(item.data)}</small>
+        </div>`).join("");
+    }
+
+    function aplicarFiltros(statusRapido) {
+      const busca = document.getElementById("buscaVacina").value.trim().toLowerCase();
+      const pessoa = document.getElementById("filtroPessoa").value;
+      const status = statusRapido || document.getElementById("filtroStatus").value;
+      const filtradas = vacinas.filter(item => {
+        const combinaBusca = !busca || item.nome.toLowerCase().includes(busca) || item.descricao.toLowerCase().includes(busca);
+        const combinaPessoa = pessoa === "todos" || item.pessoa === pessoa;
+        const combinaStatus = status === "todos" || item.status === status;
+        return combinaBusca && combinaPessoa && combinaStatus;
+      });
+
+      document.getElementById("listaVacinas").innerHTML = filtradas.map(vacinaTemplate).join("");
+      document.getElementById("estadoVazio").classList.toggle("d-none", filtradas.length > 0);
+      atualizarMetricas(filtradas);
+      vincularAcoes();
+    }
+
+    function abrirDetalhes(id) {
+      const item = vacinas.find(v => String(v.id) === String(id));
+      if (!item) return;
+      const info = statusInfo(item.status);
+      document.getElementById("detalhesVacina").innerHTML = `
+        <span class="badge ${info.badge} mb-3">${info.label}</span>
+        <h3 class="h5 fw-bold">${item.nome}</h3>
+        <p class="text-muted">${item.descricao}</p>
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Pessoa</dt><dd class="col-sm-8">${item.pessoa}</dd>
+          <dt class="col-sm-4">Data</dt><dd class="col-sm-8">${formatarData(item.data)}</dd>
+          <dt class="col-sm-4">Local</dt><dd class="col-sm-8">${item.local}</dd>
+        </dl>`;
+      bootstrap.Modal.getOrCreateInstance(document.getElementById("modalDetalhes")).show();
+    }
+
+    function vincularAcoes() {
+      document.querySelectorAll("[data-toast]").forEach(btn => {
+        btn.onclick = () => mostrarToast(btn.dataset.toast || "Ação realizada.");
+      });
+      document.querySelectorAll(".btnDetalhes").forEach(btn => {
+        btn.onclick = () => abrirDetalhes(btn.dataset.id);
+      });
+      document.querySelectorAll(".btnAgendar").forEach(btn => {
+        btn.onclick = () => {
+          document.getElementById("novoStatus").value = "agendada";
+          bootstrap.Modal.getOrCreateInstance(document.getElementById("modalVacina")).show();
+        };
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      renderizarLinhaDoTempo();
+      aplicarFiltros("todos");
+
+      ["buscaVacina", "filtroPessoa", "filtroStatus"].forEach(id => {
+        document.getElementById(id).addEventListener("input", () => aplicarFiltros());
+        document.getElementById(id).addEventListener("change", () => aplicarFiltros());
+      });
+
+      document.getElementById("btnLimpar").addEventListener("click", function () {
+        document.getElementById("buscaVacina").value = "";
+        document.getElementById("filtroPessoa").value = "todos";
+        document.getElementById("filtroStatus").value = "todos";
+        document.querySelectorAll(".quick-filter").forEach(btn => btn.classList.remove("active"));
+        document.querySelector('.quick-filter[data-status="todos"]').classList.add("active");
+        aplicarFiltros("todos");
+      });
+
+      document.querySelectorAll(".quick-filter").forEach(btn => {
+        btn.addEventListener("click", function () {
+          document.querySelectorAll(".quick-filter").forEach(item => {
+            item.classList.remove("active");
+            item.setAttribute("aria-pressed", "false");
+          });
+          btn.classList.add("active");
+          btn.setAttribute("aria-pressed", "true");
+          document.getElementById("filtroStatus").value = btn.dataset.status;
+          aplicarFiltros(btn.dataset.status);
+        });
+      });
+
+      document.getElementById("btnExportar").addEventListener("click", () => mostrarToast("Carteira de vacinação preparada para exportação."));
+      document.getElementById("btnResumo").addEventListener("click", () => mostrarToast("Resumo da carteira gerado com sucesso."));
+      document.getElementById("btnSalvarVacina").addEventListener("click", function () {
+        const nome = document.getElementById("novaVacina").value.trim();
+        const pessoa = document.getElementById("novaPessoa").value;
+        const data = document.getElementById("novaData").value;
+        if (!nome || !pessoa || !data) {
+          mostrarToast("Preencha vacina, pessoa e data antes de salvar.");
+          return;
+        }
+        vacinas.unshift({
+          id: Date.now(),
+          nome,
+          pessoa,
+          data,
+          status: document.getElementById("novoStatus").value,
+          local: document.getElementById("novoLocal").value || "Local não informado",
+          descricao: document.getElementById("novaObservacao").value || "Registro criado nesta sessão."
+        });
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("modalVacina")).hide();
+        document.getElementById("formVacina").reset();
+        renderizarLinhaDoTempo();
+        aplicarFiltros();
+        mostrarToast("Vacina salva na carteira.");
+      });
+    });
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

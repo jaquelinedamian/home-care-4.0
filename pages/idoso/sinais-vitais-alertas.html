@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Alertas de sinais vitais | Home Care 4.0</title>
+<style>
+    .alert-summary-card {
+      border: 1px solid var(--bs-border-color);
+      border-radius: 1.25rem;
+      background: #fff;
+      height: 100%;
+    }
+
+    .metric-card {
+      border: 1px solid var(--bs-border-color);
+      border-radius: 1.25rem;
+      background: #fff;
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+
+    .metric-card:hover {
+      border-color: rgba(var(--bs-primary-rgb), .45);
+      box-shadow: 0 .75rem 1.5rem rgba(13, 110, 253, .08);
+      transform: translateY(-1px);
+    }
+
+    .metric-card.is-disabled {
+      opacity: .55;
+      background: var(--bs-light);
+    }
+
+    .metric-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(var(--bs-primary-rgb), .1);
+      color: var(--bs-primary);
+      flex: 0 0 auto;
+    }
+
+    .contact-card,
+    .channel-card {
+      cursor: pointer;
+      border: 1px solid var(--bs-border-color);
+      border-radius: 1rem;
+      background: #fff;
+      transition: border-color .2s ease, background-color .2s ease;
+    }
+
+    .contact-card:has(input:checked),
+    .channel-card:has(input:checked) {
+      border-color: var(--bs-primary);
+      background: rgba(var(--bs-primary-rgb), .06);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: .45rem;
+      top: .45rem;
+      width: .75rem;
+      height: .75rem;
+      border-radius: 50%;
+      background: var(--bs-primary);
+    }
+
+    .timeline-item:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: .78rem;
+      top: 1.25rem;
+      width: 1px;
+      height: calc(100% - .5rem);
+      background: var(--bs-border-color);
+    }
+
+    .preview-phone {
+      border-radius: 2rem;
+      border: 10px solid #17213c;
+      background: #f8f9fa;
+      overflow: hidden;
+      max-width: 340px;
+      margin-inline: auto;
+      box-shadow: 0 1rem 2rem rgba(23, 33, 60, .16);
+    }
+
+    .preview-phone-top {
+      height: 28px;
+      background: #17213c;
+    }
+
+    @media (max-width: 991.98px) {
+      .mobile-stack-actions .btn {
+        width: 100%;
+      }
+    }
+  </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080;">
+          <div id="appToast" class="toast border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar aviso"></button>
+            </div>
+          </div>
+        </div>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+              <div class="col-lg-8">
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2 mb-3">
+                  <a href="sinais-vitais.html" class="btn btn-light border align-self-start">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Voltar
+                  </a>
+                  <span class="badge text-bg-danger rounded-pill align-self-start">
+                    <i class="bi bi-bell me-1"></i>
+                    Monitoramento ativo
+                  </span>
+                </div>
+
+                <p class="text-muted fs-5 mb-1">Sinais vitais</p>
+                <h1 class="fw-bold mb-3">Alertas de sinais vitais</h1>
+                <p class="text-muted fs-5 mb-0">
+                  Configure limites seguros, escolha quem será avisado e simule como o alerta aparece antes de salvar.
+                </p>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="alert-summary-card p-4">
+                  <div class="d-flex align-items-center justify-content-between mb-3">
+                    <strong>Resumo dos alertas</strong>
+                    <i class="bi bi-shield-check text-success fs-4"></i>
+                  </div>
+                  <div class="row g-3 text-center">
+                    <div class="col-4">
+                      <span class="d-block h4 fw-bold mb-0" id="activeMetricsCount">5</span>
+                      <span class="small text-muted">métricas</span>
+                    </div>
+                    <div class="col-4">
+                      <span class="d-block h4 fw-bold mb-0" id="contactsCount">2</span>
+                      <span class="small text-muted">contatos</span>
+                    </div>
+                    <div class="col-4">
+                      <span class="d-block h4 fw-bold mb-0" id="channelsCount">2</span>
+                      <span class="small text-muted">canais</span>
+                    </div>
+                  </div>
+                  <p class="small text-muted mt-3 mb-0" id="summaryText">
+                    Alertas críticos serão enviados para cuidador e familiar responsável.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="alert alert-danger border-0 shadow-sm rounded-4 mb-4" id="recentAlertBox">
+          <div class="d-flex flex-column flex-lg-row gap-3 align-items-lg-center justify-content-between">
+            <div>
+              <h2 class="h5 fw-bold mb-1">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Alerta recente simulado
+              </h2>
+              <p class="mb-0" id="recentAlertText">
+                Oxigenação abaixo de 92% deve gerar aviso imediato para o cuidador.
+              </p>
+            </div>
+            <div class="d-flex gap-2 mobile-stack-actions">
+              <button type="button" class="btn btn-light border" id="btnAcknowledgeAlert">
+                Marcar como visto
+              </button>
+              <button type="button" class="btn btn-danger" id="btnEmergencyFlow">
+                Acionar emergência
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <div class="row g-4">
+          <div class="col-xl-8">
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4 p-lg-5">
+                <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+                  <div>
+                    <p class="text-muted mb-1">Configuração principal</p>
+                    <h2 class="h4 fw-bold mb-0">Limites monitorados</h2>
+                  </div>
+                  <div class="d-flex gap-2 mobile-stack-actions">
+                    <button type="button" class="btn btn-light border" id="btnRecommended">
+                      <i class="bi bi-stars me-1"></i>
+                      Usar recomendados
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" id="btnReset">
+                      Restaurar
+                    </button>
+                  </div>
+                </div>
+
+                <div class="d-grid gap-3" id="metricsList">
+                  <article class="metric-card p-3 p-lg-4" data-metric="Oxigenação" data-unit="%" data-critical="92">
+                    <div class="row g-3 align-items-center">
+                      <div class="col-lg-5">
+                        <div class="d-flex gap-3 align-items-start">
+                          <span class="metric-icon"><i class="bi bi-droplet-half fs-3"></i></span>
+                          <div>
+                            <div class="form-check form-switch mb-1">
+                              <input class="form-check-input metric-enabled" type="checkbox" role="switch" checked id="metricOxygen">
+                              <label class="form-check-label fw-bold fs-5" for="metricOxygen">Oxigenação</label>
+                            </div>
+                            <p class="text-muted mb-0">Avisar quando a saturação estiver abaixo do limite seguro.</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6 col-lg-3">
+                        <label class="form-label small text-muted" for="oxygenMin">Mínimo</label>
+                        <div class="input-group input-group-lg">
+                          <input type="number" class="form-control metric-input" id="oxygenMin" value="92" min="70" max="100">
+                          <span class="input-group-text">%</span>
+                        </div>
+                      </div>
+                      <div class="col-6 col-lg-2">
+                        <label class="form-label small text-muted" for="oxygenDelay">Após</label>
+                        <select class="form-select form-select-lg metric-delay" id="oxygenDelay">
+                          <option value="imediato">Imediato</option>
+                          <option value="2 min">2 min</option>
+                          <option value="5 min">5 min</option>
+                        </select>
+                      </div>
+                      <div class="col-lg-2 text-lg-end">
+                        <span class="badge text-bg-danger rounded-pill metric-status">Crítico</span>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="metric-card p-3 p-lg-4" data-metric="Batimentos" data-unit="bpm" data-critical="110">
+                    <div class="row g-3 align-items-center">
+                      <div class="col-lg-5">
+                        <div class="d-flex gap-3 align-items-start">
+                          <span class="metric-icon"><i class="bi bi-heart-pulse fs-3"></i></span>
+                          <div>
+                            <div class="form-check form-switch mb-1">
+                              <input class="form-check-input metric-enabled" type="checkbox" role="switch" checked id="metricHeart">
+                              <label class="form-check-label fw-bold fs-5" for="metricHeart">Batimentos</label>
+                            </div>
+                            <p class="text-muted mb-0">Avisar quando a frequência cardíaca estiver elevada.</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6 col-lg-3">
+                        <label class="form-label small text-muted" for="heartMax">Máximo</label>
+                        <div class="input-group input-group-lg">
+                          <input type="number" class="form-control metric-input" id="heartMax" value="110" min="40" max="220">
+                          <span class="input-group-text">bpm</span>
+                        </div>
+                      </div>
+                      <div class="col-6 col-lg-2">
+                        <label class="form-label small text-muted" for="heartDelay">Após</label>
+                        <select class="form-select form-select-lg metric-delay" id="heartDelay">
+                          <option value="imediato">Imediato</option>
+                          <option value="2 min" selected>2 min</option>
+                          <option value="5 min">5 min</option>
+                        </select>
+                      </div>
+                      <div class="col-lg-2 text-lg-end">
+                        <span class="badge text-bg-warning rounded-pill metric-status">Atenção</span>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="metric-card p-3 p-lg-4" data-metric="Pressão sistólica" data-unit="mmHg" data-critical="140">
+                    <div class="row g-3 align-items-center">
+                      <div class="col-lg-5">
+                        <div class="d-flex gap-3 align-items-start">
+                          <span class="metric-icon"><i class="bi bi-activity fs-3"></i></span>
+                          <div>
+                            <div class="form-check form-switch mb-1">
+                              <input class="form-check-input metric-enabled" type="checkbox" role="switch" checked id="metricPressure">
+                              <label class="form-check-label fw-bold fs-5" for="metricPressure">Pressão arterial</label>
+                            </div>
+                            <p class="text-muted mb-0">Avisar quando a pressão sistólica ultrapassar o limite.</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6 col-lg-3">
+                        <label class="form-label small text-muted" for="pressureMax">Máximo</label>
+                        <div class="input-group input-group-lg">
+                          <input type="number" class="form-control metric-input" id="pressureMax" value="140" min="80" max="240">
+                          <span class="input-group-text">mmHg</span>
+                        </div>
+                      </div>
+                      <div class="col-6 col-lg-2">
+                        <label class="form-label small text-muted" for="pressureDelay">Após</label>
+                        <select class="form-select form-select-lg metric-delay" id="pressureDelay">
+                          <option value="imediato">Imediato</option>
+                          <option value="2 min">2 min</option>
+                          <option value="5 min" selected>5 min</option>
+                        </select>
+                      </div>
+                      <div class="col-lg-2 text-lg-end">
+                        <span class="badge text-bg-warning rounded-pill metric-status">Atenção</span>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="metric-card p-3 p-lg-4" data-metric="Temperatura" data-unit="°C" data-critical="37.8">
+                    <div class="row g-3 align-items-center">
+                      <div class="col-lg-5">
+                        <div class="d-flex gap-3 align-items-start">
+                          <span class="metric-icon"><i class="bi bi-thermometer-half fs-3"></i></span>
+                          <div>
+                            <div class="form-check form-switch mb-1">
+                              <input class="form-check-input metric-enabled" type="checkbox" role="switch" checked id="metricTemp">
+                              <label class="form-check-label fw-bold fs-5" for="metricTemp">Temperatura</label>
+                            </div>
+                            <p class="text-muted mb-0">Avisar quando houver possível febre.</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6 col-lg-3">
+                        <label class="form-label small text-muted" for="tempMax">Máximo</label>
+                        <div class="input-group input-group-lg">
+                          <input type="number" class="form-control metric-input" id="tempMax" value="37.8" min="34" max="42" step="0.1">
+                          <span class="input-group-text">°C</span>
+                        </div>
+                      </div>
+                      <div class="col-6 col-lg-2">
+                        <label class="form-label small text-muted" for="tempDelay">Após</label>
+                        <select class="form-select form-select-lg metric-delay" id="tempDelay">
+                          <option value="imediato">Imediato</option>
+                          <option value="2 min" selected>2 min</option>
+                          <option value="5 min">5 min</option>
+                        </select>
+                      </div>
+                      <div class="col-lg-2 text-lg-end">
+                        <span class="badge text-bg-warning rounded-pill metric-status">Atenção</span>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="metric-card p-3 p-lg-4" data-metric="Queda detectada" data-unit="" data-critical="imediato">
+                    <div class="row g-3 align-items-center">
+                      <div class="col-lg-5">
+                        <div class="d-flex gap-3 align-items-start">
+                          <span class="metric-icon"><i class="bi bi-person-standing fs-3"></i></span>
+                          <div>
+                            <div class="form-check form-switch mb-1">
+                              <input class="form-check-input metric-enabled" type="checkbox" role="switch" checked id="metricFall">
+                              <label class="form-check-label fw-bold fs-5" for="metricFall">Queda detectada</label>
+                            </div>
+                            <p class="text-muted mb-0">Aviso automático quando o dispositivo identificar possível queda.</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6 col-lg-3">
+                        <label class="form-label small text-muted" for="fallSensitivity">Sensibilidade</label>
+                        <select class="form-select form-select-lg metric-input" id="fallSensitivity">
+                          <option value="Baixa">Baixa</option>
+                          <option value="Média" selected>Média</option>
+                          <option value="Alta">Alta</option>
+                        </select>
+                      </div>
+                      <div class="col-6 col-lg-2">
+                        <label class="form-label small text-muted" for="fallDelay">Após</label>
+                        <select class="form-select form-select-lg metric-delay" id="fallDelay">
+                          <option value="imediato" selected>Imediato</option>
+                          <option value="30 seg">30 seg</option>
+                          <option value="1 min">1 min</option>
+                        </select>
+                      </div>
+                      <div class="col-lg-2 text-lg-end">
+                        <span class="badge text-bg-danger rounded-pill metric-status">Crítico</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4 p-lg-5">
+                <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+                  <div>
+                    <p class="text-muted mb-1">Histórico e teste</p>
+                    <h2 class="h4 fw-bold mb-0">Últimos eventos</h2>
+                  </div>
+                  <button type="button" class="btn btn-outline-primary" id="btnSimulateEvent">
+                    <i class="bi bi-lightning-charge me-1"></i>
+                    Simular alerta
+                  </button>
+                </div>
+
+                <div class="d-grid gap-3" id="eventTimeline">
+                  <div class="timeline-item">
+                    <div class="border rounded-4 p-3">
+                      <div class="d-flex justify-content-between gap-3 flex-wrap">
+                        <strong>Oxigenação baixa</strong>
+                        <span class="badge text-bg-danger">Crítico</span>
+                      </div>
+                      <p class="text-muted mb-1">Hoje, 08:42 • Maria Aparecida • 91%</p>
+                      <p class="mb-0">Aviso enviado para cuidador principal e familiar responsável.</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="border rounded-4 p-3">
+                      <div class="d-flex justify-content-between gap-3 flex-wrap">
+                        <strong>Batimentos elevados</strong>
+                        <span class="badge text-bg-warning">Atenção</span>
+                      </div>
+                      <p class="text-muted mb-1">Ontem, 19:16 • Maria Aparecida • 112 bpm</p>
+                      <p class="mb-0">O alerta foi visualizado pelo cuidador em 3 minutos.</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="border rounded-4 p-3">
+                      <div class="d-flex justify-content-between gap-3 flex-wrap">
+                        <strong>Temperatura acima do limite</strong>
+                        <span class="badge text-bg-warning">Atenção</span>
+                      </div>
+                      <p class="text-muted mb-1">09/05, 21:05 • Maria Aparecida • 38.1 °C</p>
+                      <p class="mb-0">Recomendado acompanhar evolução e registrar observação.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="col-xl-4">
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Destinatários</p>
+                <h2 class="h4 fw-bold mb-4">Quem será avisado?</h2>
+
+                <div class="d-grid gap-3" id="contactsList">
+                  <label class="contact-card p-3">
+                    <input class="form-check-input me-2 contact-input" type="checkbox" checked value="Cuidador principal">
+                    <span class="fw-semibold"><i class="bi bi-person-heart me-2 text-primary"></i>Cuidador principal</span>
+                    <span class="d-block text-muted small mt-1 ms-4">Recebe alertas críticos e de atenção.</span>
+                  </label>
+                  <label class="contact-card p-3">
+                    <input class="form-check-input me-2 contact-input" type="checkbox" checked value="Familiar responsável">
+                    <span class="fw-semibold"><i class="bi bi-telephone me-2 text-primary"></i>Familiar responsável</span>
+                    <span class="d-block text-muted small mt-1 ms-4">Recebe resumo e avisos críticos.</span>
+                  </label>
+                  <label class="contact-card p-3">
+                    <input class="form-check-input me-2 contact-input" type="checkbox" value="Equipe de saúde">
+                    <span class="fw-semibold"><i class="bi bi-hospital me-2 text-primary"></i>Equipe de saúde</span>
+                    <span class="d-block text-muted small mt-1 ms-4">Recebe somente ocorrências graves.</span>
+                  </label>
+                </div>
+
+                <button type="button" class="btn btn-light border w-100 mt-3" id="btnAddContact">
+                  <i class="bi bi-plus-circle me-1"></i>
+                  Adicionar contato simulado
+                </button>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Canais</p>
+                <h2 class="h4 fw-bold mb-4">Como avisar?</h2>
+
+                <div class="row g-3" id="channelsList">
+                  <div class="col-6">
+                    <label class="channel-card p-3 w-100 h-100">
+                      <input class="form-check-input channel-input" type="checkbox" checked value="App">
+                      <span class="d-block fs-3 text-primary mt-2"><i class="bi bi-phone"></i></span>
+                      <strong>App</strong>
+                    </label>
+                  </div>
+                  <div class="col-6">
+                    <label class="channel-card p-3 w-100 h-100">
+                      <input class="form-check-input channel-input" type="checkbox" checked value="SMS">
+                      <span class="d-block fs-3 text-primary mt-2"><i class="bi bi-chat-dots"></i></span>
+                      <strong>SMS</strong>
+                    </label>
+                  </div>
+                  <div class="col-6">
+                    <label class="channel-card p-3 w-100 h-100">
+                      <input class="form-check-input channel-input" type="checkbox" value="E-mail">
+                      <span class="d-block fs-3 text-primary mt-2"><i class="bi bi-envelope"></i></span>
+                      <strong>E-mail</strong>
+                    </label>
+                  </div>
+                  <div class="col-6">
+                    <label class="channel-card p-3 w-100 h-100">
+                      <input class="form-check-input channel-input" type="checkbox" value="Ligação">
+                      <span class="d-block fs-3 text-primary mt-2"><i class="bi bi-telephone-outbound"></i></span>
+                      <strong>Ligação</strong>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Prévia</p>
+                <h2 class="h4 fw-bold mb-4">Mensagem do alerta</h2>
+
+                <div class="preview-phone">
+                  <div class="preview-phone-top"></div>
+                  <div class="p-3">
+                    <div class="bg-white border rounded-4 p-3 shadow-sm">
+                      <span class="badge text-bg-danger mb-2">Alerta crítico</span>
+                      <h3 class="h6 fw-bold mb-1" id="previewTitle">Oxigenação baixa</h3>
+                      <p class="small text-muted mb-2" id="previewBody">
+                        Maria Aparecida apresentou oxigenação abaixo de 92%. Verifique imediatamente.
+                      </p>
+                      <div class="d-grid gap-2">
+                        <button class="btn btn-danger btn-sm" type="button" id="btnPreviewCall">Ligar para cuidador</button>
+                        <button class="btn btn-light border btn-sm" type="button" id="btnPreviewOpen">Abrir histórico</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <h2 class="h5 fw-bold mb-3">Salvar configuração</h2>
+                <p class="text-muted">
+                  Antes de salvar, revise se pelo menos uma métrica, um contato e um canal estão ativos.
+                </p>
+                <div class="d-grid gap-2">
+                  <button type="button" class="btn btn-primary btn-lg" id="btnSaveAlerts">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Salvar alertas
+                  </button>
+                  <button type="button" class="btn btn-outline-primary btn-lg" id="btnTestAlerts">
+                    <i class="bi bi-send-check me-2"></i>
+                    Enviar teste
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="modal fade" id="emergencyModal" tabindex="-1" aria-labelledby="emergencyTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-4 shadow">
+        <div class="modal-header border-0">
+          <div>
+            <p class="text-muted mb-1">Fluxo de emergência</p>
+            <h2 class="modal-title h4 fw-bold" id="emergencyTitle">Confirmar acionamento</h2>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <div class="alert alert-danger rounded-4 border-0">
+            Esta ação simula o envio de alerta prioritário para os contatos selecionados.
+          </div>
+          <ul class="list-group list-group-flush rounded-4 border mb-4">
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Contato principal</span>
+              <strong>Cuidador principal</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Canal inicial</span>
+              <strong>App + SMS</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Prioridade</span>
+              <strong>Crítica</strong>
+            </li>
+          </ul>
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-danger btn-lg" id="btnConfirmEmergency">Confirmar simulação</button>
+            <button type="button" class="btn btn-light border btn-lg" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+async function markCurrentNavigation() {
+      const currentPage = window.location.pathname.split("/").pop();
+
+      document.querySelectorAll(".sidebar-link").forEach(link => {
+        const linkPage = link.getAttribute("href")?.split("/").pop();
+        link.classList.toggle("active", linkPage === currentPage);
+      });
+    }
+const recommended = {
+      oxygenMin: "94",
+      heartMax: "105",
+      pressureMax: "135",
+      tempMax: "37.5",
+      fallSensitivity: "Alta"
+    };
+
+    const emergencyModal = new bootstrap.Modal(document.getElementById("emergencyModal"));
+
+    function showToast(message) {
+      document.getElementById("toastMessage").textContent = message;
+      bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
+    }
+
+    function getChecked(selector) {
+      return [...document.querySelectorAll(selector)].filter(item => item.checked);
+    }
+
+    function updateCardStates() {
+      document.querySelectorAll(".metric-card").forEach(card => {
+        const enabled = card.querySelector(".metric-enabled").checked;
+        card.classList.toggle("is-disabled", !enabled);
+        card.querySelectorAll(".metric-input, .metric-delay").forEach(field => {
+          field.disabled = !enabled;
+        });
+      });
+    }
+
+    function updateSummary() {
+      const activeMetrics = getChecked(".metric-enabled");
+      const contacts = getChecked(".contact-input");
+      const channels = getChecked(".channel-input");
+
+      document.getElementById("activeMetricsCount").textContent = activeMetrics.length;
+      document.getElementById("contactsCount").textContent = contacts.length;
+      document.getElementById("channelsCount").textContent = channels.length;
+
+      const contactsText = contacts.map(item => item.value).join(", ") || "nenhum contato";
+      const channelsText = channels.map(item => item.value).join(", ") || "nenhum canal";
+
+      document.getElementById("summaryText").textContent = `${activeMetrics.length} métrica(s) ativa(s), envio para ${contactsText}, via ${channelsText}.`;
+      updatePreview();
+      updateCardStates();
+    }
+
+    function updatePreview() {
+      const oxygenLimit = document.getElementById("oxygenMin").value || "92";
+      const contacts = getChecked(".contact-input").map(item => item.value);
+      const firstContact = contacts[0] || "contato responsável";
+
+      document.getElementById("previewTitle").textContent = "Oxigenação baixa";
+      document.getElementById("previewBody").textContent = `Maria Aparecida apresentou oxigenação abaixo de ${oxygenLimit}%. Aviso enviado para ${firstContact}.`;
+      document.getElementById("recentAlertText").textContent = `Oxigenação abaixo de ${oxygenLimit}% deve gerar aviso imediato para o cuidador.`;
+    }
+
+    function validateConfiguration() {
+      const activeMetrics = getChecked(".metric-enabled").length;
+      const contacts = getChecked(".contact-input").length;
+      const channels = getChecked(".channel-input").length;
+
+      if (!activeMetrics) {
+        showToast("Ative pelo menos uma métrica para monitoramento.");
+        return false;
+      }
+
+      if (!contacts) {
+        showToast("Selecione pelo menos uma pessoa para receber os alertas.");
+        return false;
+      }
+
+      if (!channels) {
+        showToast("Selecione pelo menos um canal de envio.");
+        return false;
+      }
+
+      return true;
+    }
+
+    function applyValues(values) {
+      Object.entries(values).forEach(([id, value]) => {
+        const field = document.getElementById(id);
+        if (field) field.value = value;
+      });
+      updateSummary();
+    }
+
+    function addSimulatedContact() {
+      const contactsList = document.getElementById("contactsList");
+      const existing = document.getElementById("contactNeighbor");
+
+      if (existing) {
+        existing.checked = true;
+        showToast("Contato de vizinha responsável já estava disponível e foi selecionado.");
+        updateSummary();
+        return;
+      }
+
+      const label = document.createElement("label");
+      label.className = "contact-card p-3";
+      label.innerHTML = `
+        <input class="form-check-input me-2 contact-input" type="checkbox" checked value="Vizinha de apoio" id="contactNeighbor">
+        <span class="fw-semibold"><i class="bi bi-house-heart me-2 text-primary"></i>Vizinha de apoio</span>
+        <span class="d-block text-muted small mt-1 ms-4">Recebe alerta quando familiares não respondem.</span>
+      `;
+
+      contactsList.appendChild(label);
+      label.querySelector("input").addEventListener("change", updateSummary);
+      showToast("Contato simulado adicionado aos alertas.");
+      updateSummary();
+    }
+
+    function simulateEvent() {
+      const timeline = document.getElementById("eventTimeline");
+      const now = new Date();
+      const time = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      const oxygenLimit = document.getElementById("oxygenMin").value || "92";
+
+      const item = document.createElement("div");
+      item.className = "timeline-item";
+      item.innerHTML = `
+        <div class="border rounded-4 p-3 bg-light">
+          <div class="d-flex justify-content-between gap-3 flex-wrap">
+            <strong>Teste de alerta enviado</strong>
+            <span class="badge text-bg-primary">Simulação</span>
+          </div>
+          <p class="text-muted mb-1">Hoje, ${time} • Maria Aparecida • limite ${oxygenLimit}%</p>
+          <p class="mb-0">A simulação confirmou os canais e contatos configurados.</p>
+        </div>
+      `;
+
+      timeline.prepend(item);
+      showToast("Alerta simulado registrado no histórico.");
+    }
+
+    document.querySelectorAll(".metric-enabled, .metric-input, .metric-delay, .contact-input, .channel-input").forEach(item => {
+      item.addEventListener("change", updateSummary);
+      item.addEventListener("input", updateSummary);
+    });
+
+    document.getElementById("btnRecommended").addEventListener("click", () => {
+      applyValues(recommended);
+      showToast("Limites recomendados aplicados.");
+    });
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      applyValues(defaults);
+      document.querySelectorAll(".metric-enabled").forEach(item => item.checked = true);
+      showToast("Configuração inicial restaurada.");
+      updateSummary();
+    });
+
+    document.getElementById("btnAddContact").addEventListener("click", addSimulatedContact);
+
+    document.getElementById("btnSaveAlerts").addEventListener("click", () => {
+      if (!validateConfiguration()) return;
+      showToast("Configurações de alerta salvas com sucesso.");
+    });
+
+    document.getElementById("btnTestAlerts").addEventListener("click", () => {
+      if (!validateConfiguration()) return;
+      simulateEvent();
+    });
+
+    document.getElementById("btnSimulateEvent").addEventListener("click", simulateEvent);
+
+    document.getElementById("btnAcknowledgeAlert").addEventListener("click", () => {
+      document.getElementById("recentAlertBox").classList.remove("alert-danger");
+      document.getElementById("recentAlertBox").classList.add("alert-success");
+      document.getElementById("recentAlertText").textContent = "Alerta marcado como visto. O histórico foi atualizado para acompanhamento.";
+      showToast("Alerta marcado como visto.");
+    });
+
+    document.getElementById("btnEmergencyFlow").addEventListener("click", () => emergencyModal.show());
+
+    document.getElementById("btnConfirmEmergency").addEventListener("click", () => {
+      emergencyModal.hide();
+      showToast("Fluxo de emergência simulado com sucesso.");
+      simulateEvent();
+    });
+
+    document.getElementById("btnPreviewCall").addEventListener("click", () => showToast("Simulação: chamada para cuidador iniciada."));
+    document.getElementById("btnPreviewOpen").addEventListener("click", () => showToast("Histórico do alerta aberto em modo simulado."));
+
+    updateSummary();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

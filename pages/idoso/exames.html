@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Exames | Home Care+</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+          <div id="appToast" class="toast align-items-center border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+          <div>
+            <span class="badge text-bg-primary mb-2">Exames</span>
+            <h1 class="h3 mb-1">Central de exames</h1>
+            <p class="text-muted mb-0">
+              Acompanhe exames agendados, resultados, preparos e histórico da pessoa acompanhada.
+            </p>
+          </div>
+
+          <div class="d-flex flex-column flex-sm-row gap-2">
+            <a href="exames-agendar.html" class="btn btn-primary">Agendar exame</a>
+            <a href="exames-resultados.html" class="btn btn-outline-primary">Ver resultados</a>
+            <a href="exames-historico.html" class="btn btn-outline-secondary">Histórico</a>
+          </div>
+        </div>
+
+        <section class="alert alert-info border-0 shadow-sm rounded-4 mb-4">
+          <div class="row g-3 align-items-center">
+            <div class="col-lg">
+              <h2 class="h5 mb-1">Preparo importante para amanhã</h2>
+              <p class="mb-0">
+                Maria tem <strong>hemograma completo</strong> às <strong>07:30</strong>.
+                Verifique jejum, documentos e local do atendimento.
+              </p>
+            </div>
+
+            <div class="col-lg-auto d-flex flex-column flex-sm-row gap-2">
+              <a href="exames-preparo.html" class="btn btn-primary">Ver preparo</a>
+              <button class="btn btn-outline-primary" type="button" data-action="lembrar" data-id="1">
+                Ativar lembrete
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-4">
+                <label for="buscaExame" class="form-label">Buscar exame</label>
+                <input type="search" id="buscaExame" class="form-control" placeholder="Ex.: hemograma, mamografia, glicose">
+              </div>
+
+              <div class="col-md-3">
+                <label for="filtroPessoa" class="form-label">Pessoa acompanhada</label>
+                <select id="filtroPessoa" class="form-select">
+                  <option value="">Todas</option>
+                  <option>Maria</option>
+                  <option>Antônio</option>
+                  <option>Eu</option>
+                </select>
+              </div>
+
+              <div class="col-md-3">
+                <label for="filtroStatus" class="form-label">Status</label>
+                <select id="filtroStatus" class="form-select">
+                  <option value="">Todos</option>
+                  <option value="agendado">Agendado</option>
+                  <option value="preparo">Em preparo</option>
+                  <option value="resultado">Resultado disponível</option>
+                  <option value="concluido">Concluído</option>
+                  <option value="cancelado">Cancelado</option>
+                </select>
+              </div>
+
+              <div class="col-md-2 d-grid">
+                <button class="btn btn-outline-secondary" type="button" id="btnLimpar">
+                  Limpar
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4">
+          <div class="col-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body">
+                <p class="text-muted mb-1">Agendados</p>
+                <h2 class="h3 mb-0" id="metricAgendados">0</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body">
+                <p class="text-muted mb-1">Com preparo</p>
+                <h2 class="h3 mb-0 text-primary" id="metricPreparo">0</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body">
+                <p class="text-muted mb-1">Resultados</p>
+                <h2 class="h3 mb-0 text-success" id="metricResultados">0</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body">
+                <p class="text-muted mb-1">Atenção</p>
+                <h2 class="h3 mb-0 text-warning" id="metricAtencao">0</h2>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="row g-4">
+          <div class="col-xl-8">
+
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+                  <div>
+                    <h2 class="h5 mb-1">Exames acompanhados</h2>
+                    <p class="text-muted mb-0" id="contadorResultado">Exibindo exames cadastrados.</p>
+                  </div>
+
+                  <div class="btn-group" role="group" aria-label="Filtro rápido">
+                    <button type="button" class="btn btn-outline-primary active filtro-rapido" data-status="">Todos</button>
+                    <button type="button" class="btn btn-outline-primary filtro-rapido" data-status="agendado">Agendados</button>
+                    <button type="button" class="btn btn-outline-primary filtro-rapido" data-status="resultado">Resultados</button>
+                  </div>
+                </div>
+
+                <div id="listaExames" class="list-group list-group-flush"></div>
+
+                <div id="estadoVazio" class="text-center py-5 d-none">
+                  <h3 class="h5">Nenhum exame encontrado</h3>
+                  <p class="text-muted mb-3">Tente limpar os filtros ou agendar um novo exame.</p>
+                  <a href="exames-agendar.html" class="btn btn-primary">Agendar exame</a>
+                </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                  <div>
+                    <h2 class="h5 mb-1">Resultados recentes</h2>
+                    <p class="text-muted mb-0">Exames com laudo ou arquivo disponível.</p>
+                  </div>
+                  <a href="exames-resultados.html" class="btn btn-sm btn-outline-primary">Ver todos</a>
+                </div>
+
+                <div id="listaResultados" class="row g-3"></div>
+              </div>
+            </section>
+          </div>
+
+          <aside class="col-xl-4">
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Ações rápidas</h2>
+                <div class="d-grid gap-2">
+                  <a href="exames-agendar.html" class="btn btn-primary">Agendar novo exame</a>
+                  <a href="exames-preparo.html" class="btn btn-outline-primary">Consultar preparo</a>
+                  <a href="exames-resultados.html" class="btn btn-outline-success">Enviar/visualizar resultado</a>
+                  <a href="exames-historico.html" class="btn btn-outline-secondary">Histórico completo</a>
+                </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Próximos preparos</h2>
+                <div id="listaPreparos" class="d-grid gap-3"></div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Resumo por pessoa</h2>
+                <div id="resumoPessoas" class="d-grid gap-3"></div>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="modalDetalhesLabel">Detalhes do exame</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div id="detalhesExame" class="row g-3"></div>
+        </div>
+
+        <div class="modal-footer">
+          <a href="exames-preparo.html" class="btn btn-outline-primary">Ver preparo</a>
+          <a href="exames-resultados.html" class="btn btn-primary">Ver resultado</a>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalCancelar" tabindex="-1" aria-labelledby="modalCancelarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="modalCancelarLabel">Cancelar exame</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" id="cancelarId">
+          <p id="cancelarResumo" class="mb-3"></p>
+          <label for="motivoCancelamento" class="form-label">Motivo do cancelamento</label>
+          <textarea id="motivoCancelamento" class="form-control" rows="3" placeholder="Ex.: conflito de agenda, paciente indisposto, remarcado..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Voltar</button>
+          <button type="button" class="btn btn-danger" id="btnConfirmarCancelamento">Confirmar cancelamento</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+
+</script>
+
+  <script>
+    const exames = [
+      {
+        id: 1,
+        nome: "Hemograma completo",
+        pessoa: "Maria",
+        data: "2026-04-28",
+        horario: "07:30",
+        local: "Laboratório Vida Plena",
+        status: "preparo",
+        preparo: "Jejum de 8 horas. Levar documento e pedido médico.",
+        resultado: false,
+        responsavel: "Cuidador principal",
+        prioridade: "Alta"
+      },
+      {
+        id: 2,
+        nome: "Ultrassom transvaginal",
+        pessoa: "Maria",
+        data: "2026-05-02",
+        horario: "09:00",
+        local: "Clínica Mulher+",
+        status: "agendado",
+        preparo: "Chegar 20 minutos antes. Levar exames anteriores.",
+        resultado: false,
+        responsavel: "Familiar responsável",
+        prioridade: "Média"
+      },
+      {
+        id: 3,
+        nome: "Colesterol total e frações",
+        pessoa: "Eu",
+        data: "2026-04-22",
+        horario: "08:00",
+        local: "Laboratório Central",
+        status: "resultado",
+        preparo: "Sem preparo especial.",
+        resultado: true,
+        responsavel: "Paciente",
+        prioridade: "Baixa"
+      },
+      {
+        id: 4,
+        nome: "Creatinina sérica",
+        pessoa: "Antônio",
+        data: "2026-04-20",
+        horario: "10:30",
+        local: "Laboratório Vida Plena",
+        status: "resultado",
+        preparo: "Manter hidratação habitual.",
+        resultado: true,
+        responsavel: "Cuidador principal",
+        prioridade: "Média"
+      },
+      {
+        id: 5,
+        nome: "Mamografia",
+        pessoa: "Maria",
+        data: "2026-05-08",
+        horario: "14:00",
+        local: "Centro de Imagem Saúde",
+        status: "agendado",
+        preparo: "Não usar desodorante, creme ou talco na região das mamas.",
+        resultado: false,
+        responsavel: "Familiar responsável",
+        prioridade: "Alta"
+      },
+      {
+        id: 6,
+        nome: "TSH",
+        pessoa: "Eu",
+        data: "2026-04-15",
+        horario: "07:45",
+        local: "Laboratório Central",
+        status: "concluido",
+        preparo: "Sem preparo especial.",
+        resultado: true,
+        responsavel: "Paciente",
+        prioridade: "Baixa"
+      },
+      {
+        id: 7,
+        nome: "Hemoglobina glicada",
+        pessoa: "Antônio",
+        data: "2026-04-30",
+        horario: "08:15",
+        local: "Laboratório Vida Plena",
+        status: "preparo",
+        preparo: "Não exige jejum, mas seguir orientação médica.",
+        resultado: false,
+        responsavel: "Cuidador principal",
+        prioridade: "Alta"
+      },
+      {
+        id: 8,
+        nome: "USG de mamas",
+        pessoa: "Maria",
+        data: "2026-04-10",
+        horario: "11:00",
+        local: "Centro de Imagem Saúde",
+        status: "concluido",
+        preparo: "Levar mamografias anteriores, se houver.",
+        resultado: true,
+        responsavel: "Familiar responsável",
+        prioridade: "Média"
+      }
+    ];
+
+    let listaFiltrada = [...exames];
+
+    const modalDetalhes = new bootstrap.Modal(document.getElementById("modalDetalhes"));
+    const modalCancelar = new bootstrap.Modal(document.getElementById("modalCancelar"));
+    const toast = new bootstrap.Toast(document.getElementById("appToast"));
+
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      toast.show();
+    }
+
+    function formatarData(data) {
+      return data.split("-").reverse().join("/");
+    }
+
+    function statusTexto(status) {
+      const map = {
+        agendado: "Agendado",
+        preparo: "Em preparo",
+        resultado: "Resultado disponível",
+        concluido: "Concluído",
+        cancelado: "Cancelado"
+      };
+      return map[status] || status;
+    }
+
+    function statusClasse(status) {
+      if (status === "resultado" || status === "concluido") return "text-bg-success";
+      if (status === "preparo") return "text-bg-primary";
+      if (status === "cancelado") return "text-bg-danger";
+      return "text-bg-warning";
+    }
+
+    function aplicarFiltros() {
+      const busca = document.getElementById("buscaExame").value.trim().toLowerCase();
+      const pessoa = document.getElementById("filtroPessoa").value;
+      const status = document.getElementById("filtroStatus").value;
+
+      listaFiltrada = exames.filter(function(exame) {
+        const texto = [exame.nome, exame.pessoa, exame.local, exame.preparo, exame.responsavel].join(" ").toLowerCase();
+
+        if (busca && !texto.includes(busca)) return false;
+        if (pessoa && exame.pessoa !== pessoa) return false;
+        if (status && exame.status !== status) return false;
+
+        return true;
+      });
+
+      renderizarTudo();
+    }
+
+    function renderizarTudo() {
+      renderizarLista();
+      renderizarMetricas();
+      renderizarResultados();
+      renderizarPreparos();
+      renderizarResumoPessoas();
+    }
+
+    function renderizarLista() {
+      const container = document.getElementById("listaExames");
+      const vazio = document.getElementById("estadoVazio");
+
+      container.innerHTML = "";
+
+      const ordenados = [...listaFiltrada].sort((a, b) => (a.data + a.horario).localeCompare(b.data + b.horario));
+
+      vazio.classList.toggle("d-none", ordenados.length > 0);
+
+      ordenados.forEach(function(exame) {
+        const item = document.createElement("div");
+        item.className = "list-group-item px-0 py-3";
+
+        item.innerHTML = `
+          <div class="row g-3 align-items-center">
+            <div class="col-md-2">
+              <strong>${formatarData(exame.data)}</strong><br>
+              <small class="text-muted">${exame.horario}</small>
+            </div>
+
+            <div class="col-md-4">
+              <h3 class="h6 mb-1">${exame.nome}</h3>
+              <p class="text-muted mb-0">${exame.pessoa} • ${exame.local}</p>
+            </div>
+
+            <div class="col-md-2">
+              <span class="badge ${statusClasse(exame.status)}">${statusTexto(exame.status)}</span>
+            </div>
+
+            <div class="col-md-4">
+              <div class="d-flex flex-wrap justify-content-md-end gap-2">
+                <button class="btn btn-sm btn-outline-primary" type="button" data-action="detalhes" data-id="${exame.id}">
+                  Detalhes
+                </button>
+
+                ${
+                  exame.resultado
+                    ? `<a href="exames-resultados.html" class="btn btn-sm btn-success">Resultado</a>`
+                    : `<a href="exames-preparo.html" class="btn btn-sm btn-outline-secondary">Preparo</a>`
+                }
+
+                ${
+                  exame.status === "agendado" || exame.status === "preparo"
+                    ? `<button class="btn btn-sm btn-outline-danger" type="button" data-action="cancelar" data-id="${exame.id}">Cancelar</button>`
+                    : ""
+                }
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(item);
+      });
+
+      document.getElementById("contadorResultado").textContent =
+        `Exibindo ${ordenados.length} exame(s) de ${exames.length}.`;
+    }
+
+    function renderizarMetricas() {
+      const agendados = listaFiltrada.filter(e => e.status === "agendado").length;
+      const preparo = listaFiltrada.filter(e => e.status === "preparo").length;
+      const resultados = listaFiltrada.filter(e => e.status === "resultado" || e.resultado).length;
+      const atencao = listaFiltrada.filter(e => e.prioridade === "Alta" && e.status !== "concluido").length;
+
+      document.getElementById("metricAgendados").textContent = agendados;
+      document.getElementById("metricPreparo").textContent = preparo;
+      document.getElementById("metricResultados").textContent = resultados;
+      document.getElementById("metricAtencao").textContent = atencao;
+    }
+
+    function renderizarResultados() {
+      const container = document.getElementById("listaResultados");
+      container.innerHTML = "";
+
+      const resultados = exames.filter(e => e.resultado).slice(0, 4);
+
+      resultados.forEach(function(exame) {
+        const col = document.createElement("div");
+        col.className = "col-md-6";
+
+        col.innerHTML = `
+          <article class="card border-0 bg-light rounded-4 h-100">
+            <div class="card-body">
+              <span class="badge text-bg-success mb-2">Resultado disponível</span>
+              <h3 class="h6 mb-1">${exame.nome}</h3>
+              <p class="text-muted small mb-3">${exame.pessoa} • ${formatarData(exame.data)}</p>
+              <button class="btn btn-sm btn-outline-primary" type="button" data-action="detalhes" data-id="${exame.id}">
+                Ver detalhes
+              </button>
+            </div>
+          </article>
+        `;
+
+        container.appendChild(col);
+      });
+    }
+
+    function renderizarPreparos() {
+      const container = document.getElementById("listaPreparos");
+      container.innerHTML = "";
+
+      const preparos = exames
+        .filter(e => e.status === "preparo" || e.status === "agendado")
+        .slice(0, 4);
+
+      preparos.forEach(function(exame) {
+        const item = document.createElement("div");
+        item.className = "border rounded-4 p-3 bg-light";
+
+        item.innerHTML = `
+          <strong>${exame.nome}</strong>
+          <p class="text-muted small mb-2">${formatarData(exame.data)} às ${exame.horario}</p>
+          <small>${exame.preparo}</small>
+        `;
+
+        container.appendChild(item);
+      });
+    }
+
+    function renderizarResumoPessoas() {
+      const container = document.getElementById("resumoPessoas");
+      const grupos = {};
+
+      exames.forEach(function(exame) {
+        if (!grupos[exame.pessoa]) {
+          grupos[exame.pessoa] = { total: 0, resultados: 0, pendentes: 0 };
+        }
+
+        grupos[exame.pessoa].total += 1;
+        if (exame.resultado) grupos[exame.pessoa].resultados += 1;
+        if (exame.status === "agendado" || exame.status === "preparo") grupos[exame.pessoa].pendentes += 1;
+      });
+
+      container.innerHTML = Object.keys(grupos).map(function(nome) {
+        const g = grupos[nome];
+
+        return `
+          <div class="border rounded-4 p-3 bg-light">
+            <div class="d-flex justify-content-between">
+              <strong>${nome}</strong>
+              <span>${g.total}</span>
+            </div>
+            <small class="text-muted">${g.pendentes} pendente(s), ${g.resultados} resultado(s)</small>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function abrirDetalhes(id) {
+      const exame = exames.find(e => e.id === Number(id));
+      if (!exame) return;
+
+      const dados = [
+        ["Exame", exame.nome],
+        ["Pessoa acompanhada", exame.pessoa],
+        ["Data e horário", `${formatarData(exame.data)} às ${exame.horario}`],
+        ["Local", exame.local],
+        ["Status", statusTexto(exame.status)],
+        ["Preparo", exame.preparo],
+        ["Responsável", exame.responsavel],
+        ["Prioridade", exame.prioridade],
+        ["Resultado", exame.resultado ? "Disponível" : "Ainda não disponível"]
+      ];
+
+      document.getElementById("detalhesExame").innerHTML = dados.map(function(item) {
+        return `
+          <div class="col-md-6">
+            <div class="card border-0 bg-light rounded-4 h-100">
+              <div class="card-body">
+                <small class="text-muted">${item[0]}</small>
+                <h3 class="h6 mb-0">${item[1]}</h3>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      modalDetalhes.show();
+    }
+
+    function abrirCancelar(id) {
+      const exame = exames.find(e => e.id === Number(id));
+      if (!exame) return;
+
+      document.getElementById("cancelarId").value = exame.id;
+      document.getElementById("motivoCancelamento").value = "";
+      document.getElementById("cancelarResumo").innerHTML =
+        `Deseja cancelar <strong>${exame.nome}</strong> de <strong>${exame.pessoa}</strong>, agendado para <strong>${formatarData(exame.data)} às ${exame.horario}</strong>?`;
+
+      modalCancelar.show();
+    }
+
+    function confirmarCancelamento() {
+      const id = Number(document.getElementById("cancelarId").value);
+      const exame = exames.find(e => e.id === id);
+      if (!exame) return;
+
+      exame.status = "cancelado";
+      modalCancelar.hide();
+
+      aplicarFiltros();
+      mostrarToast("Exame cancelado e histórico atualizado.");
+    }
+
+    function ativarLembrete(id) {
+      const exame = exames.find(e => e.id === Number(id));
+      mostrarToast(exame ? `Lembrete ativado para ${exame.nome}.` : "Lembrete ativado.");
+    }
+
+    document.getElementById("buscaExame").addEventListener("input", aplicarFiltros);
+    document.getElementById("filtroPessoa").addEventListener("change", aplicarFiltros);
+    document.getElementById("filtroStatus").addEventListener("change", aplicarFiltros);
+
+    document.getElementById("btnLimpar").addEventListener("click", function() {
+      document.getElementById("buscaExame").value = "";
+      document.getElementById("filtroPessoa").value = "";
+      document.getElementById("filtroStatus").value = "";
+
+      document.querySelectorAll(".filtro-rapido").forEach(btn => btn.classList.remove("active"));
+      document.querySelector('.filtro-rapido[data-status=""]').classList.add("active");
+
+      aplicarFiltros();
+      mostrarToast("Filtros limpos.");
+    });
+
+    document.querySelectorAll(".filtro-rapido").forEach(function(button) {
+      button.addEventListener("click", function() {
+        document.querySelectorAll(".filtro-rapido").forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+
+        document.getElementById("filtroStatus").value = button.dataset.status;
+        aplicarFiltros();
+      });
+    });
+
+    document.body.addEventListener("click", function(event) {
+      const button = event.target.closest("[data-action]");
+      if (!button) return;
+
+      const action = button.dataset.action;
+      const id = button.dataset.id;
+
+      if (action === "detalhes") abrirDetalhes(id);
+      if (action === "cancelar") abrirCancelar(id);
+      if (action === "lembrar") ativarLembrete(id);
+    });
+
+    document.getElementById("btnConfirmarCancelamento").addEventListener("click", confirmarCancelamento);
+
+    renderizarTudo();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Conectar dispositivo | Home Care 4.0</title>
+<style>
+    .setup-stepper {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: .75rem;
+    }
+
+    .setup-step {
+      border: 1px solid var(--bs-border-color);
+      border-radius: 1rem;
+      padding: .875rem;
+      background: #fff;
+      color: var(--bs-secondary-color);
+      min-height: 82px;
+    }
+
+    .setup-step.is-active {
+      border-color: var(--bs-primary);
+      background: rgba(var(--bs-primary-rgb), .08);
+      color: var(--bs-primary);
+    }
+
+    .setup-step.is-done {
+      border-color: var(--bs-success);
+      background: rgba(var(--bs-success-rgb), .08);
+      color: var(--bs-success);
+    }
+
+    .choice-card {
+      cursor: pointer;
+      transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+
+    .choice-card:hover,
+    .choice-card:has(input:checked) {
+      border-color: var(--bs-primary) !important;
+      box-shadow: 0 .75rem 1.5rem rgba(13, 110, 253, .12);
+      transform: translateY(-2px);
+    }
+
+    .choice-card input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .device-found-card {
+      cursor: pointer;
+      transition: border-color .2s ease, background-color .2s ease;
+    }
+
+    .device-found-card.is-selected {
+      border-color: var(--bs-primary) !important;
+      background: rgba(var(--bs-primary-rgb), .06);
+    }
+
+    .scan-radar {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(var(--bs-primary-rgb), .08);
+      border: 1px solid rgba(var(--bs-primary-rgb), .2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scan-radar::before {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border-radius: 50%;
+      border: 2px dashed rgba(var(--bs-primary-rgb), .35);
+      animation: radarSpin 1.8s linear infinite;
+    }
+
+    .scan-radar.is-paused::before {
+      animation-play-state: paused;
+    }
+
+    @keyframes radarSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .result-panel {
+      min-height: 172px;
+    }
+
+    @media (max-width: 991.98px) {
+      .setup-stepper {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080;">
+          <div id="appToast" class="toast border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+              <div class="col-lg-8">
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-2 mb-3">
+                  <a href="sinais-vitais-dispositivos.html" class="btn btn-light border align-self-start">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Voltar
+                  </a>
+                  <span class="badge text-bg-primary rounded-pill align-self-start">
+                    <i class="bi bi-bluetooth me-1"></i>
+                    Nova conexão
+                  </span>
+                </div>
+
+                <p class="text-muted fs-5 mb-1">Dispositivos conectados</p>
+                <h1 class="fw-bold mb-3">Conectar novo dispositivo</h1>
+                <p class="text-muted fs-5 mb-0">
+                  Siga as etapas para parear um aparelho, associar a uma pessoa acompanhada e definir quais dados serão monitorados.
+                </p>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="card border-0 bg-light rounded-4">
+                  <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <strong>Progresso</strong>
+                      <span class="text-muted" id="stepCounter">Etapa 1 de 5</span>
+                    </div>
+                    <div class="progress" style="height: 14px;" aria-label="Progresso da conexão">
+                      <div id="progressBar" class="progress-bar" style="width:20%;"></div>
+                    </div>
+                    <p class="small text-muted mt-3 mb-0" id="stepHint">
+                      Primeiro, escolha para quem este dispositivo será usado.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="setup-stepper mb-4" aria-label="Etapas da conexão">
+          <div class="setup-step is-active" data-step-indicator="1">
+            <strong class="d-block">1. Pessoa</strong>
+            <span class="small">Quem será monitorado</span>
+          </div>
+          <div class="setup-step" data-step-indicator="2">
+            <strong class="d-block">2. Tipo</strong>
+            <span class="small">Modelo do aparelho</span>
+          </div>
+          <div class="setup-step" data-step-indicator="3">
+            <strong class="d-block">3. Parear</strong>
+            <span class="small">Buscar dispositivo</span>
+          </div>
+          <div class="setup-step" data-step-indicator="4">
+            <strong class="d-block">4. Configurar</strong>
+            <span class="small">Dados e alertas</span>
+          </div>
+          <div class="setup-step" data-step-indicator="5">
+            <strong class="d-block">5. Revisar</strong>
+            <span class="small">Concluir conexão</span>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-4 p-lg-5">
+            <form id="deviceSetupForm" novalidate>
+
+              <section class="setup-screen" data-step="1">
+                <div class="mb-4">
+                  <p class="text-muted mb-1">Etapa 1</p>
+                  <h2 class="h4 fw-bold mb-2">Para quem é este dispositivo?</h2>
+                  <p class="text-muted mb-0">
+                    Associar o aparelho a uma pessoa ajuda a organizar alertas, histórico e permissões de cuidado.
+                  </p>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-md-6 col-xl-4">
+                    <label class="choice-card border rounded-4 p-4 h-100 w-100 position-relative">
+                      <input type="radio" name="person" value="Maria Aparecida" data-relation="Mãe" checked>
+                      <div class="d-flex align-items-start gap-3">
+                        <span class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center" style="width:54px;height:54px;">
+                          <i class="bi bi-person-heart fs-4"></i>
+                        </span>
+                        <div>
+                          <strong class="d-block fs-5">Maria Aparecida</strong>
+                          <span class="text-muted">Mãe • 74 anos</span>
+                          <p class="text-muted mb-0 mt-2">Monitoramento contínuo recomendado.</p>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="col-md-6 col-xl-4">
+                    <label class="choice-card border rounded-4 p-4 h-100 w-100 position-relative">
+                      <input type="radio" name="person" value="José Roberto" data-relation="Pai">
+                      <div class="d-flex align-items-start gap-3">
+                        <span class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center" style="width:54px;height:54px;">
+                          <i class="bi bi-person fs-4"></i>
+                        </span>
+                        <div>
+                          <strong class="d-block fs-5">José Roberto</strong>
+                          <span class="text-muted">Pai • 78 anos</span>
+                          <p class="text-muted mb-0 mt-2">Acompanhamento de pressão e batimentos.</p>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="col-md-6 col-xl-4">
+                    <label class="choice-card border rounded-4 p-4 h-100 w-100 position-relative">
+                      <input type="radio" name="person" value="Meu próprio cuidado" data-relation="Titular">
+                      <div class="d-flex align-items-start gap-3">
+                        <span class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center" style="width:54px;height:54px;">
+                          <i class="bi bi-person-check fs-4"></i>
+                        </span>
+                        <div>
+                          <strong class="d-block fs-5">Meu próprio cuidado</strong>
+                          <span class="text-muted">Titular da conta</span>
+                          <p class="text-muted mb-0 mt-2">Usar o dispositivo no meu perfil.</p>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </section>
+
+              <section class="setup-screen d-none" data-step="2">
+                <div class="mb-4">
+                  <p class="text-muted mb-1">Etapa 2</p>
+                  <h2 class="h4 fw-bold mb-2">Qual dispositivo deseja conectar?</h2>
+                  <p class="text-muted mb-0">
+                    Escolha o tipo mais próximo. Depois você poderá personalizar nome, alertas e dados monitorados.
+                  </p>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-md-6 col-xl-4">
+                    <label class="choice-card border rounded-4 p-4 h-100 w-100 position-relative">
+                      <input type="radio" name="deviceType" value="Relógio inteligente" data-icon="bi-smartwatch" checked>
+                      <i class="bi bi-smartwatch fs-1 text-primary d-block mb-3"></i>
+                      <strong class="d-block fs-5">Relógio inteligente</strong>
+                      <p class="text-muted mb-0">Batimentos, passos, quedas, sono e atividade.</p>
+                    </label>
+                  </div>
+
+                  <div class="col-md-6 col-xl-4">
+                    <label class="choice-card border rounded-4 p-4 h-100 w-100 position-relative">
+                      <input type="radio" name="deviceType" value="Oxímetro" data-icon="bi-droplet-half">
+                      <i class="bi bi-droplet-half fs-1 text-primary d-block mb-3"></i>
+                      <strong class="d-block fs-5">Oxímetro</strong>
+                      <p class="text-muted mb-0">Oxigenação do sangue e frequência cardíaca.</p>
+                    </label>
+                  </div>
+
+                  <div class="col-md-6 col-xl-4">
+                    <label class="choice-card border rounded-4 p-4 h-100 w-100 position-relative">
+                      <input type="radio" name="deviceType" value="Aparelho de pressão" data-icon="bi-activity">
+                      <i class="bi bi-activity fs-1 text-primary d-block mb-3"></i>
+                      <strong class="d-block fs-5">Aparelho de pressão</strong>
+                      <p class="text-muted mb-0">Pressão arterial sistólica, diastólica e pulso.</p>
+                    </label>
+                  </div>
+
+                  <div class="col-md-6 col-xl-4">
+                    <label class="choice-card border rounded-4 p-4 h-100 w-100 position-relative">
+                      <input type="radio" name="deviceType" value="Termômetro digital" data-icon="bi-thermometer-half">
+                      <i class="bi bi-thermometer-half fs-1 text-primary d-block mb-3"></i>
+                      <strong class="d-block fs-5">Termômetro digital</strong>
+                      <p class="text-muted mb-0">Temperatura corporal e registro de febre.</p>
+                    </label>
+                  </div>
+
+                  <div class="col-md-6 col-xl-4">
+                    <label class="choice-card border rounded-4 p-4 h-100 w-100 position-relative">
+                      <input type="radio" name="deviceType" value="Sensor de queda" data-icon="bi-shield-exclamation">
+                      <i class="bi bi-shield-exclamation fs-1 text-primary d-block mb-3"></i>
+                      <strong class="d-block fs-5">Sensor de queda</strong>
+                      <p class="text-muted mb-0">Detecção de quedas e alertas de emergência.</p>
+                    </label>
+                  </div>
+
+                  <div class="col-md-6 col-xl-4">
+                    <label class="choice-card border rounded-4 p-4 h-100 w-100 position-relative">
+                      <input type="radio" name="deviceType" value="Outro dispositivo" data-icon="bi-plus-circle">
+                      <i class="bi bi-plus-circle fs-1 text-primary d-block mb-3"></i>
+                      <strong class="d-block fs-5">Outro dispositivo</strong>
+                      <p class="text-muted mb-0">Para dispositivos compatíveis não listados.</p>
+                    </label>
+                  </div>
+                </div>
+              </section>
+
+              <section class="setup-screen d-none" data-step="3">
+                <div class="row g-4 align-items-stretch">
+                  <div class="col-lg-5">
+                    <div class="card border-0 bg-light rounded-4 h-100">
+                      <div class="card-body p-4 d-flex flex-column justify-content-center align-items-center text-center">
+                        <div class="scan-radar mb-4" id="scanRadar">
+                          <i class="bi bi-bluetooth fs-1 text-primary position-relative"></i>
+                        </div>
+                        <p class="text-muted mb-1">Etapa 3</p>
+                        <h2 class="h4 fw-bold mb-3">Parear dispositivo</h2>
+                        <p class="text-muted mb-4">
+                          Deixe o dispositivo ligado, próximo e em modo de pareamento.
+                        </p>
+                        <button type="button" class="btn btn-primary btn-lg w-100" id="scanButton">
+                          <i class="bi bi-broadcast-pin me-2"></i>
+                          Procurar dispositivos
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-7">
+                    <div class="result-panel border rounded-4 p-4 h-100">
+                      <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+                        <div>
+                          <h3 class="h5 fw-bold mb-1">Dispositivos encontrados</h3>
+                          <p class="text-muted mb-0">Selecione o aparelho correto para continuar.</p>
+                        </div>
+                        <span class="badge text-bg-light align-self-start" id="scanStatus">Aguardando busca</span>
+                      </div>
+
+                      <div id="scanEmpty" class="alert alert-light border rounded-4 mb-0">
+                        Nenhum dispositivo buscado ainda. Clique em “Procurar dispositivos”.
+                      </div>
+
+                      <div id="scanLoading" class="d-none">
+                        <div class="d-flex align-items-center gap-3 p-4 border rounded-4">
+                          <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+                          <div>
+                            <strong>Buscando aparelhos próximos...</strong>
+                            <p class="text-muted mb-0">Isso é uma simulação visual para o protótipo.</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div id="deviceResults" class="d-none d-grid gap-3"></div>
+
+                      <div class="mt-4">
+                        <label for="manualCode" class="form-label fw-semibold">Ou informe o código do dispositivo</label>
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+                          <input id="manualCode" class="form-control" placeholder="Ex.: HC40-8892" maxlength="12" autocomplete="off">
+                          <button class="btn btn-outline-primary" type="button" id="useManualCode">Usar código</button>
+                        </div>
+                        <div class="form-text">Use esta opção quando o aparelho tiver QR Code, etiqueta ou código impresso.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="setup-screen d-none" data-step="4">
+                <div class="mb-4">
+                  <p class="text-muted mb-1">Etapa 4</p>
+                  <h2 class="h4 fw-bold mb-2">Configure monitoramento e alertas</h2>
+                  <p class="text-muted mb-0">
+                    Selecione quais dados serão acompanhados e quando a família deve ser avisada.
+                  </p>
+                </div>
+
+                <div class="row g-4">
+                  <div class="col-lg-7">
+                    <div class="border rounded-4 p-4 h-100">
+                      <h3 class="h5 fw-bold mb-3">Dados monitorados</h3>
+
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <div class="form-check form-switch border rounded-4 p-3 ps-5 h-100">
+                            <input class="form-check-input" type="checkbox" id="monitorHeart" checked>
+                            <label class="form-check-label fw-semibold" for="monitorHeart">Batimentos cardíacos</label>
+                            <p class="text-muted small mb-0">Alertas em caso de alteração importante.</p>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-check form-switch border rounded-4 p-3 ps-5 h-100">
+                            <input class="form-check-input" type="checkbox" id="monitorOxygen" checked>
+                            <label class="form-check-label fw-semibold" for="monitorOxygen">Oxigenação</label>
+                            <p class="text-muted small mb-0">Registro de saturação e queda de oxigênio.</p>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-check form-switch border rounded-4 p-3 ps-5 h-100">
+                            <input class="form-check-input" type="checkbox" id="monitorFall" checked>
+                            <label class="form-check-label fw-semibold" for="monitorFall">Quedas</label>
+                            <p class="text-muted small mb-0">Alerta rápido para responsáveis.</p>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-check form-switch border rounded-4 p-3 ps-5 h-100">
+                            <input class="form-check-input" type="checkbox" id="monitorSleep">
+                            <label class="form-check-label fw-semibold" for="monitorSleep">Sono</label>
+                            <p class="text-muted small mb-0">Qualidade do sono e interrupções.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-5">
+                    <div class="border rounded-4 p-4 h-100">
+                      <h3 class="h5 fw-bold mb-3">Identificação</h3>
+
+                      <div class="mb-3">
+                        <label for="deviceName" class="form-label fw-semibold">Nome do dispositivo</label>
+                        <input id="deviceName" class="form-control form-control-lg" placeholder="Ex.: Relógio da Maria" required>
+                        <div class="invalid-feedback">Informe um nome para identificar o aparelho.</div>
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="alertLevel" class="form-label fw-semibold">Nível de alerta</label>
+                        <select id="alertLevel" class="form-select form-select-lg">
+                          <option value="Essencial">Essencial: avisar apenas em situações graves</option>
+                          <option value="Preventivo" selected>Preventivo: avisar alterações relevantes</option>
+                          <option value="Intensivo">Intensivo: avisar qualquer alteração fora do padrão</option>
+                        </select>
+                      </div>
+
+                      <div class="form-check form-switch border rounded-4 p-3 ps-5">
+                        <input class="form-check-input" type="checkbox" id="shareFamily" checked>
+                        <label class="form-check-label fw-semibold" for="shareFamily">Compartilhar com familiares autorizados</label>
+                        <p class="text-muted small mb-0">Responsáveis poderão ver alertas e histórico.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="setup-screen d-none" data-step="5">
+                <div class="row g-4 align-items-stretch">
+                  <div class="col-lg-7">
+                    <div class="border rounded-4 p-4 h-100">
+                      <p class="text-muted mb-1">Etapa 5</p>
+                      <h2 class="h4 fw-bold mb-3">Revise antes de concluir</h2>
+                      <p class="text-muted mb-4">Confira os dados da conexão. Se algo estiver errado, volte e ajuste.</p>
+
+                      <div class="d-grid gap-3" id="reviewList"></div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-5">
+                    <div class="card border-0 bg-light rounded-4 h-100">
+                      <div class="card-body p-4">
+                        <h3 class="h5 fw-bold mb-3">Teste de comunicação</h3>
+                        <p class="text-muted">
+                          Antes de finalizar, faça um teste para confirmar que o aparelho está respondendo.
+                        </p>
+
+                        <button type="button" class="btn btn-outline-primary btn-lg w-100 mb-3" id="testConnection">
+                          <i class="bi bi-wifi me-2"></i>
+                          Testar conexão
+                        </button>
+
+                        <div class="alert alert-light border rounded-4 mb-0" id="testResult">
+                          Teste ainda não realizado.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <div class="border-top mt-5 pt-4 d-flex flex-column flex-lg-row gap-3 justify-content-between align-items-stretch align-items-lg-center">
+                <div class="text-muted small" id="validationMessage" aria-live="polite"></div>
+
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                  <a href="sinais-vitais-dispositivos.html" class="btn btn-light border btn-lg">
+                    Cancelar
+                  </a>
+                  <button type="button" class="btn btn-outline-secondary btn-lg" id="backButton" disabled>
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Voltar
+                  </button>
+                  <button type="button" class="btn btn-primary btn-lg" id="nextButton">
+                    Continuar
+                    <i class="bi bi-arrow-right ms-1"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-4 shadow">
+        <div class="modal-body p-4 p-lg-5 text-center">
+          <div class="rounded-circle bg-success-subtle text-success d-inline-flex align-items-center justify-content-center mb-4" style="width:82px;height:82px;">
+            <i class="bi bi-check2-circle fs-1"></i>
+          </div>
+          <h2 class="h4 fw-bold" id="successTitle">Dispositivo conectado</h2>
+          <p class="text-muted mb-4" id="successText">
+            O dispositivo foi conectado com sucesso.
+          </p>
+          <div class="d-grid gap-2">
+            <a href="sinais-vitais-dispositivos.html" class="btn btn-primary btn-lg">Ver dispositivos</a>
+            <a href="sinais-vitais.html" class="btn btn-light border btn-lg">Ir para sinais vitais</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+async function markCurrentNavigation() {
+      const currentPage = window.location.pathname.split("/").pop();
+
+      document.querySelectorAll(".sidebar-link").forEach(link => {
+        const linkPage = link.getAttribute("href")?.split("/").pop();
+        link.classList.toggle("active", linkPage === currentPage);
+      });
+    }
+const stepHints = {
+      1: "Primeiro, escolha para quem este dispositivo será usado.",
+      2: "Agora escolha o tipo de aparelho que será conectado.",
+      3: "Procure o dispositivo por Bluetooth ou use um código manual.",
+      4: "Defina quais dados serão monitorados e como os alertas serão enviados.",
+      5: "Revise, teste a conexão e conclua o pareamento."
+    };
+
+    const deviceMock = [
+      { id: "HC40-8892", name: "Health Watch 4.0", battery: "82%", signal: "Forte", type: "Relógio inteligente" },
+      { id: "OXI-2147", name: "Oxímetro Care Plus", battery: "64%", signal: "Médio", type: "Oxímetro" },
+      { id: "BPM-7721", name: "Pressão Smart Pro", battery: "91%", signal: "Forte", type: "Aparelho de pressão" }
+    ];
+
+    const screens = [...document.querySelectorAll(".setup-screen")];
+    const indicators = [...document.querySelectorAll("[data-step-indicator]")];
+    const progressBar = document.getElementById("progressBar");
+    const stepCounter = document.getElementById("stepCounter");
+    const stepHint = document.getElementById("stepHint");
+    const backButton = document.getElementById("backButton");
+    const nextButton = document.getElementById("nextButton");
+    const validationMessage = document.getElementById("validationMessage");
+    const toastMessage = document.getElementById("toastMessage");
+    const appToast = document.getElementById("appToast");
+    const scanButton = document.getElementById("scanButton");
+    const scanEmpty = document.getElementById("scanEmpty");
+    const scanLoading = document.getElementById("scanLoading");
+    const deviceResults = document.getElementById("deviceResults");
+    const scanStatus = document.getElementById("scanStatus");
+    const scanRadar = document.getElementById("scanRadar");
+    const manualCode = document.getElementById("manualCode");
+    const useManualCode = document.getElementById("useManualCode");
+    const deviceName = document.getElementById("deviceName");
+    const testConnection = document.getElementById("testConnection");
+    const testResult = document.getElementById("testResult");
+    const reviewList = document.getElementById("reviewList");
+    const successModal = new bootstrap.Modal(document.getElementById("successModal"));
+
+    function showToast(message) {
+      toastMessage.textContent = message;
+      bootstrap.Toast.getOrCreateInstance(appToast).show();
+    }
+
+    function getCheckedValue(name) {
+      return document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+    }
+
+    function getCheckedInput(name) {
+      return document.querySelector(`input[name="${name}"]:checked`);
+    }
+
+    function selectedPersonRelation() {
+      return getCheckedInput("person")?.dataset.relation || "";
+    }
+
+    function getMonitoredItems() {
+      const items = [
+        ["monitorHeart", "Batimentos cardíacos"],
+        ["monitorOxygen", "Oxigenação"],
+        ["monitorFall", "Quedas"],
+        ["monitorSleep", "Sono"]
+      ];
+
+      return items
+        .filter(([id]) => document.getElementById(id).checked)
+        .map(([, label]) => label);
+    }
+
+    function updateScreen() {
+      screens.forEach(screen => {
+        screen.classList.toggle("d-none", Number(screen.dataset.step) !== state.currentStep);
+      });
+
+      indicators.forEach(indicator => {
+        const step = Number(indicator.dataset.stepIndicator);
+        indicator.classList.toggle("is-active", step === state.currentStep);
+        indicator.classList.toggle("is-done", step < state.currentStep);
+      });
+
+      const progress = (state.currentStep / state.totalSteps) * 100;
+      progressBar.style.width = `${progress}%`;
+      stepCounter.textContent = `Etapa ${state.currentStep} de ${state.totalSteps}`;
+      stepHint.textContent = stepHints[state.currentStep];
+      backButton.disabled = state.currentStep === 1;
+      nextButton.innerHTML = state.currentStep === state.totalSteps
+        ? '<i class="bi bi-check-circle me-1"></i> Concluir conexão'
+        : 'Continuar <i class="bi bi-arrow-right ms-1"></i>';
+
+      validationMessage.textContent = "";
+
+      if (state.currentStep === 4 && !deviceName.value.trim()) {
+        const defaultName = `${getCheckedValue("deviceType")} de ${getCheckedValue("person")}`;
+        deviceName.value = defaultName;
+      }
+
+      if (state.currentStep === 5) {
+        renderReview();
+      }
+    }
+
+    function validateCurrentStep() {
+      validationMessage.textContent = "";
+
+      if (state.currentStep === 3 && !state.selectedDeviceId) {
+        validationMessage.textContent = "Selecione um dispositivo encontrado ou informe um código manual para continuar.";
+        showToast("Selecione ou informe o código do dispositivo.");
+        return false;
+      }
+
+      if (state.currentStep === 4) {
+        if (!deviceName.value.trim()) {
+          deviceName.classList.add("is-invalid");
+          validationMessage.textContent = "Informe um nome para identificar o dispositivo.";
+          deviceName.focus();
+          return false;
+        }
+
+        if (getMonitoredItems().length === 0) {
+          validationMessage.textContent = "Selecione pelo menos um dado para monitorar.";
+          showToast("Escolha pelo menos um dado monitorado.");
+          return false;
+        }
+
+        deviceName.classList.remove("is-invalid");
+      }
+
+      if (state.currentStep === 5 && !state.testDone) {
+        validationMessage.textContent = "Faça o teste de conexão antes de concluir.";
+        showToast("Teste a conexão antes de finalizar.");
+        return false;
+      }
+
+      return true;
+    }
+
+    function goNext() {
+      if (!validateCurrentStep()) return;
+
+      if (state.currentStep < state.totalSteps) {
+        state.currentStep += 1;
+        updateScreen();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+
+      const successText = document.getElementById("successText");
+      successText.textContent = `${deviceName.value.trim()} foi conectado ao perfil de ${getCheckedValue("person")}.`;
+      successModal.show();
+    }
+
+    function goBack() {
+      if (state.currentStep > 1) {
+        state.currentStep -= 1;
+        updateScreen();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    function renderDevices(devices) {
+      deviceResults.innerHTML = devices.map(device => `
+        <button type="button" class="device-found-card text-start border rounded-4 p-3 bg-white" data-device-id="${device.id}" data-device-name="${device.name}">
+          <div class="d-flex justify-content-between gap-3">
+            <div>
+              <strong class="d-block">${device.name}</strong>
+              <span class="text-muted small">${device.type} • Código ${device.id}</span>
+            </div>
+            <span class="badge text-bg-success align-self-start">${device.signal}</span>
+          </div>
+          <div class="d-flex flex-wrap gap-2 mt-3 small text-muted">
+            <span><i class="bi bi-battery-half me-1"></i>Bateria ${device.battery}</span>
+            <span><i class="bi bi-bluetooth me-1"></i>Bluetooth ativo</span>
+          </div>
+        </button>
+      `).join("");
+
+      document.querySelectorAll(".device-found-card").forEach(card => {
+        card.addEventListener("click", () => {
+          document.querySelectorAll(".device-found-card").forEach(item => item.classList.remove("is-selected"));
+          card.classList.add("is-selected");
+          state.selectedDeviceId = card.dataset.deviceId;
+          scanStatus.textContent = "Selecionado";
+          showToast(`${card.dataset.deviceName} selecionado.`);
+        });
+      });
+    }
+
+    function scanDevices() {
+      scanEmpty.classList.add("d-none");
+      deviceResults.classList.add("d-none");
+      scanLoading.classList.remove("d-none");
+      scanStatus.textContent = "Buscando";
+      scanRadar.classList.remove("is-paused");
+      state.selectedDeviceId = "";
+      state.testDone = false;
+
+      setTimeout(() => {
+        const selectedType = getCheckedValue("deviceType");
+        const filtered = deviceMock.filter(device => device.type === selectedType);
+        const results = filtered.length ? filtered : deviceMock;
+
+        renderDevices(results);
+        scanLoading.classList.add("d-none");
+        deviceResults.classList.remove("d-none");
+        scanStatus.textContent = `${results.length} encontrado(s)`;
+        scanRadar.classList.add("is-paused");
+        showToast("Busca concluída. Selecione um dispositivo.");
+      }, 1100);
+    }
+
+    function useCode() {
+      const code = manualCode.value.trim().toUpperCase();
+
+      if (code.length < 6) {
+        showToast("Informe um código válido do dispositivo.");
+        manualCode.focus();
+        return;
+      }
+
+      state.selectedDeviceId = code;
+      scanStatus.textContent = "Código informado";
+      scanEmpty.classList.add("d-none");
+      scanLoading.classList.add("d-none");
+      deviceResults.classList.remove("d-none");
+      deviceResults.innerHTML = `
+        <div class="device-found-card is-selected border rounded-4 p-3 bg-white">
+          <strong class="d-block">Dispositivo informado manualmente</strong>
+          <span class="text-muted small">Código ${code}</span>
+          <div class="mt-3 small text-muted">
+            <span><i class="bi bi-upc-scan me-1"></i>Aguardando validação no teste de conexão</span>
+          </div>
+        </div>
+      `;
+      showToast("Código aplicado ao pareamento.");
+    }
+
+    function renderReview() {
+      const monitored = getMonitoredItems();
+      const shared = document.getElementById("shareFamily").checked ? "Sim" : "Não";
+      const alertLevel = document.getElementById("alertLevel").value;
+      const deviceType = getCheckedValue("deviceType");
+      const icon = getCheckedInput("deviceType")?.dataset.icon || "bi-smartwatch";
+
+      reviewList.innerHTML = `
+        <div class="d-flex align-items-start gap-3 p-3 border rounded-4">
+          <i class="bi ${icon} fs-2 text-primary"></i>
+          <div>
+            <span class="text-muted d-block small">Dispositivo</span>
+            <strong>${deviceName.value.trim() || deviceType}</strong>
+            <p class="text-muted mb-0 small">${deviceType} • Código ${state.selectedDeviceId}</p>
+          </div>
+        </div>
+
+        <div class="p-3 border rounded-4">
+          <span class="text-muted d-block small">Pessoa acompanhada</span>
+          <strong>${getCheckedValue("person")}</strong>
+          <p class="text-muted mb-0 small">Relação: ${selectedPersonRelation()}</p>
+        </div>
+
+        <div class="p-3 border rounded-4">
+          <span class="text-muted d-block small">Dados monitorados</span>
+          <strong>${monitored.join(", ")}</strong>
+        </div>
+
+        <div class="p-3 border rounded-4">
+          <span class="text-muted d-block small">Alertas e compartilhamento</span>
+          <strong>Nível ${alertLevel}</strong>
+          <p class="text-muted mb-0 small">Compartilhar com familiares: ${shared}</p>
+        </div>
+      `;
+    }
+
+    function runConnectionTest() {
+      testConnection.disabled = true;
+      testConnection.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Testando...';
+      testResult.className = "alert alert-light border rounded-4 mb-0";
+      testResult.textContent = "Enviando sinal de teste para o dispositivo.";
+
+      setTimeout(() => {
+        state.testDone = true;
+        testConnection.disabled = false;
+        testConnection.innerHTML = '<i class="bi bi-check-circle me-2"></i>Teste aprovado';
+        testResult.className = "alert alert-success border-0 rounded-4 mb-0";
+        testResult.innerHTML = '<strong>Conexão estável.</strong><br>O dispositivo respondeu corretamente e está pronto para uso.';
+        showToast("Teste de conexão aprovado.");
+      }, 1000);
+    }
+
+    function resetTestOnChange() {
+      state.testDone = false;
+      testConnection.disabled = false;
+      testConnection.innerHTML = '<i class="bi bi-wifi me-2"></i>Testar conexão';
+      testResult.className = "alert alert-light border rounded-4 mb-0";
+      testResult.textContent = "Teste ainda não realizado.";
+    }
+
+    nextButton.addEventListener("click", goNext);
+    backButton.addEventListener("click", goBack);
+    scanButton.addEventListener("click", scanDevices);
+    useManualCode.addEventListener("click", useCode);
+    testConnection.addEventListener("click", runConnectionTest);
+    manualCode.addEventListener("input", () => manualCode.value = manualCode.value.toUpperCase());
+    deviceName.addEventListener("input", () => deviceName.classList.remove("is-invalid"));
+
+    document.querySelectorAll('input[name="deviceType"]').forEach(input => {
+      input.addEventListener("change", () => {
+        state.selectedDeviceId = "";
+        scanEmpty.classList.remove("d-none");
+        scanLoading.classList.add("d-none");
+        deviceResults.classList.add("d-none");
+        scanStatus.textContent = "Aguardando busca";
+        resetTestOnChange();
+      });
+    });
+
+    document.querySelectorAll("#monitorHeart, #monitorOxygen, #monitorFall, #monitorSleep, #alertLevel, #shareFamily").forEach(input => {
+      input.addEventListener("change", resetTestOnChange);
+    });
+
+    updateScreen();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

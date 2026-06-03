@@ -1,0 +1,102 @@
+.hc-medication-page .hc-module-header {
+  background: linear-gradient(135deg, rgba(18, 102, 92, 0.08), rgba(30, 95, 143, 0.08));
+  border: 1px solid rgba(18, 102, 92, 0.14);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.hc-medication-page .hc-module-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.hc-medication-page .hc-profile-note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  max-width: 58rem;
+}
+
+.hc-medication-page .hc-alert-icon {
+  align-items: center;
+  background: rgba(245, 158, 11, 0.16);
+  border-radius: 999px;
+  color: #92400e;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 1.35rem;
+  height: 3rem;
+  justify-content: center;
+  width: 3rem;
+}
+
+.hc-medication-page .hc-medication-actions .btn,
+.hc-medication-page .hc-list-actions .btn,
+.hc-medication-page .btn-group .btn {
+  min-height: 2.75rem;
+}
+
+.hc-medication-page .hc-metric-label {
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.hc-medication-page .form-control,
+.hc-medication-page .form-select {
+  min-height: 3rem;
+}
+
+.hc-medication-page .list-group-item {
+  border-color: var(--color-border);
+  padding: 1rem 0;
+}
+
+.hc-medication-page .progress {
+  background-color: rgba(15, 23, 42, 0.08);
+}
+
+.hc-medication-page .hc-toast-container {
+  z-index: 1080;
+}
+
+.hc-medication-page .hc-progress-sm {
+  height: 0.75rem;
+}
+
+.hc-medication-page .hc-progress-md {
+  height: 0.875rem;
+}
+
+.hc-medication-page .hc-progress-zero {
+  width: 0%;
+}
+
+.hc-medication-page .hc-progress-quarter {
+  width: 25%;
+}
+
+.theme-contrast .hc-medication-page .hc-module-header {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.theme-contrast .hc-medication-page .hc-alert-icon {
+  background: transparent;
+  border: 2px solid var(--color-focus);
+  color: var(--color-focus);
+}
+
+@media (max-width: 767.98px) {
+  .hc-medication-page .hc-module-header {
+    padding: var(--space-4);
+  }
+
+  .hc-medication-page .btn-group {
+    display: grid;
+    width: 100%;
+  }
+
+  .hc-medication-page .btn-group .btn {
+    border-radius: var(--radius-md) !important;
+  }
+}

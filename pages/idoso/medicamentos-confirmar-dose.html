@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Confirmar Dose | Home Care 4.0</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+  <link rel="stylesheet" href="../../css/pages/medicamentos.css" />
+</head>
+
+<body class="hc-medication-page hc-idoso-module" data-profile-page="idoso">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3 hc-toast-container">
+          <div id="appToast" class="toast align-items-center border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+          <div>
+            <span class="badge text-bg-success mb-2">Confirmação de dose</span>
+            <h1 class="h3 mb-1">Registrar medicamento tomado</h1>
+            <p class="text-muted mb-0">
+              Confirme se a dose foi tomada, registre atrasos ou informe quando não foi possível tomar.
+            </p>
+          </div>
+
+          <div class="d-flex flex-column flex-sm-row gap-2">
+            <a href="medicamentos.html" class="btn btn-outline-secondary">Voltar</a>
+            <a href="medicamentos-historico.html" class="btn btn-outline-primary">Ver histórico</a>
+          </div>
+        </div>
+
+        <div class="row g-4">
+
+          <div class="col-xl-8">
+
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <h2 class="h5 mb-1">Dose selecionada</h2>
+                    <p class="text-muted mb-0">
+                      Escolha a dose que deseja registrar agora.
+                    </p>
+                  </div>
+
+                  <select id="doseSelecionada" class="form-select w-auto">
+                    <option value="1">08:00 • Losartana 50mg • Maria</option>
+                    <option value="2">10:00 • Metformina 850mg • Maria</option>
+                    <option value="3">14:00 • Vitamina D • Antônio</option>
+                    <option value="4">20:00 • Sinvastatina 20mg • Maria</option>
+                  </select>
+                </div>
+
+                <div id="cardDoseAtual" class="border rounded-4 p-4 bg-light"></div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-1">Como deseja registrar?</h2>
+                <p class="text-muted mb-4">
+                  Essa informação será gravada no histórico de medicamentos.
+                </p>
+
+                <div class="row g-3 mb-4">
+                  <div class="col-md-4">
+                    <input type="radio" class="btn-check" name="statusDose" id="statusTomada" value="tomada" checked />
+                    <label class="btn btn-outline-success w-100 p-3 rounded-4" for="statusTomada">
+                      Tomada
+                    </label>
+                  </div>
+
+                  <div class="col-md-4">
+                    <input type="radio" class="btn-check" name="statusDose" id="statusAtrasada" value="atrasada" />
+                    <label class="btn btn-outline-warning w-100 p-3 rounded-4" for="statusAtrasada">
+                      Tomada com atraso
+                    </label>
+                  </div>
+
+                  <div class="col-md-4">
+                    <input type="radio" class="btn-check" name="statusDose" id="statusNaoTomada" value="nao-tomada" />
+                    <label class="btn btn-outline-danger w-100 p-3 rounded-4" for="statusNaoTomada">
+                      Não tomada
+                    </label>
+                  </div>
+                </div>
+
+                <form id="formConfirmarDose" novalidate>
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="horarioRegistro" class="form-label">Horário real do registro</label>
+                      <input type="time" class="form-control" id="horarioRegistro" required />
+                      <div class="invalid-feedback">Informe o horário do registro.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="responsavelRegistro" class="form-label">Quem confirmou?</label>
+                      <select id="responsavelRegistro" class="form-select" required>
+                        <option value="">Selecione</option>
+                        <option>Paciente</option>
+                        <option>Cuidador principal</option>
+                        <option>Familiar responsável</option>
+                        <option>Profissional de saúde</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione quem confirmou.</div>
+                    </div>
+
+                    <div class="col-12" id="motivoWrapper">
+                      <label for="motivoRegistro" class="form-label">Motivo ou observação</label>
+                      <select id="motivoRegistro" class="form-select">
+                        <option value="">Selecione, se necessário</option>
+                        <option>Esquecimento</option>
+                        <option>Pessoa estava dormindo</option>
+                        <option>Recusou tomar</option>
+                        <option>Medicamento acabou</option>
+                        <option>Orientação médica para suspender</option>
+                        <option>Efeito colateral observado</option>
+                        <option>Outro motivo</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="observacao" class="form-label">Observação detalhada</label>
+                      <textarea
+                        id="observacao"
+                        class="form-control"
+                        rows="4"
+                        placeholder="Ex.: tomou com água, precisou de ajuda, apresentou enjoo, recusou a dose..."
+                      ></textarea>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="border rounded-4 p-3 bg-light">
+                        <strong class="d-block mb-2">Sinais de atenção observados?</strong>
+
+                        <div class="row g-2">
+                          <div class="col-md-4">
+                            <div class="form-check">
+                              <input class="form-check-input sinal-alerta" type="checkbox" value="Tontura" id="sinalTontura" />
+                              <label class="form-check-label" for="sinalTontura">Tontura</label>
+                            </div>
+                          </div>
+
+                          <div class="col-md-4">
+                            <div class="form-check">
+                              <input class="form-check-input sinal-alerta" type="checkbox" value="Náusea" id="sinalNausea" />
+                              <label class="form-check-label" for="sinalNausea">Náusea</label>
+                            </div>
+                          </div>
+
+                          <div class="col-md-4">
+                            <div class="form-check">
+                              <input class="form-check-input sinal-alerta" type="checkbox" value="Sonolência" id="sinalSonolencia" />
+                              <label class="form-check-label" for="sinalSonolencia">Sonolência</label>
+                            </div>
+                          </div>
+
+                          <div class="col-md-4">
+                            <div class="form-check">
+                              <input class="form-check-input sinal-alerta" type="checkbox" value="Dor" id="sinalDor" />
+                              <label class="form-check-label" for="sinalDor">Dor</label>
+                            </div>
+                          </div>
+
+                          <div class="col-md-4">
+                            <div class="form-check">
+                              <input class="form-check-input sinal-alerta" type="checkbox" value="Falta de ar" id="sinalAr" />
+                              <label class="form-check-label" for="sinalAr">Falta de ar</label>
+                            </div>
+                          </div>
+
+                          <div class="col-md-4">
+                            <div class="form-check">
+                              <input class="form-check-input sinal-alerta" type="checkbox" value="Nenhum sinal" id="sinalNenhum" checked />
+                              <label class="form-check-label" for="sinalNenhum">Nenhum sinal</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2 mt-3">
+                      <button type="button" class="btn btn-outline-secondary" id="btnLimpar">
+                        Limpar registro
+                      </button>
+
+                      <button type="submit" class="btn btn-success">
+                        Salvar confirmação
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-1">Registros de hoje</h2>
+                <p class="text-muted mb-4">Acompanhe as confirmações feitas nesta tela.</p>
+
+                <div id="listaRegistros" class="list-group list-group-flush"></div>
+
+                <div id="semRegistros" class="text-center py-4">
+                  <p class="text-muted mb-0">Nenhum registro novo feito nesta sessão.</p>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <aside class="col-xl-4">
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Resumo da dose</h2>
+
+                <div class="d-grid gap-3">
+                  <div>
+                    <small class="text-muted">Medicamento</small>
+                    <p class="fw-semibold mb-0" id="resumoMedicamento">-</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Pessoa acompanhada</small>
+                    <p class="fw-semibold mb-0" id="resumoPessoa">-</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Horário previsto</small>
+                    <p class="fw-semibold mb-0" id="resumoHorario">-</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Status atual</small>
+                    <p class="fw-semibold mb-0" id="resumoStatus">-</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Orientação</small>
+                    <p class="fw-semibold mb-0" id="resumoOrientacao">-</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Resultado do registro</h2>
+
+                <div id="resultadoRegistro" class="alert alert-light border rounded-4 mb-0">
+                  Preencha e salve uma confirmação para ver o resultado.
+                </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Ações após salvar</h2>
+
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item px-0">Atualiza a agenda do medicamento</li>
+                  <li class="list-group-item px-0">Registra no histórico</li>
+                  <li class="list-group-item px-0">Calcula atraso, se houver</li>
+                  <li class="list-group-item px-0">Pode avisar responsável em caso de não tomada</li>
+                </ul>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="modal fade" id="modalSucesso" tabindex="-1" aria-labelledby="modalSucessoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="modalSucessoLabel">Registro salvo</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div id="modalResultado" class="alert border-0 rounded-4 mb-3"></div>
+          <div id="modalCards" class="row g-3"></div>
+        </div>
+
+        <div class="modal-footer">
+          <a href="medicamentos.html" class="btn btn-primary">Ir para medicamentos</a>
+          <a href="medicamentos-historico.html" class="btn btn-outline-primary">Ver histórico</a>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Registrar outra dose</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const doses = {
+      1: {
+        horario: "08:00",
+        nome: "Losartana 50mg",
+        pessoa: "Maria",
+        status: "Atrasada",
+        orientacao: "Tomar com água pela manhã.",
+        estoque: 12,
+        criticidade: "Alta"
+      },
+      2: {
+        horario: "10:00",
+        nome: "Metformina 850mg",
+        pessoa: "Maria",
+        status: "Pendente",
+        orientacao: "Tomar após o café da manhã.",
+        estoque: 28,
+        criticidade: "Média"
+      },
+      3: {
+        horario: "14:00",
+        nome: "Vitamina D",
+        pessoa: "Antônio",
+        status: "Pendente",
+        orientacao: "Tomar após refeição.",
+        estoque: 9,
+        criticidade: "Baixa"
+      },
+      4: {
+        horario: "20:00",
+        nome: "Sinvastatina 20mg",
+        pessoa: "Maria",
+        status: "Pendente",
+        orientacao: "Tomar antes de dormir.",
+        estoque: 16,
+        criticidade: "Média"
+      }
+    };
+
+    const registros = [];
+    const toast = new bootstrap.Toast(document.getElementById("appToast"));
+    const modalSucesso = new bootstrap.Modal(document.getElementById("modalSucesso"));
+
+    const doseSelecionada = document.getElementById("doseSelecionada");
+    const form = document.getElementById("formConfirmarDose");
+
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      toast.show();
+    }
+
+    function horaAtual() {
+      return new Date().toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function doseAtual() {
+      return doses[doseSelecionada.value];
+    }
+
+    function diferencaMinutos(previsto, real) {
+      const [ph, pm] = previsto.split(":").map(Number);
+      const [rh, rm] = real.split(":").map(Number);
+
+      return (rh * 60 + rm) - (ph * 60 + pm);
+    }
+
+    function statusSelecionado() {
+      return document.querySelector('input[name="statusDose"]:checked').value;
+    }
+
+    function sinaisSelecionados() {
+      return Array.from(document.querySelectorAll(".sinal-alerta:checked"))
+        .map(input => input.value);
+    }
+
+    function carregarDose() {
+      const dose = doseAtual();
+
+      document.getElementById("cardDoseAtual").innerHTML = `
+        <div class="row g-3 align-items-center">
+          <div class="col-md-7">
+            <span class="badge text-bg-light mb-2">${dose.status}</span>
+            <h2 class="h4 mb-1">${dose.nome}</h2>
+            <p class="text-muted mb-0">${dose.pessoa} • horário previsto: ${dose.horario}</p>
+          </div>
+
+          <div class="col-md-5">
+            <div class="row g-2">
+              <div class="col-6">
+                <div class="bg-white rounded-4 p-3 border">
+                  <small class="text-muted">Estoque</small>
+                  <p class="fw-semibold mb-0">${dose.estoque} unidade(s)</p>
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="bg-white rounded-4 p-3 border">
+                  <small class="text-muted">Criticidade</small>
+                  <p class="fw-semibold mb-0">${dose.criticidade}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("resumoMedicamento").textContent = dose.nome;
+      document.getElementById("resumoPessoa").textContent = dose.pessoa;
+      document.getElementById("resumoHorario").textContent = dose.horario;
+      document.getElementById("resumoStatus").textContent = dose.status;
+      document.getElementById("resumoOrientacao").textContent = dose.orientacao;
+
+      document.getElementById("horarioRegistro").value = horaAtual();
+    }
+
+    function atualizarMotivoObrigatorio() {
+      const status = statusSelecionado();
+      const motivo = document.getElementById("motivoRegistro");
+
+      if (status === "nao-tomada" || status === "atrasada") {
+        motivo.required = true;
+      } else {
+        motivo.required = false;
+        motivo.classList.remove("is-invalid");
+      }
+    }
+
+    function limparFormulario() {
+      document.getElementById("statusTomada").checked = true;
+      document.getElementById("horarioRegistro").value = horaAtual();
+      document.getElementById("responsavelRegistro").value = "";
+      document.getElementById("motivoRegistro").value = "";
+      document.getElementById("observacao").value = "";
+
+      document.querySelectorAll(".sinal-alerta").forEach(input => input.checked = false);
+      document.getElementById("sinalNenhum").checked = true;
+
+      document.querySelectorAll(".is-invalid").forEach(campo => campo.classList.remove("is-invalid"));
+
+      atualizarMotivoObrigatorio();
+      mostrarToast("Formulário limpo.");
+    }
+
+    function validarFormulario() {
+      let valido = true;
+      const campos = form.querySelectorAll("[required]");
+
+      campos.forEach(campo => {
+        if (!campo.value) {
+          campo.classList.add("is-invalid");
+          valido = false;
+        } else {
+          campo.classList.remove("is-invalid");
+        }
+      });
+
+      if (!valido) {
+        mostrarToast("Preencha os campos obrigatórios.");
+      }
+
+      return valido;
+    }
+
+    function textoStatus(status) {
+      const mapa = {
+        "tomada": "Dose tomada",
+        "atrasada": "Dose tomada com atraso",
+        "nao-tomada": "Dose não tomada"
+      };
+
+      return mapa[status] || "Registro";
+    }
+
+    function classeResultado(status) {
+      if (status === "tomada") return "alert-success";
+      if (status === "atrasada") return "alert-warning";
+      return "alert-danger";
+    }
+
+    function registrarDose() {
+      atualizarMotivoObrigatorio();
+
+      if (!validarFormulario()) return;
+
+      const dose = doseAtual();
+      const status = statusSelecionado();
+      const horarioReal = document.getElementById("horarioRegistro").value;
+      const atraso = diferencaMinutos(dose.horario, horarioReal);
+      const sinais = sinaisSelecionados();
+      const registro = {
+        id: Date.now(),
+        medicamento: dose.nome,
+        pessoa: dose.pessoa,
+        horarioPrevisto: dose.horario,
+        horarioReal,
+        status,
+        responsavel: document.getElementById("responsavelRegistro").value,
+        motivo: document.getElementById("motivoRegistro").value || "Sem motivo informado",
+        observacao: document.getElementById("observacao").value || "Sem observação",
+        sinais,
+        atraso
+      };
+
+      registros.unshift(registro);
+
+      if (status === "tomada") {
+        dose.status = "Tomada";
+        dose.estoque = Math.max(0, dose.estoque - 1);
+      }
+
+      if (status === "atrasada") {
+        dose.status = "Tomada com atraso";
+        dose.estoque = Math.max(0, dose.estoque - 1);
+      }
+
+      if (status === "nao-tomada") {
+        dose.status = "Não tomada";
+      }
+
+      renderizarResultado(registro);
+      renderizarRegistros();
+      carregarDose();
+
+      mostrarToast("Registro salvo.");
+      modalSucesso.show();
+    }
+
+    function renderizarResultado(registro) {
+      const statusTexto = textoStatus(registro.status);
+      const classe = classeResultado(registro.status);
+      const atrasoTexto = registro.atraso > 0
+        ? `${registro.atraso} minuto(s) de atraso`
+        : registro.atraso < 0
+          ? `${Math.abs(registro.atraso)} minuto(s) antes do horário`
+          : "No horário previsto";
+
+      const html = `
+        <strong>${statusTexto}</strong><br>
+        ${registro.medicamento} • ${registro.pessoa}<br>
+        Previsto: ${registro.horarioPrevisto} • Registrado: ${registro.horarioReal}<br>
+        ${atrasoTexto}
+      `;
+
+      const resultado = document.getElementById("resultadoRegistro");
+      resultado.className = `alert ${classe} border-0 rounded-4 mb-0`;
+      resultado.innerHTML = html;
+
+      const modalResultado = document.getElementById("modalResultado");
+      modalResultado.className = `alert ${classe} border-0 rounded-4 mb-3`;
+      modalResultado.innerHTML = html;
+
+      document.getElementById("modalCards").innerHTML = `
+        <div class="col-md-6">
+          <div class="card border-0 bg-light rounded-4 h-100">
+            <div class="card-body">
+              <small class="text-muted">Responsável</small>
+              <h3 class="h6 mb-0">${registro.responsavel}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card border-0 bg-light rounded-4 h-100">
+            <div class="card-body">
+              <small class="text-muted">Motivo</small>
+              <h3 class="h6 mb-0">${registro.motivo}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card border-0 bg-light rounded-4 h-100">
+            <div class="card-body">
+              <small class="text-muted">Sinais observados</small>
+              <h3 class="h6 mb-0">${registro.sinais.join(", ") || "Nenhum sinal"}</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card border-0 bg-light rounded-4 h-100">
+            <div class="card-body">
+              <small class="text-muted">Observação</small>
+              <h3 class="h6 mb-0">${registro.observacao}</h3>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderizarRegistros() {
+      const lista = document.getElementById("listaRegistros");
+      const vazio = document.getElementById("semRegistros");
+
+      lista.innerHTML = "";
+
+      if (registros.length === 0) {
+        vazio.classList.remove("d-none");
+        return;
+      }
+
+      vazio.classList.add("d-none");
+
+      registros.forEach(registro => {
+        const item = document.createElement("div");
+        item.className = "list-group-item px-0 py-3";
+
+        item.innerHTML = `
+          <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+            <div>
+              <strong>${registro.horarioReal} • ${registro.medicamento}</strong>
+              <p class="text-muted mb-0">${registro.pessoa} • ${textoStatus(registro.status)}</p>
+            </div>
+            <span class="badge ${registro.status === "tomada" ? "text-bg-success" : registro.status === "atrasada" ? "text-bg-warning" : "text-bg-danger"} align-self-md-center">
+              ${textoStatus(registro.status)}
+            </span>
+          </div>
+        `;
+
+        lista.appendChild(item);
+      });
+    }
+
+    document.querySelectorAll('input[name="statusDose"]').forEach(input => {
+      input.addEventListener("change", atualizarMotivoObrigatorio);
+    });
+
+    document.querySelectorAll(".sinal-alerta").forEach(input => {
+      input.addEventListener("change", function () {
+        if (this.id === "sinalNenhum" && this.checked) {
+          document.querySelectorAll(".sinal-alerta").forEach(outro => {
+            if (outro.id !== "sinalNenhum") outro.checked = false;
+          });
+        }
+
+        if (this.id !== "sinalNenhum" && this.checked) {
+          document.getElementById("sinalNenhum").checked = false;
+        }
+      });
+    });
+
+    doseSelecionada.addEventListener("change", carregarDose);
+    document.getElementById("btnLimpar").addEventListener("click", limparFormulario);
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      registrarDose();
+    });
+
+    form.addEventListener("input", function (event) {
+      event.target.classList.remove("is-invalid");
+    });
+
+    carregarDose();
+    atualizarMotivoObrigatorio();
+    renderizarRegistros();
+  </script>
+  <script src="../../js/pages/medicamentos-profile.js"></script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

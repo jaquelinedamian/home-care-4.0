@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Agendar Exame | Home Care+</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+          <div id="appToast" class="toast align-items-center border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+          <div>
+            <span class="badge text-bg-primary mb-2">Novo agendamento</span>
+            <h1 class="h3 mb-1">Agendar exame</h1>
+            <p class="text-muted mb-0">
+              Cadastre o exame, escolha local, data, responsável e orientações de preparo.
+            </p>
+          </div>
+
+          <div class="d-flex gap-2">
+            <a href="exames.html" class="btn btn-outline-secondary">Cancelar</a>
+          </div>
+        </div>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong>Etapa <span id="etapaAtualTexto">1</span> de 4</strong>
+              <span class="text-muted" id="tituloEtapa">Dados do exame</span>
+            </div>
+
+            <div class="progress" style="height: 12px;">
+              <div
+                id="barraProgresso"
+                class="progress-bar"
+                role="progressbar"
+                style="width: 25%;"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="25"
+              ></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="row g-4">
+          <div class="col-xl-8">
+            <form id="formAgendarExame" novalidate>
+
+              <section class="card border-0 shadow-sm rounded-4 etapa-formulario" data-etapa="1">
+                <div class="card-body p-4">
+                  <h2 class="h5 mb-1">1. Dados do exame</h2>
+                  <p class="text-muted mb-4">Informe quem fará o exame e qual procedimento precisa ser agendado.</p>
+
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="pessoaCuidada" class="form-label">Pessoa acompanhada</label>
+                      <select id="pessoaCuidada" class="form-select" required>
+                        <option value="">Selecione</option>
+                        <option>Maria</option>
+                        <option>Antônio</option>
+                        <option>Eu</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione a pessoa acompanhada.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="categoriaExame" class="form-label">Categoria</label>
+                      <select id="categoriaExame" class="form-select" required>
+                        <option value="">Selecione</option>
+                        <option value="Laboratorial">Laboratorial</option>
+                        <option value="Imagem">Imagem</option>
+                        <option value="Cardiológico">Cardiológico</option>
+                        <option value="Ginecológico">Ginecológico</option>
+                        <option value="Rotina preventiva">Rotina preventiva</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione a categoria.</div>
+                    </div>
+
+                    <div class="col-md-8">
+                      <label for="nomeExame" class="form-label">Exame</label>
+                      <select id="nomeExame" class="form-select" required>
+                        <option value="">Selecione uma categoria primeiro</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione o exame.</div>
+                    </div>
+
+                    <div class="col-md-4">
+                      <label for="prioridade" class="form-label">Prioridade</label>
+                      <select id="prioridade" class="form-select" required>
+                        <option value="">Selecione</option>
+                        <option>Baixa</option>
+                        <option>Média</option>
+                        <option>Alta</option>
+                        <option>Urgente</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione a prioridade.</div>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="observacaoClinica" class="form-label">Observação clínica ou motivo</label>
+                      <textarea id="observacaoClinica" class="form-control" rows="3" placeholder="Ex.: controle de diabetes, check-up, solicitação médica, acompanhamento de sintomas..."></textarea>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="card border-0 shadow-sm rounded-4 etapa-formulario d-none" data-etapa="2">
+                <div class="card-body p-4">
+                  <h2 class="h5 mb-1">2. Local e modalidade</h2>
+                  <p class="text-muted mb-4">Escolha onde o exame será realizado e quem acompanhará.</p>
+
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="modalidade" class="form-label">Modalidade</label>
+                      <select id="modalidade" class="form-select" required>
+                        <option value="">Selecione</option>
+                        <option>Presencial no laboratório</option>
+                        <option>Coleta domiciliar</option>
+                        <option>Clínica de imagem</option>
+                        <option>Hospital/centro diagnóstico</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione a modalidade.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="localExame" class="form-label">Local</label>
+                      <select id="localExame" class="form-select" required>
+                        <option value="">Selecione</option>
+                        <option>Laboratório Vida Plena</option>
+                        <option>Laboratório Central</option>
+                        <option>Centro de Imagem Saúde</option>
+                        <option>Clínica Mulher+</option>
+                        <option>Atendimento domiciliar Home Care+</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione o local.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="responsavel" class="form-label">Responsável pelo acompanhamento</label>
+                      <select id="responsavel" class="form-select" required>
+                        <option value="">Selecione</option>
+                        <option>Paciente</option>
+                        <option>Cuidador principal</option>
+                        <option>Familiar responsável</option>
+                        <option>Profissional de saúde</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione o responsável.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="transporte" class="form-label">Transporte/rota</label>
+                      <select id="transporte" class="form-select">
+                        <option>Não precisa</option>
+                        <option>Precisa de carro por aplicativo</option>
+                        <option>Precisa de acompanhante</option>
+                        <option>Precisa de transporte adaptado</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="border rounded-4 p-4 bg-light">
+                        <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                          <div>
+                            <strong>Prévia do local</strong>
+                            <p class="text-muted mb-0" id="mapaTexto">Selecione um local para ver a prévia do deslocamento.</p>
+                          </div>
+                          <button type="button" class="btn btn-outline-primary" id="btnSimularRota">Simular rota</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="card border-0 shadow-sm rounded-4 etapa-formulario d-none" data-etapa="3">
+                <div class="card-body p-4">
+                  <h2 class="h5 mb-1">3. Data, horário e preparo</h2>
+                  <p class="text-muted mb-4">Defina o melhor horário e confira orientações antes do exame.</p>
+
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <label for="dataExame" class="form-label">Data</label>
+                      <input type="date" id="dataExame" class="form-control" required>
+                      <div class="invalid-feedback">Informe a data.</div>
+                    </div>
+
+                    <div class="col-md-4">
+                      <label for="horarioExame" class="form-label">Horário</label>
+                      <select id="horarioExame" class="form-select" required>
+                        <option value="">Selecione</option>
+                        <option>07:30</option>
+                        <option>08:00</option>
+                        <option>09:00</option>
+                        <option>10:30</option>
+                        <option>14:00</option>
+                        <option>16:00</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione o horário.</div>
+                    </div>
+
+                    <div class="col-md-4">
+                      <label for="antecedenciaLembrete" class="form-label">Lembrete</label>
+                      <select id="antecedenciaLembrete" class="form-select" required>
+                        <option value="">Selecione</option>
+                        <option>1 dia antes</option>
+                        <option>12 horas antes</option>
+                        <option>3 horas antes</option>
+                        <option>1 hora antes</option>
+                        <option>Todos os lembretes</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione o lembrete.</div>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="alert alert-info border-0 rounded-4 mb-0" id="preparoAutomatico">
+                        Selecione o exame para gerar orientações de preparo.
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="observacaoPreparo" class="form-label">Observações adicionais de preparo</label>
+                      <textarea id="observacaoPreparo" class="form-control" rows="3" placeholder="Ex.: levar exames anteriores, documento, pedido médico, carteirinha..."></textarea>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="card border-0 shadow-sm rounded-4 etapa-formulario d-none" data-etapa="4">
+                <div class="card-body p-4">
+                  <h2 class="h5 mb-1">4. Revisão e confirmação</h2>
+                  <p class="text-muted mb-4">Confira os dados antes de salvar o agendamento.</p>
+
+                  <div id="resumoFinal" class="row g-3"></div>
+
+                  <div class="alert alert-warning border-0 rounded-4 mt-4 mb-0">
+                    <strong>Atenção:</strong> em um sistema real, este agendamento deve confirmar disponibilidade com o laboratório/clínica antes de finalizar.
+                  </div>
+                </div>
+              </section>
+
+              <div class="d-flex flex-column flex-sm-row justify-content-between gap-2 mt-4">
+                <button type="button" class="btn btn-outline-secondary" id="btnVoltar" disabled>Voltar</button>
+
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                  <button type="button" class="btn btn-outline-primary" id="btnSalvarRascunho">Salvar rascunho</button>
+                  <button type="button" class="btn btn-primary" id="btnProximo">Próxima etapa</button>
+                  <button type="submit" class="btn btn-success d-none" id="btnSalvar">Confirmar agendamento</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <aside class="col-xl-4">
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Resumo do agendamento</h2>
+
+                <div class="d-grid gap-3">
+                  <div>
+                    <small class="text-muted">Pessoa acompanhada</small>
+                    <p class="fw-semibold mb-0" id="resumoPessoa">Ainda não selecionada</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Exame</small>
+                    <p class="fw-semibold mb-0" id="resumoExame">Ainda não selecionado</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Local</small>
+                    <p class="fw-semibold mb-0" id="resumoLocal">Ainda não definido</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Data e horário</small>
+                    <p class="fw-semibold mb-0" id="resumoDataHora">Ainda não definido</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Preparo</small>
+                    <p class="fw-semibold mb-0" id="resumoPreparo">Aguardando exame</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Após confirmar</h2>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item px-0">Cria item na agenda</li>
+                  <li class="list-group-item px-0">Gera lembretes de preparo</li>
+                  <li class="list-group-item px-0">Registra no histórico</li>
+                  <li class="list-group-item px-0">Disponibiliza área de resultado</li>
+                </ul>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="modal fade" id="modalSucesso" tabindex="-1" aria-labelledby="modalSucessoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="modalSucessoLabel">Exame agendado</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="alert alert-success border-0 rounded-4">
+            <strong>Agendamento criado com sucesso.</strong><br>
+            O exame foi adicionado à agenda e os lembretes foram configurados.
+          </div>
+
+          <div id="resultadoAgendamento" class="row g-3"></div>
+        </div>
+
+        <div class="modal-footer">
+          <a href="exames.html" class="btn btn-primary">Ir para exames</a>
+          <a href="exames-preparo.html" class="btn btn-outline-primary">Ver preparo</a>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Continuar nesta página</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+
+</script>
+
+  <script>
+    let etapaAtual = 1;
+
+    const titulosEtapas = {
+      1: "Dados do exame",
+      2: "Local e modalidade",
+      3: "Data, horário e preparo",
+      4: "Revisão e confirmação"
+    };
+
+    const examesPorCategoria = {
+      "Laboratorial": ["Hemograma completo", "Colesterol total e frações", "TSH", "Creatinina sérica", "Hemoglobina glicada", "Genotipagem HPV por PCR"],
+      "Imagem": ["Mamografia", "USG de mamas", "Ultrassom abdominal", "Raio-X", "Densitometria óssea"],
+      "Cardiológico": ["Eletrocardiograma", "Ecocardiograma", "Holter 24h", "MAPA"],
+      "Ginecológico": ["USG transvaginal", "Papanicolau", "Mamografia", "Genotipagem HPV por PCR"],
+      "Rotina preventiva": ["Check-up completo", "Hemograma completo", "Colesterol total e frações", "Glicemia", "TSH"]
+    };
+
+    const preparos = {
+      "Hemograma completo": "Jejum pode ser solicitado conforme laboratório. Levar documento e pedido médico.",
+      "Colesterol total e frações": "Jejum pode ser necessário conforme orientação médica. Evitar álcool no dia anterior.",
+      "TSH": "Informar medicamentos em uso. Seguir orientação sobre hormônios tireoidianos.",
+      "Creatinina sérica": "Manter hidratação habitual. Levar exames anteriores, se houver.",
+      "Hemoglobina glicada": "Não exige jejum na maioria dos casos.",
+      "Genotipagem HPV por PCR": "Evitar relações sexuais, duchas ou medicamentos vaginais conforme orientação do laboratório.",
+      "Mamografia": "Não usar desodorante, creme, perfume ou talco na região das mamas e axilas.",
+      "USG de mamas": "Levar exames anteriores de mama, se houver.",
+      "USG transvaginal": "Chegar com antecedência. Seguir orientação da clínica sobre bexiga.",
+      "Ultrassom abdominal": "Pode exigir jejum e preparo intestinal. Confirmar com o local.",
+      "Raio-X": "Remover objetos metálicos. Informar suspeita de gravidez.",
+      "Densitometria óssea": "Evitar cálcio no dia do exame, se orientado.",
+      "Eletrocardiograma": "Usar roupa confortável e evitar creme no tórax.",
+      "Ecocardiograma": "Sem preparo especial na maioria dos casos.",
+      "Holter 24h": "Evitar banho durante o uso do aparelho. Usar roupa confortável.",
+      "MAPA": "Usar roupa larga e manter rotina habitual durante monitoramento.",
+      "Papanicolau": "Evitar relações sexuais, duchas e cremes vaginais antes do exame.",
+      "Check-up completo": "Pode incluir jejum e documentos. Conferir exames solicitados.",
+      "Glicemia": "Pode exigir jejum conforme solicitação médica."
+    };
+
+    const form = document.getElementById("formAgendarExame");
+    const modalSucesso = new bootstrap.Modal(document.getElementById("modalSucesso"));
+    const toast = new bootstrap.Toast(document.getElementById("appToast"));
+
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      toast.show();
+    }
+
+    function valor(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    }
+
+    function formatarData(data) {
+      if (!data) return "";
+      return data.split("-").reverse().join("/");
+    }
+
+    function atualizarEtapa() {
+      document.querySelectorAll(".etapa-formulario").forEach(function(secao) {
+        secao.classList.toggle("d-none", Number(secao.dataset.etapa) !== etapaAtual);
+      });
+
+      const progresso = etapaAtual * 25;
+
+      document.getElementById("etapaAtualTexto").textContent = etapaAtual;
+      document.getElementById("tituloEtapa").textContent = titulosEtapas[etapaAtual];
+      document.getElementById("barraProgresso").style.width = progresso + "%";
+      document.getElementById("barraProgresso").setAttribute("aria-valuenow", progresso);
+
+      document.getElementById("btnVoltar").disabled = etapaAtual === 1;
+      document.getElementById("btnProximo").classList.toggle("d-none", etapaAtual === 4);
+      document.getElementById("btnSalvar").classList.toggle("d-none", etapaAtual !== 4);
+
+      if (etapaAtual === 4) renderizarResumoFinal();
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function validarEtapa() {
+      const secao = document.querySelector(`.etapa-formulario[data-etapa="${etapaAtual}"]`);
+      const campos = secao.querySelectorAll("[required]");
+      let valido = true;
+
+      campos.forEach(function(campo) {
+        if (!campo.value) {
+          campo.classList.add("is-invalid");
+          valido = false;
+        } else {
+          campo.classList.remove("is-invalid");
+        }
+      });
+
+      if (!valido) mostrarToast("Preencha os campos obrigatórios antes de continuar.");
+      return valido;
+    }
+
+    function atualizarExames() {
+      const categoria = valor("categoriaExame");
+      const select = document.getElementById("nomeExame");
+
+      select.innerHTML = `<option value="">Selecione</option>`;
+
+      if (!categoria || !examesPorCategoria[categoria]) {
+        select.innerHTML = `<option value="">Selecione uma categoria primeiro</option>`;
+        atualizarResumo();
+        return;
+      }
+
+      examesPorCategoria[categoria].forEach(function(exame) {
+        const option = document.createElement("option");
+        option.value = exame;
+        option.textContent = exame;
+        select.appendChild(option);
+      });
+
+      atualizarResumo();
+    }
+
+    function atualizarPreparo() {
+      const exame = valor("nomeExame");
+      const texto = preparos[exame] || "Selecione o exame para gerar orientações de preparo.";
+      document.getElementById("preparoAutomatico").innerHTML = `<strong>Preparo sugerido:</strong> ${texto}`;
+      atualizarResumo();
+    }
+
+    function atualizarResumo() {
+      const pessoa = valor("pessoaCuidada");
+      const exame = valor("nomeExame");
+      const local = valor("localExame");
+      const data = valor("dataExame");
+      const horario = valor("horarioExame");
+      const preparo = preparos[exame];
+
+      document.getElementById("resumoPessoa").textContent = pessoa || "Ainda não selecionada";
+      document.getElementById("resumoExame").textContent = exame || "Ainda não selecionado";
+      document.getElementById("resumoLocal").textContent = local || "Ainda não definido";
+      document.getElementById("resumoDataHora").textContent = data && horario ? `${formatarData(data)} às ${horario}` : "Ainda não definido";
+      document.getElementById("resumoPreparo").textContent = preparo || "Aguardando exame";
+
+      if (etapaAtual === 4) renderizarResumoFinal();
+    }
+
+    function renderizarResumoFinal() {
+      const exame = valor("nomeExame");
+      const cards = [
+        ["Pessoa acompanhada", valor("pessoaCuidada") || "-"],
+        ["Exame", exame || "-"],
+        ["Categoria", valor("categoriaExame") || "-"],
+        ["Prioridade", valor("prioridade") || "-"],
+        ["Modalidade", valor("modalidade") || "-"],
+        ["Local", valor("localExame") || "-"],
+        ["Data e horário", `${formatarData(valor("dataExame")) || "-"} às ${valor("horarioExame") || "-"}`],
+        ["Responsável", valor("responsavel") || "-"],
+        ["Transporte", valor("transporte") || "-"],
+        ["Lembrete", valor("antecedenciaLembrete") || "-"],
+        ["Preparo", preparos[exame] || "-"],
+        ["Observação", valor("observacaoClinica") || "Sem observação clínica"]
+      ];
+
+      document.getElementById("resumoFinal").innerHTML = cards.map(function(item) {
+        return `
+          <div class="col-md-6">
+            <div class="card border-0 bg-light rounded-4 h-100">
+              <div class="card-body">
+                <small class="text-muted">${item[0]}</small>
+                <h3 class="h6 mb-0">${item[1]}</h3>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderizarResultado() {
+      const exame = valor("nomeExame");
+      const cards = [
+        ["Agendamento", `${exame} para ${valor("pessoaCuidada")}`],
+        ["Quando", `${formatarData(valor("dataExame"))} às ${valor("horarioExame")}`],
+        ["Onde", valor("localExame")],
+        ["Responsável", valor("responsavel")],
+        ["Lembrete", valor("antecedenciaLembrete")],
+        ["Preparo", preparos[exame] || "Sem preparo cadastrado"]
+      ];
+
+      document.getElementById("resultadoAgendamento").innerHTML = cards.map(function(item) {
+        return `
+          <div class="col-md-6">
+            <div class="card border-0 bg-light rounded-4 h-100">
+              <div class="card-body">
+                <small class="text-muted">${item[0]}</small>
+                <h3 class="h6 mb-0">${item[1]}</h3>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function definirDataMinima() {
+      const hoje = new Date().toISOString().split("T")[0];
+      document.getElementById("dataExame").min = hoje;
+    }
+
+    document.getElementById("categoriaExame").addEventListener("change", atualizarExames);
+    document.getElementById("nomeExame").addEventListener("change", atualizarPreparo);
+
+    document.getElementById("btnProximo").addEventListener("click", function() {
+      if (!validarEtapa()) return;
+      etapaAtual += 1;
+      atualizarEtapa();
+    });
+
+    document.getElementById("btnVoltar").addEventListener("click", function() {
+      if (etapaAtual > 1) {
+        etapaAtual -= 1;
+        atualizarEtapa();
+      }
+    });
+
+    document.getElementById("btnSalvarRascunho").addEventListener("click", function() {
+      const dados = {
+        pessoa: valor("pessoaCuidada"),
+        categoria: valor("categoriaExame"),
+        exame: valor("nomeExame"),
+        prioridade: valor("prioridade"),
+        modalidade: valor("modalidade"),
+        local: valor("localExame"),
+        data: valor("dataExame"),
+        horario: valor("horarioExame"),
+        responsavel: valor("responsavel")
+      };
+
+      localStorage.setItem("rascunhoAgendarExame", JSON.stringify(dados));
+      mostrarToast("Rascunho salvo neste navegador.");
+    });
+
+    document.getElementById("btnSimularRota").addEventListener("click", function() {
+      const local = valor("localExame");
+      const transporte = valor("transporte");
+
+      if (!local) {
+        mostrarToast("Selecione um local antes de simular a rota.");
+        return;
+      }
+
+      document.getElementById("mapaTexto").textContent =
+        `${local} • deslocamento estimado: 18 min • ${transporte || "sem transporte definido"}.`;
+
+      mostrarToast("Rota simulada.");
+    });
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+      if (!validarEtapa()) return;
+
+      renderizarResultado();
+      modalSucesso.show();
+      mostrarToast("Exame agendado com sucesso.");
+    });
+
+    document.body.addEventListener("input", function(event) {
+      if (event.target.matches("input") || event.target.matches("select") || event.target.matches("textarea")) {
+        event.target.classList.remove("is-invalid");
+        atualizarResumo();
+      }
+    });
+
+    document.body.addEventListener("change", function(event) {
+      if (event.target.matches("input") || event.target.matches("select") || event.target.matches("textarea")) {
+        event.target.classList.remove("is-invalid");
+        atualizarResumo();
+      }
+    });
+
+    definirDataMinima();
+    atualizarEtapa();
+    atualizarResumo();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

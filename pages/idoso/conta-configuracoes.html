@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configurações da conta | Home Care 4.0</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+<body>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-lg-5">
+            <p class="text-muted fs-5 mb-1"><i class="bi bi-gear me-2"></i>Configurações</p>
+            <h1 class="fw-bold mb-3">Preferências da conta</h1>
+            <p class="text-muted fs-5 mb-0">Ajuste acessibilidade, notificações e privacidade do demonstrativo.</p>
+          </div>
+        </section>
+
+        <section class="row g-4">
+          <div class="col-12 col-lg-4">
+            <article class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <h2 class="h4">Acessibilidade</h2>
+                <p class="text-muted">Use o menu do header para aumentar fonte, reduzir fonte ou ativar alto contraste.</p>
+                <button class="btn btn-outline-primary btn-lg w-100" type="button" data-accessibility="toggle-contrast">Alternar contraste</button>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <article class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <h2 class="h4">Notificações</h2>
+                <div class="form-check form-switch mb-3">
+                  <input class="form-check-input" type="checkbox" role="switch" id="notifyMedicamentos" checked>
+                  <label class="form-check-label" for="notifyMedicamentos">Lembretes de medicamentos</label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" role="switch" id="notifyAgenda" checked>
+                  <label class="form-check-label" for="notifyAgenda">Avisos de agenda</label>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <article class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <h2 class="h4">Privacidade</h2>
+                <p class="text-muted">Controle permissões pelo perfil ativo e revise quem pode acompanhar informações de cuidado.</p>
+                <a class="btn btn-outline-primary btn-lg w-100" href="/pages/idoso/permissoes.html">Ver permissões</a>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

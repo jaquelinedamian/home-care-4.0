@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="Perfil idoso">
+  <rect width="96" height="96" rx="24" fill="#e8eef8"/>
+  <circle cx="48" cy="34" r="16" fill="#001b4b"/>
+  <path d="M22 78c3.5-14 14-22 26-22s22.5 8 26 22" fill="none" stroke="#001b4b" stroke-width="8" stroke-linecap="round"/>
+  <path d="M60 62l10 10 14-18" fill="none" stroke="#198754" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

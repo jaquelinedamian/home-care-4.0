@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Próximas Vacinas | Home Care 4.0</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080;">
+          <div id="appToast" class="toast border-0 shadow">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+          </div>
+        </div>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+              <div class="col-12 col-lg-8">
+                <p class="text-muted fs-5 mb-1">Próximas vacinas</p>
+                <h1 class="fw-bold mb-3">Veja o que precisa de atenção nos próximos dias</h1>
+                <p class="text-muted fs-5 mb-0">
+                  Acompanhe doses pendentes, reforços e vacinas agendadas para evitar atrasos.
+                </p>
+              </div>
+
+              <div class="col-12 col-lg-4">
+                <div class="d-grid gap-2">
+                  <a href="vacinas-adicionar.html" class="btn btn-primary btn-lg">Agendar vacina</a>
+                  <button type="button" class="btn btn-outline-primary btn-lg" id="btnAtivarTodos">
+                    Ativar lembretes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="alert alert-warning border-0 shadow-sm rounded-4 mb-4">
+          <div class="row g-3 align-items-center">
+            <div class="col-lg">
+              <h2 class="h5 mb-1">Atenção para esta semana</h2>
+              <p class="mb-0">
+                Existem <strong>2 vacinas</strong> próximas do prazo. Revise as datas e agende com segurança.
+              </p>
+            </div>
+
+            <div class="col-lg-auto">
+              <button class="btn btn-primary w-100" type="button" id="btnVerPendentes">
+                Ver pendentes
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4">
+          <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Nos próximos 7 dias</p>
+                <h2 class="fw-bold mb-0">2</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Agendadas</p>
+                <h2 class="fw-bold mb-0">1</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Sem lembrete</p>
+                <h2 class="fw-bold mb-0" id="semLembrete">3</h2>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4">
+            <div class="row g-3 align-items-end">
+              <div class="col-12 col-lg-4">
+                <label for="busca" class="form-label">Buscar vacina</label>
+                <input id="busca" type="search" class="form-control form-control-lg" placeholder="Ex.: Influenza, Hepatite B">
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-3">
+                <label for="pessoa" class="form-label">Pessoa acompanhada</label>
+                <select id="pessoa" class="form-select form-select-lg">
+                  <option value="">Todas</option>
+                  <option value="Maria">Maria</option>
+                  <option value="Antônio">Antônio</option>
+                  <option value="Eu">Eu</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-3">
+                <label for="periodo" class="form-label">Período</label>
+                <select id="periodo" class="form-select form-select-lg">
+                  <option value="">Todos</option>
+                  <option value="7">Próximos 7 dias</option>
+                  <option value="30">Próximos 30 dias</option>
+                  <option value="90">Próximos 90 dias</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-2">
+                <button type="button" class="btn btn-outline-secondary btn-lg w-100" id="btnLimpar">
+                  Limpar
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4" id="listaProximas">
+          <div class="col-12 vacina-item" data-nome="influenza gripe" data-pessoa="Maria" data-dias="3">
+            <article class="card border-0 shadow-sm rounded-4 border-start border-warning border-4">
+              <div class="card-body p-4">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-lg">
+                    <span class="badge text-bg-warning mb-2">Em 3 dias</span>
+                    <h2 class="h4 mb-1">Influenza</h2>
+                    <p class="text-muted mb-0">Maria • Reforço recomendado para 28/06/2025</p>
+                  </div>
+
+                  <div class="col-12 col-lg-auto d-grid d-sm-flex gap-2">
+                    <a href="vacinas-adicionar.html" class="btn btn-primary">Agendar</a>
+                    <button class="btn btn-outline-primary btnLembrete" type="button">Criar lembrete</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 vacina-item" data-nome="hepatite b" data-pessoa="Antônio" data-dias="7">
+            <article class="card border-0 shadow-sm rounded-4 border-start border-primary border-4">
+              <div class="card-body p-4">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-lg">
+                    <span class="badge text-bg-primary mb-2">Agendada</span>
+                    <h2 class="h4 mb-1">Hepatite B</h2>
+                    <p class="text-muted mb-0">Antônio • 02/07/2025 às 09:00 • UBS Central</p>
+                  </div>
+
+                  <div class="col-12 col-lg-auto d-grid d-sm-flex gap-2">
+                    <button class="btn btn-outline-primary btnLembrete" type="button">Reforçar lembrete</button>
+                    <button class="btn btn-outline-secondary btnDetalhes" type="button">Detalhes</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 vacina-item" data-nome="pneumococica pneumonia" data-pessoa="Maria" data-dias="30">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-lg">
+                    <span class="badge text-bg-light border mb-2">Em 30 dias</span>
+                    <h2 class="h4 mb-1">Pneumocócica</h2>
+                    <p class="text-muted mb-0">Maria • Revisar indicação em 25/07/2025</p>
+                  </div>
+
+                  <div class="col-12 col-lg-auto d-grid d-sm-flex gap-2">
+                    <a href="vacinas-adicionar.html" class="btn btn-primary">Agendar</a>
+                    <button class="btn btn-outline-secondary btnDetalhes" type="button">Detalhes</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 vacina-item" data-nome="dupla adulto dt tetano" data-pessoa="Eu" data-dias="90">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-lg">
+                    <span class="badge text-bg-light border mb-2">Em 90 dias</span>
+                    <h2 class="h4 mb-1">Dupla adulto — dT</h2>
+                    <p class="text-muted mb-0">Eu • Revisar carteira em 23/09/2025</p>
+                  </div>
+
+                  <div class="col-12 col-lg-auto d-grid d-sm-flex gap-2">
+                    <button class="btn btn-outline-primary btnLembrete" type="button">Criar lembrete</button>
+                    <button class="btn btn-outline-secondary btnDetalhes" type="button">Detalhes</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="alert alert-light border-0 shadow-sm rounded-4 mt-4 d-none" id="estadoVazio">
+          <h2 class="h5 mb-1">Nenhuma vacina encontrada</h2>
+          <p class="text-muted mb-0">Tente mudar o período ou limpar os filtros.</p>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <footer class="app-footer bg-white border-top">
+    <div class="container py-3">
+      <p class="mb-0 text-muted">Home Care 4.0 — Plataforma de centralização de cuidados e serviços.</p>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="modalDetalhes" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header">
+          <h2 class="modal-title h5">Detalhes da próxima vacina</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="text-muted">
+            Confira a data, local indicado, pessoa acompanhada e orientações antes da aplicação.
+          </p>
+
+          <div class="p-3 rounded-4 bg-light">
+            <strong>Orientação:</strong>
+            leve documento, cartão de vacinação e chegue com antecedência.
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+          <a href="vacinas-adicionar.html" class="btn btn-primary">Agendar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const busca = document.getElementById("busca");
+    const pessoa = document.getElementById("pessoa");
+    const periodo = document.getElementById("periodo");
+    const itens = Array.from(document.querySelectorAll(".vacina-item"));
+    const estadoVazio = document.getElementById("estadoVazio");
+    const semLembrete = document.getElementById("semLembrete");
+
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
+    }
+
+    function aplicarFiltros() {
+      const termo = busca.value.trim().toLowerCase();
+      const pessoaSelecionada = pessoa.value;
+      const periodoSelecionado = periodo.value;
+      let visiveis = 0;
+
+      itens.forEach(function(item) {
+        const dias = Number(item.dataset.dias);
+        const bateBusca = !termo || item.dataset.nome.includes(termo);
+        const batePessoa = !pessoaSelecionada || item.dataset.pessoa === pessoaSelecionada;
+        const batePeriodo = !periodoSelecionado || dias <= Number(periodoSelecionado);
+
+        const mostrar = bateBusca && batePessoa && batePeriodo;
+        item.classList.toggle("d-none", !mostrar);
+
+        if (mostrar) visiveis++;
+      });
+
+      estadoVazio.classList.toggle("d-none", visiveis > 0);
+    }
+
+    busca.addEventListener("input", aplicarFiltros);
+    pessoa.addEventListener("change", aplicarFiltros);
+    periodo.addEventListener("change", aplicarFiltros);
+
+    document.getElementById("btnLimpar").addEventListener("click", function() {
+      busca.value = "";
+      pessoa.value = "";
+      periodo.value = "";
+      aplicarFiltros();
+      mostrarToast("Filtros limpos.");
+    });
+
+    document.getElementById("btnVerPendentes").addEventListener("click", function() {
+      periodo.value = "7";
+      aplicarFiltros();
+      mostrarToast("Mostrando vacinas dos próximos 7 dias.");
+    });
+
+    document.getElementById("btnAtivarTodos").addEventListener("click", function() {
+      semLembrete.textContent = "0";
+      mostrarToast("Lembretes ativados para as próximas vacinas.");
+    });
+
+    document.querySelectorAll(".btnLembrete").forEach(function(botao) {
+      botao.addEventListener("click", function() {
+        mostrarToast("Lembrete criado com sucesso.");
+      });
+    });
+
+    document.querySelectorAll(".btnDetalhes").forEach(function(botao) {
+      botao.addEventListener("click", function() {
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("modalDetalhes")).show();
+      });
+    });
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Histórico de Exames | Home Care 4.0</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+          <div id="appToast" class="toast align-items-center border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+              <div class="card-body p-4 p-lg-5">
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-lg-8">
+                    <p class="text-muted fs-5 mb-1">Histórico de exames</p>
+                    <h1 class="fw-bold mb-3">Tudo que já foi feito, organizado em um só lugar</h1>
+                    <p class="text-muted fs-5 mb-0">
+                      Consulte exames realizados, resultados disponíveis, preparos concluídos e pendências.
+                    </p>
+                  </div>
+
+                  <div class="col-12 col-lg-4">
+                    <div class="d-grid gap-2">
+                      <a href="exames-agendar.html" class="btn btn-primary btn-lg">Agendar novo exame</a>
+                      <button type="button" class="btn btn-outline-primary btn-lg" id="btnImprimir">Imprimir histórico</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4">
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Exames realizados</p>
+                <h2 class="fw-bold mb-0" id="totalRealizados">8</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Resultados disponíveis</p>
+                <h2 class="fw-bold mb-0" id="totalResultados">5</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Aguardando resultado</p>
+                <h2 class="fw-bold mb-0" id="totalPendentes">2</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Último exame</p>
+                <h2 class="fw-bold mb-0 fs-4">18/06</h2>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4">
+            <div class="row g-3 align-items-end">
+              <div class="col-12 col-lg-4">
+                <label for="buscaHistorico" class="form-label">Buscar exame</label>
+                <input type="search" id="buscaHistorico" class="form-control form-control-lg" placeholder="Ex.: hemograma, glicose, urina">
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-3">
+                <label for="filtroPessoa" class="form-label">Pessoa acompanhada</label>
+                <select id="filtroPessoa" class="form-select form-select-lg">
+                  <option value="">Todas</option>
+                  <option value="Maria">Maria</option>
+                  <option value="Antônio">Antônio</option>
+                  <option value="Eu">Eu</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-3">
+                <label for="filtroStatus" class="form-label">Status</label>
+                <select id="filtroStatus" class="form-select form-select-lg">
+                  <option value="">Todos</option>
+                  <option value="Disponível">Resultado disponível</option>
+                  <option value="Aguardando">Aguardando resultado</option>
+                  <option value="Arquivado">Arquivado</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-2">
+                <button type="button" class="btn btn-outline-secondary btn-lg w-100" id="btnLimpar">
+                  Limpar
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4" id="listaHistorico">
+          <div class="col-12 exame-card" data-nome="hemograma completo" data-pessoa="Maria" data-status="Disponível">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-lg">
+                    <span class="badge text-bg-success mb-2">Resultado disponível</span>
+                    <h2 class="h4 mb-1">Hemograma completo</h2>
+                    <p class="text-muted mb-0">Maria • Realizado em 18/06/2025 • Laboratório Vida</p>
+                  </div>
+
+                  <div class="col-12 col-lg-auto d-grid d-sm-flex gap-2">
+                    <a href="exames-resultados.html" class="btn btn-primary">Ver resultado</a>
+                    <button class="btn btn-outline-primary btnDetalhes" type="button">Detalhes</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 exame-card" data-nome="glicemia em jejum" data-pessoa="Maria" data-status="Aguardando">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-lg">
+                    <span class="badge text-bg-warning mb-2">Aguardando resultado</span>
+                    <h2 class="h4 mb-1">Glicemia em jejum</h2>
+                    <p class="text-muted mb-0">Maria • Realizado em 10/06/2025 • Clínica Central</p>
+                  </div>
+
+                  <div class="col-12 col-lg-auto d-grid d-sm-flex gap-2">
+                    <button class="btn btn-outline-primary btnLembrete" type="button">Avisar quando sair</button>
+                    <button class="btn btn-outline-secondary btnDetalhes" type="button">Detalhes</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 exame-card" data-nome="exame de urina" data-pessoa="Antônio" data-status="Disponível">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-lg">
+                    <span class="badge text-bg-success mb-2">Resultado disponível</span>
+                    <h2 class="h4 mb-1">Exame de urina</h2>
+                    <p class="text-muted mb-0">Antônio • Realizado em 02/06/2025 • Laboratório Saúde</p>
+                  </div>
+
+                  <div class="col-12 col-lg-auto d-grid d-sm-flex gap-2">
+                    <a href="exames-resultados.html" class="btn btn-primary">Ver resultado</a>
+                    <button class="btn btn-outline-primary btnDetalhes" type="button">Detalhes</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 exame-card" data-nome="ultrassom abdominal" data-pessoa="Eu" data-status="Arquivado">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-lg">
+                    <span class="badge text-bg-secondary mb-2">Arquivado</span>
+                    <h2 class="h4 mb-1">Ultrassom abdominal</h2>
+                    <p class="text-muted mb-0">Eu • Realizado em 21/05/2025 • Centro Diagnóstico</p>
+                  </div>
+
+                  <div class="col-12 col-lg-auto d-grid d-sm-flex gap-2">
+                    <button class="btn btn-outline-primary btnDetalhes" type="button">Detalhes</button>
+                    <button class="btn btn-outline-secondary btnCompartilhar" type="button">Compartilhar</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="alert alert-light border-0 shadow-sm rounded-4 mt-4 d-none" id="estadoVazio">
+          <h2 class="h5 mb-1">Nenhum exame encontrado</h2>
+          <p class="text-muted mb-0">Tente ajustar os filtros ou buscar por outro nome.</p>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <footer class="app-footer bg-white border-top">
+    <div class="container py-3">
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-2">
+        <p class="mb-0 text-muted">
+          Home Care 4.0 — Plataforma de centralização de cuidados e serviços.
+        </p>
+
+        <div class="d-flex flex-wrap gap-3">
+          <a href="suporte.html" class="text-decoration-none">Suporte</a>
+          <a href="configuracoes.html" class="text-decoration-none">Configurações</a>
+          <a href="emergencia-contatos.html" class="text-decoration-none text-danger fw-bold">Emergência</a>
+        </div>
+      </div>
+    </div>
+
+    <nav class="mobile-bottom-nav d-lg-none" aria-label="Menu inferior mobile">
+      <a href="dashboard.html" class="mobile-bottom-link">Início</a>
+      <a href="agenda.html" class="mobile-bottom-link">Agenda</a>
+      <a href="alertas.html" class="mobile-bottom-link">Alertas</a>
+      <a href="servicos.html" class="mobile-bottom-link">Serviços</a>
+      <a href="perfil.html" class="mobile-bottom-link">Perfil</a>
+    </nav>
+  </footer>
+
+  <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="modalDetalhesTitulo">Detalhes do exame</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="text-muted mb-3">
+            As informações completas do exame ficam disponíveis para acompanhamento e comprovação.
+          </p>
+
+          <div class="d-grid gap-3">
+            <div class="p-3 rounded-4 bg-light">
+              <span class="text-muted d-block">Orientação</span>
+              <strong>Levar este histórico em consultas futuras.</strong>
+            </div>
+
+            <div class="p-3 rounded-4 bg-light">
+              <span class="text-muted d-block">Compartilhamento</span>
+              <strong>Disponível para cuidadores autorizados.</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+          <a href="exames-resultados.html" class="btn btn-primary">Abrir resultados</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const buscaHistorico = document.getElementById("buscaHistorico");
+    const filtroPessoa = document.getElementById("filtroPessoa");
+    const filtroStatus = document.getElementById("filtroStatus");
+    const cards = Array.from(document.querySelectorAll(".exame-card"));
+    const estadoVazio = document.getElementById("estadoVazio");
+
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
+    }
+
+    function aplicarFiltros() {
+      const busca = buscaHistorico.value.trim().toLowerCase();
+      const pessoa = filtroPessoa.value;
+      const status = filtroStatus.value;
+      let visiveis = 0;
+
+      cards.forEach(function(card) {
+        const nomeCard = card.dataset.nome;
+        const pessoaCard = card.dataset.pessoa;
+        const statusCard = card.dataset.status;
+
+        const correspondeBusca = !busca || nomeCard.includes(busca);
+        const correspondePessoa = !pessoa || pessoaCard === pessoa;
+        const correspondeStatus = !status || statusCard === status;
+
+        const mostrar = correspondeBusca && correspondePessoa && correspondeStatus;
+        card.classList.toggle("d-none", !mostrar);
+
+        if (mostrar) visiveis++;
+      });
+
+      estadoVazio.classList.toggle("d-none", visiveis > 0);
+    }
+
+    buscaHistorico.addEventListener("input", aplicarFiltros);
+    filtroPessoa.addEventListener("change", aplicarFiltros);
+    filtroStatus.addEventListener("change", aplicarFiltros);
+
+    document.getElementById("btnLimpar").addEventListener("click", function() {
+      buscaHistorico.value = "";
+      filtroPessoa.value = "";
+      filtroStatus.value = "";
+      aplicarFiltros();
+      mostrarToast("Filtros limpos.");
+    });
+
+    document.getElementById("btnImprimir").addEventListener("click", function() {
+      window.print();
+    });
+
+    document.querySelectorAll(".btnDetalhes").forEach(function(botao) {
+      botao.addEventListener("click", function() {
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("modalDetalhes")).show();
+      });
+    });
+
+    document.querySelectorAll(".btnLembrete").forEach(function(botao) {
+      botao.addEventListener("click", function() {
+        mostrarToast("Você será avisado quando o resultado estiver disponível.");
+      });
+    });
+
+    document.querySelectorAll(".btnCompartilhar").forEach(function(botao) {
+      botao.addEventListener("click", function() {
+        mostrarToast("Link de compartilhamento preparado.");
+      });
+    });
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

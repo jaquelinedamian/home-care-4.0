@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Convidar pessoa | Caixa Inteligente</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4 mb-5">
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+          <div id="appToast" class="toast border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        
+<section class="card border-0 shadow-sm rounded-4 mb-4">
+  <div class="card-body p-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+      <div>
+        <span class="badge text-bg-primary mb-2"><i class="bi bi-person-plus me-1"></i> Permissões</span>
+        <h1 class="h3 fw-bold mb-2">Convidar pessoa</h1>
+        <p class="text-muted mb-0">Convide alguém e defina exatamente o que ela poderá ver ou fazer.</p>
+      </div>
+      <a href="permissoes.html" class="btn btn-outline-primary btn-lg align-self-start"><i class="bi bi-sliders me-1"></i> Gerenciar acessos</a>
+    </div>
+  </div>
+</section>
+
+<section class="card border-0 shadow-sm rounded-4">
+  <div class="card-body p-4">
+    <div class="mb-4">
+      <div class="d-flex justify-content-between mb-2"><strong>Etapa <span id="etapaAtual">1</span> de 3</strong><span class="text-muted" id="nomeEtapa">Quem será convidado</span></div>
+      <div class="progress"><div id="barra" class="progress-bar" style="width:33%"></div></div>
+    </div>
+
+    <form id="formConvite">
+      <div class="etapa" data-etapa="1">
+        <div class="row g-3">
+          <div class="col-12 col-md-6"><label class="form-label">Nome da pessoa</label><input id="nome" class="form-control form-control-lg" placeholder="Ex.: Paulo Santos"></div>
+          <div class="col-12 col-md-6"><label class="form-label">Tipo de vínculo</label><select id="vinculo" class="form-select form-select-lg"><option>Familiar</option><option>Cuidador</option><option>Profissional de saúde</option><option>Outro</option></select></div>
+          <div class="col-12"><label class="form-label">E-mail ou telefone</label><input id="contato" class="form-control form-control-lg" placeholder="Ex.: paulo@email.com ou telefone"></div>
+        </div>
+      </div>
+
+      <div class="etapa d-none" data-etapa="2">
+        <label class="form-label">Pessoa acompanhada</label>
+        <select id="pessoaCuidada" class="form-select form-select-lg mb-3"><option>Maria</option><option>Antônio</option><option>Eu</option></select>
+        <div class="d-grid gap-3">
+          <div class="form-check border rounded-4 p-3 ps-5"><input class="form-check-input permissao" type="checkbox" value="Medicamentos" checked><label class="form-check-label"><strong>Medicamentos</strong><span class="d-block text-muted">Ver horários, doses e histórico.</span></label></div>
+          <div class="form-check border rounded-4 p-3 ps-5"><input class="form-check-input permissao" type="checkbox" value="Exames" checked><label class="form-check-label"><strong>Exames</strong><span class="d-block text-muted">Ver agendamentos e resultados.</span></label></div>
+          <div class="form-check border rounded-4 p-3 ps-5"><input class="form-check-input permissao" type="checkbox" value="Sinais vitais"><label class="form-check-label"><strong>Sinais vitais</strong><span class="d-block text-muted">Ver alertas e dispositivos conectados.</span></label></div>
+          <div class="form-check border rounded-4 p-3 ps-5"><input class="form-check-input permissao" type="checkbox" value="Editar dados"><label class="form-check-label"><strong>Editar dados</strong><span class="d-block text-muted">Permitir alterações nos registros.</span></label></div>
+        </div>
+      </div>
+
+      <div class="etapa d-none" data-etapa="3">
+        <h2 class="h5 fw-bold mb-3">Resumo do convite</h2>
+        <div class="bg-light rounded-4 p-4 d-grid gap-3">
+          <div><span class="text-muted d-block">Convidado</span><strong id="rNome">-</strong></div>
+          <div><span class="text-muted d-block">Contato</span><strong id="rContato">-</strong></div>
+          <div><span class="text-muted d-block">Pessoa acompanhada</span><strong id="rPessoa">-</strong></div>
+          <div><span class="text-muted d-block">Permissões</span><strong id="rPermissoes">-</strong></div>
+        </div>
+      </div>
+
+      <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+        <button type="button" class="btn btn-outline-secondary btn-lg w-100" id="btnVoltar" disabled>Voltar</button>
+        <button type="button" class="btn btn-primary btn-lg w-100" id="btnContinuar">Continuar</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+
+});
+  </script>
+  <script>
+let etapa = 1;
+const nomes = {1:"Quem será convidado",2:"Permissões",3:"Resumo final"};
+function atualizarResumo(){
+  document.getElementById("rNome").textContent = document.getElementById("nome").value || "-";
+  document.getElementById("rContato").textContent = document.getElementById("contato").value || "-";
+  document.getElementById("rPessoa").textContent = document.getElementById("pessoaCuidada").value;
+  const ps = Array.from(document.querySelectorAll(".permissao:checked")).map(p=>p.value);
+  document.getElementById("rPermissoes").textContent = ps.length ? ps.join(", ") : "Nenhuma permissão selecionada";
+}
+function atualizarTela(){
+  document.querySelectorAll(".etapa").forEach(e=>e.classList.toggle("d-none", Number(e.dataset.etapa)!==etapa));
+  document.getElementById("etapaAtual").textContent = etapa;
+  document.getElementById("nomeEtapa").textContent = nomes[etapa];
+  document.getElementById("barra").style.width = etapa===1 ? "33%" : etapa===2 ? "66%" : "100%";
+  document.getElementById("btnVoltar").disabled = etapa===1;
+  document.getElementById("btnContinuar").textContent = etapa===3 ? "Enviar convite" : "Continuar";
+  atualizarResumo();
+}
+document.getElementById("btnContinuar").addEventListener("click", function(){
+  if(etapa===1 && (!document.getElementById("nome").value.trim() || !document.getElementById("contato").value.trim())){mostrarToast("Preencha nome e contato.");return;}
+  if(etapa<3){etapa++; atualizarTela(); return;}
+  mostrarToast("Convite enviado com sucesso.");
+});
+document.getElementById("btnVoltar").addEventListener("click", function(){if(etapa>1){etapa--; atualizarTela();}});
+document.querySelectorAll("input,select").forEach(el=>el.addEventListener("input", atualizarResumo));
+atualizarTela();
+</script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

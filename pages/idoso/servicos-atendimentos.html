@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Atendimentos | Home Care 4.0</title>
+
+  <meta
+    name="description"
+    content="Acompanhe atendimentos confirmados, em andamento, próximos e concluídos na plataforma Home Care 4.0."
+  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+              <div>
+                <p class="text-muted fs-5 mb-1">Serviços contratados</p>
+                <h1 class="fw-bold mb-2">Meus atendimentos</h1>
+                <p class="text-muted fs-5 mb-0">
+                  Acompanhe atendimentos de hoje, próximos agendamentos, roteiro do dia e serviços concluídos.
+                </p>
+              </div>
+
+              <div class="d-flex flex-wrap gap-2 align-items-start">
+                <a href="servicos.html" class="btn btn-primary btn-lg">
+                  Buscar profissional
+                </a>
+
+                <a href="servicos-solicitacoes.html" class="btn btn-outline-primary btn-lg">
+                  Solicitações
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">2</strong>
+                <span class="text-muted">Hoje</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">1</strong>
+                <span class="text-muted">Em andamento</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">4</strong>
+                <span class="text-muted">Próximos</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">12</strong>
+                <span class="text-muted">Concluídos</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Roteiro de atendimentos de hoje</h2>
+                    <p class="text-muted mb-0" id="routeMapDescription">
+                      Veja no mapa os atendimentos do dia e a ordem sugerida do roteiro.
+                    </p>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-outline-primary" id="showFullRouteBtn">
+                      Ver rota completa
+                    </button>
+
+                    <a
+                      id="openRouteLink"
+                      href="https://www.google.com/maps/dir/?api=1&origin=Rua%20das%20Flores%20120%20S%C3%A3o%20Paulo&destination=Rua%20Vergueiro%201000%20S%C3%A3o%20Paulo&travelmode=driving"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="btn btn-primary"
+                    >
+                      Abrir no Google Maps
+                    </a>
+                  </div>
+                </div>
+
+                <div class="row g-4">
+                  <div class="col-12 col-lg-8">
+                    <div class="rounded-4 overflow-hidden border position-relative" style="height: 380px;">
+                      <div
+                        id="routeMapLoader"
+                        class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white"
+                        style="z-index: 2;"
+                      >
+                        <div class="text-center">
+                          <div class="spinner-border mb-2" role="status" aria-hidden="true"></div>
+                          <p class="mb-0 text-muted">Carregando roteiro...</p>
+                        </div>
+                      </div>
+
+                      <iframe
+                        id="routeMapFrame"
+                        src="https://www.google.com/maps/dir/?api=1&origin=Rua%20das%20Flores%20120%20S%C3%A3o%20Paulo&destination=Rua%20Vergueiro%201000%20S%C3%A3o%20Paulo&travelmode=driving&output=embed"
+                        width="100%"
+                        height="100%"
+                        style="border:0;"
+                        loading="lazy"
+                        allowfullscreen
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Mapa com roteiro de atendimentos"
+                      ></iframe>
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-lg-4">
+                    <div class="vstack gap-3">
+
+                      <article class="border rounded-4 p-3 route-stop-card active">
+                        <div class="d-flex justify-content-between gap-2 mb-2">
+                          <span class="badge text-bg-success">Agora</span>
+                          <small class="text-muted">15:00</small>
+                        </div>
+
+                        <h3 class="h6 fw-bold mb-1">1. Fisioterapia domiciliar</h3>
+                        <p class="text-muted mb-1">Antônio Damian • Ana Paula Martins</p>
+                        <small class="d-block mb-3">Rua das Flores, 120 — São Paulo, SP</small>
+
+                        <div class="d-grid gap-2">
+                          <button
+                            type="button"
+                            class="btn btn-outline-primary btn-sm show-location-btn"
+                            data-title="Fisioterapia domiciliar"
+                            data-map-query="Rua das Flores 120 São Paulo SP"
+                          >
+                            Ver este ponto no mapa
+                          </button>
+
+                          <a
+                            href="https://www.google.com/maps/search/?api=1&query=Rua%20das%20Flores%20120%20S%C3%A3o%20Paulo"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-outline-secondary btn-sm"
+                          >
+                            Abrir endereço
+                          </a>
+                        </div>
+                      </article>
+
+                      <article class="border rounded-4 p-3 route-stop-card">
+                        <div class="d-flex justify-content-between gap-2 mb-2">
+                          <span class="badge text-bg-primary">Próximo</span>
+                          <small class="text-muted">18:00</small>
+                        </div>
+
+                        <h3 class="h6 fw-bold mb-1">2. Curativo em casa</h3>
+                        <p class="text-muted mb-1">Maria Helena • Carlos Souza</p>
+                        <small class="d-block mb-3">Rua Vergueiro, 1000 — São Paulo, SP</small>
+
+                        <div class="d-grid gap-2">
+                          <button
+                            type="button"
+                            class="btn btn-outline-primary btn-sm show-location-btn"
+                            data-title="Curativo em casa"
+                            data-map-query="Rua Vergueiro 1000 São Paulo SP"
+                          >
+                            Ver este ponto no mapa
+                          </button>
+
+                          <a
+                            href="https://www.google.com/maps/search/?api=1&query=Rua%20Vergueiro%201000%20S%C3%A3o%20Paulo"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-outline-secondary btn-sm"
+                          >
+                            Abrir endereço
+                          </a>
+                        </div>
+                      </article>
+
+                      <div class="alert alert-info rounded-4 mb-0">
+                        O roteiro ajuda a visualizar deslocamentos, evitar atrasos e acompanhar a ordem dos atendimentos.
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="row g-3 align-items-end">
+                  <div class="col-12 col-lg-5">
+                    <label for="attendanceSearch" class="form-label fs-5">Buscar atendimento</label>
+                    <input
+                      type="search"
+                      class="form-control form-control-lg"
+                      id="attendanceSearch"
+                      placeholder="Ex: fisioterapia, Ana Paula, Antônio..."
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6 col-lg-3">
+                    <label for="attendanceTypeFilter" class="form-label fs-5">Tipo</label>
+                    <select class="form-select form-select-lg" id="attendanceTypeFilter">
+                      <option value="todos">Todos</option>
+                      <option value="fisioterapia">Fisioterapia</option>
+                      <option value="enfermagem">Enfermagem</option>
+                      <option value="psicologia">Psicologia</option>
+                      <option value="cuidador">Cuidador</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-lg-2">
+                    <label for="attendancePersonFilter" class="form-label fs-5">Pessoa</label>
+                    <select class="form-select form-select-lg" id="attendancePersonFilter">
+                      <option value="todos">Todos</option>
+                      <option value="antonio">Antônio</option>
+                      <option value="maria">Maria</option>
+                      <option value="eu">Eu</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-lg-2">
+                    <button type="button" class="btn btn-outline-secondary btn-lg w-100" id="clearAttendanceFilters">
+                      Limpar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <ul class="nav nav-pills gap-2" id="attendanceTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active attendance-tab" type="button" data-view="hoje">
+                  Hoje
+                </button>
+              </li>
+
+              <li class="nav-item" role="presentation">
+                <button class="nav-link attendance-tab" type="button" data-view="proximos">
+                  Próximos
+                </button>
+              </li>
+
+              <li class="nav-item" role="presentation">
+                <button class="nav-link attendance-tab" type="button" data-view="concluidos">
+                  Concluídos
+                </button>
+              </li>
+
+              <li class="nav-item" role="presentation">
+                <button class="nav-link attendance-tab" type="button" data-view="cancelados">
+                  Cancelados
+                </button>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="row g-4">
+
+          <div class="col-12 col-xl-8">
+            <div class="vstack gap-3" id="attendanceList">
+
+              <article
+                class="attendance-card card border-0 shadow-sm rounded-4"
+                data-view="hoje"
+                data-type="fisioterapia"
+                data-person="antonio"
+                data-search="fisioterapia domiciliar ana paula antonio hoje em andamento"
+              >
+                <div class="card-body p-4">
+                  <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+                    <div>
+                      <span class="badge text-bg-success mb-2">Em andamento</span>
+                      <h2 class="h5 fw-bold mb-1">Fisioterapia domiciliar</h2>
+                      <p class="text-muted mb-0">Ana Paula Martins • Antônio Damian</p>
+                    </div>
+
+                    <div class="text-lg-end">
+                      <strong class="d-block fs-5">Hoje, 15:00</strong>
+                      <span class="text-muted">Rua das Flores, 120</span>
+                    </div>
+                  </div>
+
+                  <div class="p-3 rounded-4 bg-light mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                      <strong>Status do atendimento</strong>
+                      <span class="text-success fw-semibold" id="liveStatusText">Profissional a caminho</span>
+                    </div>
+
+                    <div class="progress" role="progressbar" aria-label="Progresso do atendimento" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                      <div class="progress-bar" id="liveProgressBar" style="width: 50%"></div>
+                    </div>
+
+                    <div class="d-flex justify-content-between small text-muted mt-2">
+                      <span>Confirmado</span>
+                      <span>A caminho</span>
+                      <span>Chegou</span>
+                      <span>Finalizado</span>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    <a href="mensagens-conversa.html" class="btn btn-primary">
+                      Abrir chat
+                    </a>
+
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary show-location-btn"
+                      data-title="Fisioterapia domiciliar"
+                      data-map-query="Rua das Flores 120 São Paulo SP"
+                    >
+                      Ver no mapa
+                    </button>
+
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=Rua%20das%20Flores%20120%20S%C3%A3o%20Paulo"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="btn btn-outline-primary"
+                    >
+                      Ver rota
+                    </a>
+
+                    <button type="button" class="btn btn-outline-success" id="advanceStatusBtn">
+                      Avançar status
+                    </button>
+
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelAttendanceModal">
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              </article>
+
+              <article
+                class="attendance-card card border-0 shadow-sm rounded-4"
+                data-view="hoje"
+                data-type="enfermagem"
+                data-person="maria"
+                data-search="curativo enfermagem carlos maria hoje confirmado"
+              >
+                <div class="card-body p-4">
+                  <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+                    <div>
+                      <span class="badge text-bg-primary mb-2">Confirmado</span>
+                      <h2 class="h5 fw-bold mb-1">Curativo em casa</h2>
+                      <p class="text-muted mb-0">Carlos Souza • Maria Helena</p>
+                    </div>
+
+                    <div class="text-lg-end">
+                      <strong class="d-block fs-5">Hoje, 18:00</strong>
+                      <span class="text-muted">Rua Vergueiro, 1000</span>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    <a href="mensagens-conversa.html" class="btn btn-primary">
+                      Conversar
+                    </a>
+
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary show-location-btn"
+                      data-title="Curativo em casa"
+                      data-map-query="Rua Vergueiro 1000 São Paulo SP"
+                    >
+                      Ver no mapa
+                    </button>
+
+                    <a href="agenda.html" class="btn btn-outline-primary">
+                      Ver na agenda
+                    </a>
+
+                    <a href="servicos-agendar.html" class="btn btn-outline-secondary">
+                      Reagendar
+                    </a>
+
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelAttendanceModal">
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              </article>
+
+              <article
+                class="attendance-card card border-0 shadow-sm rounded-4"
+                data-view="proximos"
+                data-type="psicologia"
+                data-person="eu"
+                data-search="psicologia online renata amanha proximo"
+              >
+                <div class="card-body p-4">
+                  <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+                    <div>
+                      <span class="badge text-bg-info mb-2">Próximo</span>
+                      <h2 class="h5 fw-bold mb-1">Consulta psicológica online</h2>
+                      <p class="text-muted mb-0">Renata Oliveira • Eu</p>
+                    </div>
+
+                    <div class="text-lg-end">
+                      <strong class="d-block fs-5">Amanhã, 09:00</strong>
+                      <span class="text-muted">Chamada de vídeo</span>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    <a href="mensagens-conversa.html" class="btn btn-primary">
+                      Conversar
+                    </a>
+
+                    <a href="servicos-agendar.html" class="btn btn-outline-primary">
+                      Reagendar
+                    </a>
+
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelAttendanceModal">
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              </article>
+
+              <article
+                class="attendance-card card border-0 shadow-sm rounded-4"
+                data-view="concluidos"
+                data-type="fisioterapia"
+                data-person="antonio"
+                data-search="fisioterapia ana paula antonio concluido avaliar"
+              >
+                <div class="card-body p-4">
+                  <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+                    <div>
+                      <span class="badge text-bg-success mb-2">Concluído</span>
+                      <h2 class="h5 fw-bold mb-1">Fisioterapia domiciliar</h2>
+                      <p class="text-muted mb-0">Ana Paula Martins • Antônio Damian</p>
+                    </div>
+
+                    <div class="text-lg-end">
+                      <strong class="d-block fs-5">20/04/2026</strong>
+                      <span class="text-muted">Atendimento finalizado</span>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    <a href="servicos-avaliacoes.html" class="btn btn-primary">
+                      Avaliar profissional
+                    </a>
+
+                    <a href="historico.html" class="btn btn-outline-primary">
+                      Ver histórico
+                    </a>
+
+                    <a href="servicos-agendar.html" class="btn btn-outline-secondary">
+                      Agendar novamente
+                    </a>
+                  </div>
+                </div>
+              </article>
+
+              <article
+                class="attendance-card card border-0 shadow-sm rounded-4"
+                data-view="cancelados"
+                data-type="cuidador"
+                data-person="maria"
+                data-search="cuidador marina maria cancelado"
+              >
+                <div class="card-body p-4">
+                  <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
+                    <div>
+                      <span class="badge text-bg-secondary mb-2">Cancelado</span>
+                      <h2 class="h5 fw-bold mb-1">Cuidadora por período</h2>
+                      <p class="text-muted mb-0">Marina Lima • Maria Helena</p>
+                    </div>
+
+                    <div class="text-lg-end">
+                      <strong class="d-block fs-5">18/04/2026</strong>
+                      <span class="text-muted">Cancelado pelo usuário</span>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    <a href="servicos.html" class="btn btn-primary">
+                      Buscar outro profissional
+                    </a>
+
+                    <a href="servicos-historico.html" class="btn btn-outline-secondary">
+                      Ver histórico
+                    </a>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+
+            <div class="alert alert-light border rounded-4 mt-4 d-none" id="emptyAttendanceState">
+              <h3 class="h5 fw-bold">Nenhum atendimento encontrado</h3>
+              <p class="text-muted mb-0">
+                Tente mudar os filtros ou buscar um novo profissional.
+              </p>
+            </div>
+          </div>
+
+          <aside class="col-12 col-xl-4">
+            <div class="vstack gap-4">
+
+              <article class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Atenção hoje</h2>
+
+                  <div class="vstack gap-3">
+                    <div class="p-3 rounded-4 bg-light">
+                      <strong class="d-block">Fisioterapia em andamento</strong>
+                      <span class="text-muted">Ana Paula está a caminho.</span>
+                    </div>
+
+                    <div class="p-3 rounded-4 bg-light">
+                      <strong class="d-block">Curativo às 18:00</strong>
+                      <span class="text-muted">Confirme se alguém estará no local.</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Ações rápidas</h2>
+
+                  <div class="d-grid gap-2">
+                    <a href="servicos.html" class="btn btn-primary btn-lg">
+                      Buscar profissional
+                    </a>
+
+                    <a href="servicos-solicitacoes.html" class="btn btn-outline-primary btn-lg">
+                      Ver solicitações
+                    </a>
+
+                    <a href="agenda.html" class="btn btn-outline-primary btn-lg">
+                      Ver agenda
+                    </a>
+
+                    <a href="servicos-historico.html" class="btn btn-light border btn-lg">
+                      Histórico de serviços
+                    </a>
+                  </div>
+                </div>
+              </article>
+
+              <article class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Segurança</h2>
+
+                  <ul class="list-unstyled mb-0">
+                    <li class="mb-2">Profissionais verificados</li>
+                    <li class="mb-2">Atendimentos registrados</li>
+                    <li class="mb-2">Conversas vinculadas ao serviço</li>
+                    <li class="mb-0">Histórico disponível para consulta</li>
+                  </ul>
+                </div>
+              </article>
+
+            </div>
+          </aside>
+
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div
+    class="modal fade"
+    id="cancelAttendanceModal"
+    tabindex="-1"
+    aria-labelledby="cancelAttendanceModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5 fw-bold" id="cancelAttendanceModalLabel">
+            Cancelar atendimento?
+          </h2>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="text-muted fs-5">
+            O profissional será avisado e o atendimento será registrado como cancelado.
+          </p>
+
+          <label for="cancelReason" class="form-label fs-5">Motivo do cancelamento</label>
+          <select class="form-select form-select-lg" id="cancelReason">
+            <option>Não poderei estar no local</option>
+            <option>Preciso reagendar</option>
+            <option>Escolhi outro profissional</option>
+            <option>Outro motivo</option>
+          </select>
+
+          <div class="alert alert-warning rounded-4 mt-3 mb-0">
+            Cancelamentos próximos do horário podem depender das regras do atendimento.
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">
+            Voltar
+          </button>
+
+          <button type="button" class="btn btn-danger btn-lg" id="confirmCancelAttendanceBtn">
+            Confirmar cancelamento
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+
+const attendanceSearch = document.getElementById("attendanceSearch");
+    const attendanceTypeFilter = document.getElementById("attendanceTypeFilter");
+    const attendancePersonFilter = document.getElementById("attendancePersonFilter");
+    const clearAttendanceFilters = document.getElementById("clearAttendanceFilters");
+    const attendanceTabs = document.querySelectorAll(".attendance-tab");
+    const attendanceCards = document.querySelectorAll(".attendance-card");
+    const emptyAttendanceState = document.getElementById("emptyAttendanceState");
+
+    const advanceStatusBtn = document.getElementById("advanceStatusBtn");
+    const liveStatusText = document.getElementById("liveStatusText");
+    const liveProgressBar = document.getElementById("liveProgressBar");
+    const confirmCancelAttendanceBtn = document.getElementById("confirmCancelAttendanceBtn");
+
+    const routeMapFrame = document.getElementById("routeMapFrame");
+    const routeMapLoader = document.getElementById("routeMapLoader");
+    const routeMapDescription = document.getElementById("routeMapDescription");
+    const showLocationButtons = document.querySelectorAll(".show-location-btn");
+    const showFullRouteBtn = document.getElementById("showFullRouteBtn");
+    const routeStopCards = document.querySelectorAll(".route-stop-card");
+
+    let activeView = "hoje";
+    let liveStep = 1;
+
+    const fullRouteUrl =
+      "https://www.google.com/maps/dir/?api=1&origin=" +
+      encodeURIComponent("Rua das Flores 120 São Paulo SP") +
+      "&destination=" +
+      encodeURIComponent("Rua Vergueiro 1000 São Paulo SP") +
+      "&travelmode=driving&output=embed";
+
+    const liveSteps = [
+      {
+        text: "Atendimento confirmado",
+        width: "25%"
+      },
+      {
+        text: "Profissional a caminho",
+        width: "50%"
+      },
+      {
+        text: "Profissional chegou",
+        width: "75%"
+      },
+      {
+        text: "Atendimento finalizado",
+        width: "100%"
+      }
+    ];
+
+    function setRouteMapLoader(isVisible) {
+      routeMapLoader.style.display = isVisible ? "flex" : "none";
+    }
+
+    function updateRouteMap(src, description) {
+      setRouteMapLoader(true);
+      routeMapFrame.src = src;
+      routeMapDescription.textContent = description;
+
+      routeMapFrame.onload = function () {
+        setRouteMapLoader(false);
+      };
+    }
+
+    function showFullRoute() {
+      updateRouteMap(
+        fullRouteUrl,
+        "Mostrando a rota completa entre os atendimentos de hoje."
+      );
+
+      routeStopCards.forEach(function (card) {
+        card.classList.remove("border-primary");
+      });
+    }
+
+    function showLocationOnMap(query, title, button) {
+      const mapSrc =
+        "https://www.google.com/maps?q=" +
+        encodeURIComponent(query) +
+        "&z=16&output=embed";
+
+      updateRouteMap(
+        mapSrc,
+        "Mostrando no mapa: " + title + "."
+      );
+
+      routeStopCards.forEach(function (card) {
+        card.classList.remove("border-primary");
+      });
+
+      const parentCard = button.closest(".route-stop-card");
+      if (parentCard) {
+        parentCard.classList.add("border-primary");
+      }
+
+      routeMapFrame.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+
+    function applyAttendanceFilters() {
+      const searchTerm = attendanceSearch.value.trim().toLowerCase();
+      const type = attendanceTypeFilter.value;
+      const person = attendancePersonFilter.value;
+
+      let visibleCount = 0;
+
+      attendanceCards.forEach(function (card) {
+        const matchView = card.dataset.view === activeView;
+        const matchSearch = searchTerm === "" || card.dataset.search.includes(searchTerm);
+        const matchType = type === "todos" || card.dataset.type === type;
+        const matchPerson = person === "todos" || card.dataset.person === person;
+
+        const shouldShow = matchView && matchSearch && matchType && matchPerson;
+
+        card.classList.toggle("d-none", !shouldShow);
+
+        if (shouldShow) {
+          visibleCount++;
+        }
+      });
+
+      emptyAttendanceState.classList.toggle("d-none", visibleCount > 0);
+    }
+
+    attendanceTabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        activeView = tab.dataset.view;
+
+        attendanceTabs.forEach(function (item) {
+          item.classList.remove("active");
+        });
+
+        tab.classList.add("active");
+
+        applyAttendanceFilters();
+      });
+    });
+
+    attendanceSearch.addEventListener("input", applyAttendanceFilters);
+    attendanceTypeFilter.addEventListener("change", applyAttendanceFilters);
+    attendancePersonFilter.addEventListener("change", applyAttendanceFilters);
+
+    clearAttendanceFilters.addEventListener("click", function () {
+      attendanceSearch.value = "";
+      attendanceTypeFilter.value = "todos";
+      attendancePersonFilter.value = "todos";
+      applyAttendanceFilters();
+    });
+
+    advanceStatusBtn.addEventListener("click", function () {
+      liveStep++;
+
+      if (liveStep >= liveSteps.length) {
+        liveStep = liveSteps.length - 1;
+        advanceStatusBtn.disabled = true;
+        advanceStatusBtn.textContent = "Finalizado";
+      }
+
+      liveStatusText.textContent = liveSteps[liveStep].text;
+      liveProgressBar.style.width = liveSteps[liveStep].width;
+
+      if (liveStep === liveSteps.length - 1) {
+        liveProgressBar.classList.add("bg-success");
+      }
+    });
+
+    confirmCancelAttendanceBtn.addEventListener("click", function () {
+      confirmCancelAttendanceBtn.textContent = "Atendimento cancelado";
+      confirmCancelAttendanceBtn.classList.remove("btn-danger");
+      confirmCancelAttendanceBtn.classList.add("btn-success");
+    });
+
+    showLocationButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        const query = button.dataset.mapQuery;
+        const title = button.dataset.title;
+
+        showLocationOnMap(query, title, button);
+      });
+    });
+
+    showFullRouteBtn.addEventListener("click", showFullRoute);
+
+    routeMapFrame.onload = function () {
+      setRouteMapLoader(false);
+    };
+
+    applyAttendanceFilters();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

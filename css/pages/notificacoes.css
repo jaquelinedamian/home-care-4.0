@@ -1,0 +1,107 @@
+.hc-notifications-shell {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.hc-notification-hero,
+.hc-search-hero {
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.hc-notification-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.hc-notification-card:hover,
+.hc-notification-card:focus {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-text);
+}
+
+.hc-notification-icon,
+.hc-search-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef5ff;
+  color: var(--color-primary);
+  font-size: 1.5rem;
+}
+
+.hc-notification-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: .35rem;
+}
+
+.hc-notification-meta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: .2rem .55rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: .86rem;
+  font-weight: 800;
+}
+
+.hc-notification-card.is-unread {
+  border-left: 5px solid var(--color-primary);
+}
+
+.hc-notification-status {
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.hc-search-result {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.hc-search-result:hover,
+.hc-search-result:focus {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-text);
+}
+
+@media (max-width: 767.98px) {
+  .hc-notification-card,
+  .hc-search-result {
+    grid-template-columns: auto 1fr;
+  }
+
+  .hc-notification-status,
+  .hc-search-result > .btn {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+}

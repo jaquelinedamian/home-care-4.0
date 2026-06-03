@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Histórico de Consultas | Home Care 4.0</title>
+
+  <meta
+    name="description"
+    content="Histórico completo de consultas da plataforma Home Care 4.0, com filtros por pessoa acompanhada, período, profissional, especialidade, status e visão diária, semanal e mensal."
+  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+  <link rel="stylesheet" href="../../css/pages/consultas.css" />
+</head>
+
+<body class="hc-consultations-page hc-idoso-module" data-profile-page="idoso">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+              <div class="card-body p-4 p-lg-5">
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-lg-8">
+                    <p class="text-muted fs-5 mb-1" data-consultas-history-kicker>Histórico de consultas</p>
+                    <h1 class="fw-bold mb-3" data-consultas-history-title>Tudo que já aconteceu, pronto para acompanhar e comprovar</h1>
+                    <p class="text-muted fs-5 mb-0">
+                      Consulte atendimentos realizados, cancelados, reagendados, retornos, custos, profissionais, orientações e próximos encaminhamentos.
+                    </p>
+                  </div>
+
+                  <div class="col-12 col-lg-4">
+                    <div class="d-grid gap-2">
+                      <a href="consultas-agendar.html" class="btn btn-primary btn-lg">Agendar nova consulta</a>
+                      <button type="button" class="btn btn-outline-primary btn-lg" id="printReportButton">Imprimir relatório</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4" aria-label="Resumo do histórico de consultas">
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 metric-card">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Consultas no período</p>
+                <strong class="display-6 fw-bold" id="metricTotal">8</strong>
+                <p class="mb-0 text-muted">registros encontrados</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 metric-card">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Realizadas</p>
+                <strong class="display-6 fw-bold text-success" id="metricDone">5</strong>
+                <p class="mb-0 text-muted">com atendimento concluído</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 metric-card">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Reagendadas</p>
+                <strong class="display-6 fw-bold text-warning" id="metricRescheduled">2</strong>
+                <p class="mb-0 text-muted">mudanças registradas</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 metric-card">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Investimento</p>
+                <strong class="display-6 fw-bold" id="metricCost">R$ 1.440</strong>
+                <p class="mb-0 text-muted">somatório filtrado</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4 no-print" aria-labelledby="filtersTitle">
+          <div class="card-body p-4">
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+              <div>
+                <h2 class="h4 fw-bold mb-1" id="filtersTitle">Filtros do histórico</h2>
+                <p class="text-muted mb-0">Use filtros simples para encontrar uma consulta ou montar um relatório.</p>
+              </div>
+              <button type="button" class="btn btn-light border" id="clearFiltersButton">Limpar filtros</button>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12 col-lg-3">
+                <label for="filterSearch" class="form-label fw-semibold">Buscar</label>
+                <input type="search" class="form-control form-control-lg" id="filterSearch" placeholder="Profissional, clínica ou observação" />
+              </div>
+
+              <div class="col-12 col-md-6 col-lg-3">
+                <label for="filterPerson" class="form-label fw-semibold">Pessoa acompanhada</label>
+                <select class="form-select form-select-lg" id="filterPerson">
+                  <option value="all">Todas</option>
+                  <option value="maria">Maria Helena</option>
+                  <option value="antonio">Antônio Carlos</option>
+                  <option value="elisa">Elisa Regina</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-6 col-lg-3">
+                <label for="filterSpecialty" class="form-label fw-semibold">Especialidade</label>
+                <select class="form-select form-select-lg" id="filterSpecialty">
+                  <option value="all">Todas</option>
+                  <option value="geriatria">Geriatria</option>
+                  <option value="fisioterapia">Fisioterapia</option>
+                  <option value="nutricao">Nutrição</option>
+                  <option value="psicologia">Psicologia</option>
+                  <option value="enfermagem">Enfermagem</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-6 col-lg-3">
+                <label for="filterStatus" class="form-label fw-semibold">Status</label>
+                <select class="form-select form-select-lg" id="filterStatus">
+                  <option value="all">Todos</option>
+                  <option value="realizada">Realizada</option>
+                  <option value="reagendada">Reagendada</option>
+                  <option value="cancelada">Cancelada</option>
+                  <option value="faltou">Não compareceu</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-6 col-lg-3">
+                <label for="filterPeriod" class="form-label fw-semibold">Período rápido</label>
+                <select class="form-select form-select-lg" id="filterPeriod">
+                  <option value="all">Todo o histórico</option>
+                  <option value="today">Hoje</option>
+                  <option value="week">Esta semana</option>
+                  <option value="month" selected>Este mês</option>
+                  <option value="custom">Personalizado</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-6 col-lg-3 custom-date-field">
+                <label for="filterStart" class="form-label fw-semibold">Data inicial</label>
+                <input type="date" class="form-control form-control-lg" id="filterStart" value="2026-04-01" />
+              </div>
+
+              <div class="col-12 col-md-6 col-lg-3 custom-date-field">
+                <label for="filterEnd" class="form-label fw-semibold">Data final</label>
+                <input type="date" class="form-control form-control-lg" id="filterEnd" value="2026-04-30" />
+              </div>
+
+              <div class="col-12 col-md-6 col-lg-3">
+                <label for="filterView" class="form-label fw-semibold">Visualização</label>
+                <select class="form-select form-select-lg" id="filterView">
+                  <option value="cards">Cards</option>
+                  <option value="table">Tabela</option>
+                  <option value="daily">Diária</option>
+                  <option value="weekly">Semanal</option>
+                  <option value="monthly">Mensal</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4">
+          <div class="col-12 col-xl-8">
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Registros encontrados</h2>
+                    <p class="text-muted mb-0" id="resultText">8 consultas no período selecionado.</p>
+                  </div>
+                  <div class="d-flex gap-2 no-print">
+                    <button type="button" class="btn btn-outline-secondary" id="exportCsvButton">Exportar CSV</button>
+                    <a href="consultas.html" class="btn btn-outline-primary">Voltar para consultas</a>
+                  </div>
+                </div>
+
+                <div class="view-panel" id="cardsView">
+                  <div class="vstack gap-3" id="historyCards">
+                    <article class="card border rounded-4 history-card consultation-item" data-person="maria" data-specialty="geriatria" data-status="realizada" data-date="2026-04-25" data-cost="280" data-search="maria helena dra renata alves geriatria clinica vida plena consulta realizada pressao controlada retorno em 60 dias">
+                      <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                          <div>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                              <span class="badge text-bg-success status-pill">Realizada</span>
+                              <span class="badge text-bg-light text-dark border">Geriatria</span>
+                              <span class="badge text-bg-light text-dark border">Presencial</span>
+                            </div>
+                            <h3 class="h5 fw-bold mb-1">Consulta com Dra. Renata Alves</h3>
+                            <p class="text-muted mb-2">Maria Helena · 25/04/2026 às 09:30 · Clínica Vida Plena</p>
+                            <p class="mb-0">Pressão controlada, medicação mantida e retorno recomendado em 60 dias.</p>
+                          </div>
+                          <div class="text-lg-end">
+                            <p class="text-muted mb-1">Valor</p>
+                            <strong class="fs-4">R$ 280</strong>
+                            <div class="d-grid gap-2 mt-3">
+                              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Consulta com Dra. Renata Alves" data-description="Pressão controlada, medicação mantida e retorno recomendado em 60 dias." data-status="Realizada" data-person="Maria Helena" data-date="25/04/2026 às 09:30" data-cost="R$ 280">Ver detalhes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="card border rounded-4 history-card consultation-item" data-person="antonio" data-specialty="fisioterapia" data-status="realizada" data-date="2026-04-23" data-cost="190" data-search="antonio carlos lucas moreira fisioterapia domiciliar realizada mobilidade joelho dor reduzida">
+                      <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                          <div>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                              <span class="badge text-bg-success status-pill">Realizada</span>
+                              <span class="badge text-bg-light text-dark border">Fisioterapia</span>
+                              <span class="badge text-bg-light text-dark border">Domiciliar</span>
+                            </div>
+                            <h3 class="h5 fw-bold mb-1">Sessão com Lucas Moreira</h3>
+                            <p class="text-muted mb-2">Antônio Carlos · 23/04/2026 às 15:00 · Atendimento em casa</p>
+                            <p class="mb-0">Treino de mobilidade, dor reduzida e exercícios enviados para acompanhamento familiar.</p>
+                          </div>
+                          <div class="text-lg-end">
+                            <p class="text-muted mb-1">Valor</p>
+                            <strong class="fs-4">R$ 190</strong>
+                            <div class="d-grid gap-2 mt-3">
+                              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Sessão com Lucas Moreira" data-description="Treino de mobilidade, dor reduzida e exercícios enviados para acompanhamento familiar." data-status="Realizada" data-person="Antônio Carlos" data-date="23/04/2026 às 15:00" data-cost="R$ 190">Ver detalhes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="card border rounded-4 history-card consultation-item" data-person="elisa" data-specialty="nutricao" data-status="reagendada" data-date="2026-04-21" data-cost="220" data-search="elisa regina dra camila prado nutricao reagendada plano alimentar glicemia">
+                      <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                          <div>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                              <span class="badge text-bg-warning status-pill">Reagendada</span>
+                              <span class="badge text-bg-light text-dark border">Nutrição</span>
+                              <span class="badge text-bg-light text-dark border">Teleconsulta</span>
+                            </div>
+                            <h3 class="h5 fw-bold mb-1">Consulta com Dra. Camila Prado</h3>
+                            <p class="text-muted mb-2">Elisa Regina · 21/04/2026 às 11:00 · Reagendada para 29/04</p>
+                            <p class="mb-0">Reagendamento solicitado pela família para revisar exames de glicemia antes da consulta.</p>
+                          </div>
+                          <div class="text-lg-end">
+                            <p class="text-muted mb-1">Valor previsto</p>
+                            <strong class="fs-4">R$ 220</strong>
+                            <div class="d-grid gap-2 mt-3">
+                              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Consulta com Dra. Camila Prado" data-description="Reagendamento solicitado pela família para revisar exames de glicemia antes da consulta." data-status="Reagendada" data-person="Elisa Regina" data-date="21/04/2026 às 11:00" data-cost="R$ 220">Ver detalhes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="card border rounded-4 history-card consultation-item" data-person="maria" data-specialty="psicologia" data-status="realizada" data-date="2026-04-17" data-cost="210" data-search="maria helena psicologia ana beatriz realizada humor ansiedade sono">
+                      <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                          <div>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                              <span class="badge text-bg-success status-pill">Realizada</span>
+                              <span class="badge text-bg-light text-dark border">Psicologia</span>
+                              <span class="badge text-bg-light text-dark border">Teleconsulta</span>
+                            </div>
+                            <h3 class="h5 fw-bold mb-1">Sessão com Ana Beatriz</h3>
+                            <p class="text-muted mb-2">Maria Helena · 17/04/2026 às 14:00 · Online</p>
+                            <p class="mb-0">Registro de melhora no sono e redução de ansiedade após rotina de chamadas familiares.</p>
+                          </div>
+                          <div class="text-lg-end">
+                            <p class="text-muted mb-1">Valor</p>
+                            <strong class="fs-4">R$ 210</strong>
+                            <div class="d-grid gap-2 mt-3">
+                              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Sessão com Ana Beatriz" data-description="Registro de melhora no sono e redução de ansiedade após rotina de chamadas familiares." data-status="Realizada" data-person="Maria Helena" data-date="17/04/2026 às 14:00" data-cost="R$ 210">Ver detalhes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="card border rounded-4 history-card consultation-item" data-person="antonio" data-specialty="enfermagem" data-status="cancelada" data-date="2026-04-14" data-cost="0" data-search="antonio carlos enfermagem curativo cancelada chuva reagendar">
+                      <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                          <div>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                              <span class="badge text-bg-danger status-pill">Cancelada</span>
+                              <span class="badge text-bg-light text-dark border">Enfermagem</span>
+                              <span class="badge text-bg-light text-dark border">Domiciliar</span>
+                            </div>
+                            <h3 class="h5 fw-bold mb-1">Curativo com Enf. Juliana Costa</h3>
+                            <p class="text-muted mb-2">Antônio Carlos · 14/04/2026 às 08:30 · Cancelada</p>
+                            <p class="mb-0">Cancelamento por condição climática e dificuldade de deslocamento do profissional.</p>
+                          </div>
+                          <div class="text-lg-end">
+                            <p class="text-muted mb-1">Valor</p>
+                            <strong class="fs-4">R$ 0</strong>
+                            <div class="d-grid gap-2 mt-3">
+                              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Curativo com Enf. Juliana Costa" data-description="Cancelamento por condição climática e dificuldade de deslocamento do profissional." data-status="Cancelada" data-person="Antônio Carlos" data-date="14/04/2026 às 08:30" data-cost="R$ 0">Ver detalhes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="card border rounded-4 history-card consultation-item" data-person="elisa" data-specialty="geriatria" data-status="realizada" data-date="2026-04-10" data-cost="300" data-search="elisa regina geriatria dr paulo mendes realizada ajuste medicamento tontura">
+                      <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                          <div>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                              <span class="badge text-bg-success status-pill">Realizada</span>
+                              <span class="badge text-bg-light text-dark border">Geriatria</span>
+                              <span class="badge text-bg-light text-dark border">Presencial</span>
+                            </div>
+                            <h3 class="h5 fw-bold mb-1">Consulta com Dr. Paulo Mendes</h3>
+                            <p class="text-muted mb-2">Elisa Regina · 10/04/2026 às 10:15 · Centro Médico Norte</p>
+                            <p class="mb-0">Ajuste de medicamento para tontura e solicitação de exame laboratorial.</p>
+                          </div>
+                          <div class="text-lg-end">
+                            <p class="text-muted mb-1">Valor</p>
+                            <strong class="fs-4">R$ 300</strong>
+                            <div class="d-grid gap-2 mt-3">
+                              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Consulta com Dr. Paulo Mendes" data-description="Ajuste de medicamento para tontura e solicitação de exame laboratorial." data-status="Realizada" data-person="Elisa Regina" data-date="10/04/2026 às 10:15" data-cost="R$ 300">Ver detalhes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="card border rounded-4 history-card consultation-item" data-person="maria" data-specialty="nutricao" data-status="faltou" data-date="2026-04-06" data-cost="120" data-search="maria helena nutricao falta nao compareceu taxa">
+                      <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                          <div>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                              <span class="badge text-bg-secondary status-pill">Não compareceu</span>
+                              <span class="badge text-bg-light text-dark border">Nutrição</span>
+                              <span class="badge text-bg-light text-dark border">Presencial</span>
+                            </div>
+                            <h3 class="h5 fw-bold mb-1">Consulta com Dra. Helena Duarte</h3>
+                            <p class="text-muted mb-2">Maria Helena · 06/04/2026 às 16:00 · Clínica Equilíbrio</p>
+                            <p class="mb-0">Família avisada sobre ausência. Taxa parcial registrada conforme política do profissional.</p>
+                          </div>
+                          <div class="text-lg-end">
+                            <p class="text-muted mb-1">Taxa</p>
+                            <strong class="fs-4">R$ 120</strong>
+                            <div class="d-grid gap-2 mt-3">
+                              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Consulta com Dra. Helena Duarte" data-description="Família avisada sobre ausência. Taxa parcial registrada conforme política do profissional." data-status="Não compareceu" data-person="Maria Helena" data-date="06/04/2026 às 16:00" data-cost="R$ 120">Ver detalhes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="card border rounded-4 history-card consultation-item" data-person="antonio" data-specialty="fisioterapia" data-status="reagendada" data-date="2026-04-03" data-cost="120" data-search="antonio carlos fisioterapia reagendada dor lombar horario alterado">
+                      <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                          <div>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                              <span class="badge text-bg-warning status-pill">Reagendada</span>
+                              <span class="badge text-bg-light text-dark border">Fisioterapia</span>
+                              <span class="badge text-bg-light text-dark border">Domiciliar</span>
+                            </div>
+                            <h3 class="h5 fw-bold mb-1">Sessão com Priscila Rocha</h3>
+                            <p class="text-muted mb-2">Antônio Carlos · 03/04/2026 às 13:00 · Reagendada</p>
+                            <p class="mb-0">Horário alterado por conflito familiar. Nova sessão encaixada na semana seguinte.</p>
+                          </div>
+                          <div class="text-lg-end">
+                            <p class="text-muted mb-1">Taxa</p>
+                            <strong class="fs-4">R$ 120</strong>
+                            <div class="d-grid gap-2 mt-3">
+                              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Sessão com Priscila Rocha" data-description="Horário alterado por conflito familiar. Nova sessão encaixada na semana seguinte." data-status="Reagendada" data-person="Antônio Carlos" data-date="03/04/2026 às 13:00" data-cost="R$ 120">Ver detalhes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+
+                  <div class="alert alert-light border rounded-4 mt-3" id="emptyState" hidden>
+                    Nenhuma consulta encontrada com os filtros selecionados.
+                  </div>
+                </div>
+
+                <div class="view-panel" id="tableView" hidden>
+                  <div class="table-responsive">
+                    <table class="table align-middle">
+                      <thead>
+                        <tr>
+                          <th>Data</th>
+                          <th>Pessoa</th>
+                          <th>Profissional</th>
+                          <th>Especialidade</th>
+                          <th>Status</th>
+                          <th class="text-end">Valor</th>
+                          <th class="text-end no-print">Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody id="historyTableBody">
+                        <tr class="consultation-row consultation-item" data-person="maria" data-specialty="geriatria" data-status="realizada" data-date="2026-04-25" data-cost="280" data-search="maria helena dra renata alves geriatria clinica vida plena consulta realizada pressao controlada retorno em 60 dias">
+                          <td>25/04/2026<br><span class="text-muted small">09:30</span></td>
+                          <td>Maria Helena</td>
+                          <td>Dra. Renata Alves</td>
+                          <td>Geriatria</td>
+                          <td><span class="badge text-bg-success status-pill">Realizada</span></td>
+                          <td class="text-end">R$ 280</td>
+                          <td class="text-end no-print"><button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Consulta com Dra. Renata Alves" data-description="Pressão controlada, medicação mantida e retorno recomendado em 60 dias." data-status="Realizada" data-person="Maria Helena" data-date="25/04/2026 às 09:30" data-cost="R$ 280">Ver</button></td>
+                        </tr>
+                        <tr class="consultation-row consultation-item" data-person="antonio" data-specialty="fisioterapia" data-status="realizada" data-date="2026-04-23" data-cost="190" data-search="antonio carlos lucas moreira fisioterapia domiciliar realizada mobilidade joelho dor reduzida">
+                          <td>23/04/2026<br><span class="text-muted small">15:00</span></td>
+                          <td>Antônio Carlos</td>
+                          <td>Lucas Moreira</td>
+                          <td>Fisioterapia</td>
+                          <td><span class="badge text-bg-success status-pill">Realizada</span></td>
+                          <td class="text-end">R$ 190</td>
+                          <td class="text-end no-print"><button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Sessão com Lucas Moreira" data-description="Treino de mobilidade, dor reduzida e exercícios enviados para acompanhamento familiar." data-status="Realizada" data-person="Antônio Carlos" data-date="23/04/2026 às 15:00" data-cost="R$ 190">Ver</button></td>
+                        </tr>
+                        <tr class="consultation-row consultation-item" data-person="elisa" data-specialty="nutricao" data-status="reagendada" data-date="2026-04-21" data-cost="220" data-search="elisa regina dra camila prado nutricao reagendada plano alimentar glicemia">
+                          <td>21/04/2026<br><span class="text-muted small">11:00</span></td>
+                          <td>Elisa Regina</td>
+                          <td>Dra. Camila Prado</td>
+                          <td>Nutrição</td>
+                          <td><span class="badge text-bg-warning status-pill">Reagendada</span></td>
+                          <td class="text-end">R$ 220</td>
+                          <td class="text-end no-print"><button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Consulta com Dra. Camila Prado" data-description="Reagendamento solicitado pela família para revisar exames de glicemia antes da consulta." data-status="Reagendada" data-person="Elisa Regina" data-date="21/04/2026 às 11:00" data-cost="R$ 220">Ver</button></td>
+                        </tr>
+                        <tr class="consultation-row consultation-item" data-person="maria" data-specialty="psicologia" data-status="realizada" data-date="2026-04-17" data-cost="210" data-search="maria helena psicologia ana beatriz realizada humor ansiedade sono">
+                          <td>17/04/2026<br><span class="text-muted small">14:00</span></td>
+                          <td>Maria Helena</td>
+                          <td>Ana Beatriz</td>
+                          <td>Psicologia</td>
+                          <td><span class="badge text-bg-success status-pill">Realizada</span></td>
+                          <td class="text-end">R$ 210</td>
+                          <td class="text-end no-print"><button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Sessão com Ana Beatriz" data-description="Registro de melhora no sono e redução de ansiedade após rotina de chamadas familiares." data-status="Realizada" data-person="Maria Helena" data-date="17/04/2026 às 14:00" data-cost="R$ 210">Ver</button></td>
+                        </tr>
+                        <tr class="consultation-row consultation-item" data-person="antonio" data-specialty="enfermagem" data-status="cancelada" data-date="2026-04-14" data-cost="0" data-search="antonio carlos enfermagem curativo cancelada chuva reagendar">
+                          <td>14/04/2026<br><span class="text-muted small">08:30</span></td>
+                          <td>Antônio Carlos</td>
+                          <td>Enf. Juliana Costa</td>
+                          <td>Enfermagem</td>
+                          <td><span class="badge text-bg-danger status-pill">Cancelada</span></td>
+                          <td class="text-end">R$ 0</td>
+                          <td class="text-end no-print"><button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Curativo com Enf. Juliana Costa" data-description="Cancelamento por condição climática e dificuldade de deslocamento do profissional." data-status="Cancelada" data-person="Antônio Carlos" data-date="14/04/2026 às 08:30" data-cost="R$ 0">Ver</button></td>
+                        </tr>
+                        <tr class="consultation-row consultation-item" data-person="elisa" data-specialty="geriatria" data-status="realizada" data-date="2026-04-10" data-cost="300" data-search="elisa regina geriatria dr paulo mendes realizada ajuste medicamento tontura">
+                          <td>10/04/2026<br><span class="text-muted small">10:15</span></td>
+                          <td>Elisa Regina</td>
+                          <td>Dr. Paulo Mendes</td>
+                          <td>Geriatria</td>
+                          <td><span class="badge text-bg-success status-pill">Realizada</span></td>
+                          <td class="text-end">R$ 300</td>
+                          <td class="text-end no-print"><button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Consulta com Dr. Paulo Mendes" data-description="Ajuste de medicamento para tontura e solicitação de exame laboratorial." data-status="Realizada" data-person="Elisa Regina" data-date="10/04/2026 às 10:15" data-cost="R$ 300">Ver</button></td>
+                        </tr>
+                        <tr class="consultation-row consultation-item" data-person="maria" data-specialty="nutricao" data-status="faltou" data-date="2026-04-06" data-cost="120" data-search="maria helena nutricao falta nao compareceu taxa">
+                          <td>06/04/2026<br><span class="text-muted small">16:00</span></td>
+                          <td>Maria Helena</td>
+                          <td>Dra. Helena Duarte</td>
+                          <td>Nutrição</td>
+                          <td><span class="badge text-bg-secondary status-pill">Não compareceu</span></td>
+                          <td class="text-end">R$ 120</td>
+                          <td class="text-end no-print"><button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Consulta com Dra. Helena Duarte" data-description="Família avisada sobre ausência. Taxa parcial registrada conforme política do profissional." data-status="Não compareceu" data-person="Maria Helena" data-date="06/04/2026 às 16:00" data-cost="R$ 120">Ver</button></td>
+                        </tr>
+                        <tr class="consultation-row consultation-item" data-person="antonio" data-specialty="fisioterapia" data-status="reagendada" data-date="2026-04-03" data-cost="120" data-search="antonio carlos fisioterapia reagendada dor lombar horario alterado">
+                          <td>03/04/2026<br><span class="text-muted small">13:00</span></td>
+                          <td>Antônio Carlos</td>
+                          <td>Priscila Rocha</td>
+                          <td>Fisioterapia</td>
+                          <td><span class="badge text-bg-warning status-pill">Reagendada</span></td>
+                          <td class="text-end">R$ 120</td>
+                          <td class="text-end no-print"><button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" data-title="Sessão com Priscila Rocha" data-description="Horário alterado por conflito familiar. Nova sessão encaixada na semana seguinte." data-status="Reagendada" data-person="Antônio Carlos" data-date="03/04/2026 às 13:00" data-cost="R$ 120">Ver</button></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="view-panel" id="dailyView" hidden>
+                  <div class="history-timeline vstack gap-4">
+                    <div class="position-relative ps-3">
+                      <span class="timeline-dot" aria-hidden="true"></span>
+                      <h3 class="h5 fw-bold mb-1">25 de abril</h3>
+                      <p class="text-muted mb-2">1 consulta realizada</p>
+                      <div class="card border rounded-4"><div class="card-body">09:30 · Maria Helena · Geriatria · Dra. Renata Alves</div></div>
+                    </div>
+                    <div class="position-relative ps-3">
+                      <span class="timeline-dot" aria-hidden="true"></span>
+                      <h3 class="h5 fw-bold mb-1">23 de abril</h3>
+                      <p class="text-muted mb-2">1 atendimento domiciliar</p>
+                      <div class="card border rounded-4"><div class="card-body">15:00 · Antônio Carlos · Fisioterapia · Lucas Moreira</div></div>
+                    </div>
+                    <div class="position-relative ps-3">
+                      <span class="timeline-dot" aria-hidden="true"></span>
+                      <h3 class="h5 fw-bold mb-1">21 de abril</h3>
+                      <p class="text-muted mb-2">1 consulta reagendada</p>
+                      <div class="card border rounded-4"><div class="card-body">11:00 · Elisa Regina · Nutrição · Dra. Camila Prado</div></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="view-panel" id="weeklyView" hidden>
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <div class="card border rounded-4 h-100"><div class="card-body"><h3 class="h5 fw-bold">Semana 01 a 07/04</h3><p class="mb-0">2 registros: 1 falta e 1 reagendamento.</p></div></div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <div class="card border rounded-4 h-100"><div class="card-body"><h3 class="h5 fw-bold">Semana 08 a 14/04</h3><p class="mb-0">2 registros: 1 realizada e 1 cancelada.</p></div></div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <div class="card border rounded-4 h-100"><div class="card-body"><h3 class="h5 fw-bold">Semana 15 a 21/04</h3><p class="mb-0">2 registros: psicologia realizada e nutrição reagendada.</p></div></div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <div class="card border rounded-4 h-100"><div class="card-body"><h3 class="h5 fw-bold">Semana 22 a 30/04</h3><p class="mb-0">2 registros realizados: geriatria e fisioterapia.</p></div></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="view-panel" id="monthlyView" hidden>
+                  <div class="card border rounded-4">
+                    <div class="card-body p-4">
+                      <h3 class="h5 fw-bold mb-3">Abril de 2026</h3>
+                      <div class="row g-3">
+                        <div class="col-6 col-md-3"><div class="p-3 rounded-4 bg-light"><strong class="fs-3">8</strong><p class="mb-0 text-muted">consultas</p></div></div>
+                        <div class="col-6 col-md-3"><div class="p-3 rounded-4 bg-light"><strong class="fs-3">5</strong><p class="mb-0 text-muted">realizadas</p></div></div>
+                        <div class="col-6 col-md-3"><div class="p-3 rounded-4 bg-light"><strong class="fs-3">2</strong><p class="mb-0 text-muted">reagendadas</p></div></div>
+                        <div class="col-6 col-md-3"><div class="p-3 rounded-4 bg-light"><strong class="fs-3">1</strong><p class="mb-0 text-muted">cancelada</p></div></div>
+                      </div>
+                      <hr>
+                      <p class="mb-0 text-muted">Mês com maior demanda em geriatria e fisioterapia. Boa oportunidade para sugerir acompanhamento preventivo e retornos automáticos.</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <aside class="col-12 col-xl-4">
+            <div class="vstack gap-4">
+              <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Apanhado geral</h2>
+                  <div class="vstack gap-3">
+                    <div class="d-flex justify-content-between gap-3">
+                      <span class="text-muted">Pessoa com mais consultas</span>
+                      <strong>Maria Helena</strong>
+                    </div>
+                    <div class="d-flex justify-content-between gap-3">
+                      <span class="text-muted">Especialidade mais usada</span>
+                      <strong>Geriatria</strong>
+                    </div>
+                    <div class="d-flex justify-content-between gap-3">
+                      <span class="text-muted">Ticket médio</span>
+                      <strong>R$ 180</strong>
+                    </div>
+                    <div class="d-flex justify-content-between gap-3">
+                      <span class="text-muted">Taxa de conclusão</span>
+                      <strong>62%</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Alertas inteligentes</h2>
+                  <div class="alert alert-warning rounded-4 mb-3">
+                    Maria Helena teve uma ausência em nutrição. Vale sugerir lembrete reforçado antes da próxima consulta.
+                  </div>
+                  <div class="alert alert-info rounded-4 mb-0">
+                    Antônio Carlos tem boa aderência à fisioterapia. O sistema pode sugerir pacote semanal.
+                  </div>
+                </div>
+              </div>
+
+              <div class="card border-0 shadow-sm rounded-4 no-print">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Ações rápidas</h2>
+                  <div class="d-grid gap-2">
+                    <a href="consultas-agendar.html" class="btn btn-primary">Agendar retorno</a>
+                    <a href="servicos.html" class="btn btn-outline-primary">Buscar especialista</a>
+                    <a href="mensagens.html" class="btn btn-outline-secondary">Enviar mensagem</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer class="app-footer bg-white border-top">
+  <div class="container py-3">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-2">
+      <p class="mb-0 text-muted">
+        Home Care 4.0 — Plataforma de centralização de cuidados e serviços.
+      </p>
+
+      <div class="d-flex flex-wrap gap-3">
+        <a href="suporte.html" class="text-decoration-none">
+          Suporte
+        </a>
+
+        <a href="configuracoes.html" class="text-decoration-none">
+          Configurações
+        </a>
+
+        <a href="emergencia-contatos.html" class="text-decoration-none text-danger fw-bold">
+          Emergência
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="mobile-bottom-nav d-lg-none" aria-label="Menu inferior mobile">
+    <a href="dashboard.html" class="mobile-bottom-link">
+      <span>Início</span>
+    </a>
+
+    <a href="agenda.html" class="mobile-bottom-link">
+      <span>Agenda</span>
+    </a>
+
+    <a href="alertas.html" class="mobile-bottom-link">
+      <span>Alertas</span>
+    </a>
+
+    <a href="servicos.html" class="mobile-bottom-link">
+      <span>Serviços</span>
+    </a>
+
+    <a href="perfil.html" class="mobile-bottom-link">
+      <span>Perfil</span>
+    </a>
+  </nav>
+</footer>
+
+  <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header">
+          <div>
+            <p class="text-muted mb-1" id="detailModalStatus">Status</p>
+            <h2 class="modal-title h4 fw-bold" id="detailModalTitle">Detalhes da consulta</h2>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-md-4"><div class="p-3 rounded-4 bg-light"><p class="text-muted mb-1">Pessoa</p><strong id="detailPerson">-</strong></div></div>
+            <div class="col-12 col-md-4"><div class="p-3 rounded-4 bg-light"><p class="text-muted mb-1">Data</p><strong id="detailDate">-</strong></div></div>
+            <div class="col-12 col-md-4"><div class="p-3 rounded-4 bg-light"><p class="text-muted mb-1">Valor</p><strong id="detailCost">-</strong></div></div>
+          </div>
+          <p class="mb-0" id="detailDescription">Descrição da consulta.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Fechar</button>
+          <a href="consultas-detalhes.html" class="btn btn-primary">Abrir página completa</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed top-0 end-0 p-3 no-print">
+    <div id="pageToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toastMessage">Ação concluída.</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const filterSearch = document.getElementById('filterSearch');
+    const filterPerson = document.getElementById('filterPerson');
+    const filterSpecialty = document.getElementById('filterSpecialty');
+    const filterStatus = document.getElementById('filterStatus');
+    const filterPeriod = document.getElementById('filterPeriod');
+    const filterStart = document.getElementById('filterStart');
+    const filterEnd = document.getElementById('filterEnd');
+    const filterView = document.getElementById('filterView');
+    const resultText = document.getElementById('resultText');
+    const emptyState = document.getElementById('emptyState');
+    const toastElement = document.getElementById('pageToast');
+    const toastMessage = document.getElementById('toastMessage');
+
+    const allItems = Array.from(document.querySelectorAll('.consultation-item'));
+    const cardItems = Array.from(document.querySelectorAll('.history-card'));
+    const rowItems = Array.from(document.querySelectorAll('.consultation-row'));
+
+    function normalizeText(value) {
+      return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function formatCurrency(value) {
+      return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+    }
+
+    function isInsidePeriod(dateValue) {
+      if (filterPeriod.value === 'all') return true;
+
+      const date = new Date(dateValue + 'T00:00:00');
+      const start = new Date(filterStart.value + 'T00:00:00');
+      const end = new Date(filterEnd.value + 'T23:59:59');
+
+      return date >= start && date <= end;
+    }
+
+    function itemMatches(item) {
+      const search = normalizeText(filterSearch.value.trim());
+      const itemText = normalizeText(item.dataset.search || '');
+      const personMatch = filterPerson.value === 'all' || item.dataset.person === filterPerson.value;
+      const specialtyMatch = filterSpecialty.value === 'all' || item.dataset.specialty === filterSpecialty.value;
+      const statusMatch = filterStatus.value === 'all' || item.dataset.status === filterStatus.value;
+      const searchMatch = !search || itemText.includes(search);
+      const periodMatch = isInsidePeriod(item.dataset.date);
+
+      return personMatch && specialtyMatch && statusMatch && searchMatch && periodMatch;
+    }
+
+    function getUniqueVisibleCards() {
+      return cardItems.filter(item => itemMatches(item));
+    }
+
+    function updateMetrics(visibleCards) {
+      const total = visibleCards.length;
+      const done = visibleCards.filter(item => item.dataset.status === 'realizada').length;
+      const rescheduled = visibleCards.filter(item => item.dataset.status === 'reagendada').length;
+      const cost = visibleCards.reduce((sum, item) => sum + Number(item.dataset.cost || 0), 0);
+
+      document.getElementById('metricTotal').textContent = total;
+      document.getElementById('metricDone').textContent = done;
+      document.getElementById('metricRescheduled').textContent = rescheduled;
+      document.getElementById('metricCost').textContent = formatCurrency(cost);
+      resultText.textContent = `${total} consulta${total === 1 ? '' : 's'} no período selecionado.`;
+      emptyState.hidden = total !== 0;
+    }
+
+    function applyFilters() {
+      cardItems.forEach(item => item.hidden = !itemMatches(item));
+      rowItems.forEach(item => item.hidden = !itemMatches(item));
+      updateMetrics(getUniqueVisibleCards());
+    }
+
+    function updateView() {
+      const selected = filterView.value;
+      document.getElementById('cardsView').hidden = selected !== 'cards';
+      document.getElementById('tableView').hidden = selected !== 'table';
+      document.getElementById('dailyView').hidden = selected !== 'daily';
+      document.getElementById('weeklyView').hidden = selected !== 'weekly';
+      document.getElementById('monthlyView').hidden = selected !== 'monthly';
+    }
+
+    function updatePeriodDates() {
+      const today = new Date('2026-04-27T00:00:00');
+      const start = new Date(today);
+      const end = new Date(today);
+
+      if (filterPeriod.value === 'today') {
+        filterStart.value = '2026-04-27';
+        filterEnd.value = '2026-04-27';
+      }
+
+      if (filterPeriod.value === 'week') {
+        start.setDate(today.getDate() - 6);
+        filterStart.value = start.toISOString().slice(0, 10);
+        filterEnd.value = end.toISOString().slice(0, 10);
+      }
+
+      if (filterPeriod.value === 'month') {
+        filterStart.value = '2026-04-01';
+        filterEnd.value = '2026-04-30';
+      }
+
+      applyFilters();
+    }
+
+    function showToast(message, variant = 'success') {
+      toastElement.className = `toast align-items-center text-bg-${variant} border-0`;
+      toastMessage.textContent = message;
+      bootstrap.Toast.getOrCreateInstance(toastElement).show();
+    }
+
+    [filterSearch, filterPerson, filterSpecialty, filterStatus, filterStart, filterEnd].forEach(input => {
+      input.addEventListener('input', applyFilters);
+      input.addEventListener('change', applyFilters);
+    });
+
+    filterPeriod.addEventListener('change', updatePeriodDates);
+    filterView.addEventListener('change', updateView);
+
+    document.getElementById('clearFiltersButton').addEventListener('click', () => {
+      filterSearch.value = '';
+      filterPerson.value = 'all';
+      filterSpecialty.value = 'all';
+      filterStatus.value = 'all';
+      filterPeriod.value = 'month';
+      filterView.value = 'cards';
+      updatePeriodDates();
+      updateView();
+      showToast('Filtros limpos.');
+    });
+
+    document.getElementById('printReportButton').addEventListener('click', () => window.print());
+
+    document.getElementById('exportCsvButton').addEventListener('click', () => {
+      showToast('Exportação simulada. Quando integrar ao backend, este botão gera o CSV real.');
+    });
+
+    document.getElementById('detailModal').addEventListener('show.bs.modal', event => {
+      const button = event.relatedTarget;
+      document.getElementById('detailModalTitle').textContent = button.dataset.title || 'Detalhes da consulta';
+      document.getElementById('detailModalStatus').textContent = button.dataset.status || 'Status';
+      document.getElementById('detailPerson').textContent = button.dataset.person || '-';
+      document.getElementById('detailDate').textContent = button.dataset.date || '-';
+      document.getElementById('detailCost').textContent = button.dataset.cost || '-';
+      document.getElementById('detailDescription').textContent = button.dataset.description || 'Sem descrição cadastrada.';
+    });
+
+    updatePeriodDates();
+    updateView();
+  </script>
+  <script src="../../js/pages/consultas-profile.js"></script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mensagens administrativas | Home Care 4.0</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+  <link rel="stylesheet" href="../../css/pages/mensagens.css" />
+</head>
+<body data-profile-page="admin" data-can-access-admin="true">
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4 hc-messages-shell">
+        <div class="toast-container position-fixed top-0 end-0 p-3"><div id="appToast" class="toast border-0 shadow" role="status" aria-live="polite" aria-atomic="true"><div class="d-flex"><div class="toast-body" id="toastMessage">Acao realizada.</div><button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button></div></div></div>
+        <section class="hc-message-hero"><div class="p-4 p-lg-5"><p class="text-muted fs-5 mb-1"><i class="bi bi-shield-check me-2" aria-hidden="true"></i>Mensagens</p><h1 class="fw-bold mb-3">Fila administrativa de comunicacao</h1><p class="text-muted fs-5 mb-0">Acompanhe conversas criticas sobre validacao profissional, suporte e solicitacoes que precisam de intervencao.</p></div></section>
+        <section class="row g-4">
+          <div class="col-12 col-xl-4"><section class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><label for="buscarConversa" class="form-label">Buscar conversa ou contato</label><input id="buscarConversa" class="form-control form-control-lg mb-3" type="search" placeholder="Usuario, protocolo, perfil ou assunto" data-message-search><div class="hc-conversation-list"><button class="hc-conversation-card is-active" type="button" data-conversation data-conversation-title="Validacao profissional" data-conversation-subtitle="COREN pendente" data-conversation-avatar="VP" data-conversation-type="Admin" data-conversation-bond="Profissional" data-conversation-status="Pendente" data-conversation-profile="Profissional Ana Beatriz, COREN em revisao, documento ilegivel" data-conversation-profile-url="/pages/admin/validacao-profissional.html" data-conversation-search="validacao profissional coren pendente" data-conversation-messages="O documento enviado esta ilegivel.|Solicitei novo anexo pelo painel do profissional.|Assim que chegar, marque como pronto para validacao.">
+                    <span class="hc-conversation-avatar" aria-hidden="true">VP</span>
+                    <span class="hc-conversation-body"><strong>Validacao profissional</strong><small>COREN pendente</small></span>
+                    <span class="hc-conversation-meta"><span>Pendente</span><i class="bi bi-chevron-right" aria-hidden="true"></i></span>
+                  </button>
+<button class="hc-conversation-card" type="button" data-conversation data-conversation-title="Suporte familiar" data-conversation-subtitle="Permissao de acesso" data-conversation-avatar="SF" data-conversation-type="Familiar" data-conversation-bond="Vinculo familiar" data-conversation-status="Aberto" data-conversation-profile="Familiar tentando vincular pessoa cuidada por CPF e autorizacao gov.br" data-conversation-profile-url="/pages/admin/suporte.html" data-conversation-search="suporte familiar permissao acesso cpf" data-conversation-messages="A familiar nao conseguiu vincular a pessoa cuidada por CPF.|Vou revisar se o cadastro gov.br foi concluido.|Oriente a tentar novamente apos a confirmacao.">
+                    <span class="hc-conversation-avatar" aria-hidden="true">SF</span>
+                    <span class="hc-conversation-body"><strong>Suporte familiar</strong><small>Permissao de acesso</small></span>
+                    <span class="hc-conversation-meta"><span>Aberto</span><i class="bi bi-chevron-right" aria-hidden="true"></i></span>
+                  </button>
+<button class="hc-conversation-card" type="button" data-conversation data-conversation-title="Alerta operacional" data-conversation-subtitle="Atendimento recusado" data-conversation-avatar="AO" data-conversation-type="Operacao" data-conversation-bond="Solicitacao critica" data-conversation-status="Alta prioridade" data-conversation-profile="Regiao com baixa cobertura profissional e tres recusas consecutivas" data-conversation-profile-url="/pages/admin/solicitacoes.html" data-conversation-search="alerta operacional atendimento recusado" data-conversation-messages="Tres solicitacoes foram recusadas na mesma regiao.|Vou verificar disponibilidade de outros profissionais.|Se necessario, abrir contingencia de atendimento.">
+                    <span class="hc-conversation-avatar" aria-hidden="true">AO</span>
+                    <span class="hc-conversation-body"><strong>Alerta operacional</strong><small>Atendimento recusado</small></span>
+                    <span class="hc-conversation-meta"><span>Alta prioridade</span><i class="bi bi-chevron-right" aria-hidden="true"></i></span>
+                  </button></div></div></section></div>
+          <div class="col-12 col-xl-8"><section class="card border-0 shadow-sm rounded-4 hc-chat-panel" data-chat-panel><div class="card-body p-4"><div class="d-flex flex-column gap-3 border-bottom pb-3 mb-4"><div class="d-flex flex-column flex-md-row justify-content-between gap-3"><div><h2 class="h4 mb-1" data-chat-title>Validacao profissional</h2><p class="text-muted mb-0" data-chat-subtitle>COREN pendente</p></div><div class="hc-chat-actions"><button class="btn btn-outline-primary hc-chat-action-btn" type="button" data-call-contact><i class="bi bi-telephone me-2"></i>Ligar</button><button class="btn btn-outline-secondary hc-chat-action-btn" type="button" data-favorite-contact><i class="bi bi-star me-2"></i>Favoritar</button><a class="btn btn-outline-primary hc-chat-action-btn" href="#" data-view-profile><i class="bi bi-person-vcard me-2"></i>Ver perfil</a><button class="btn btn-outline-warning hc-chat-action-btn" type="button" data-block-contact><i class="bi bi-slash-circle me-2"></i>Bloquear</button><button class="btn btn-outline-danger hc-chat-action-btn" type="button" data-delete-conversation><i class="bi bi-trash me-2"></i>Excluir</button></div></div><div data-contact-profile></div></div><div class="hc-chat-thread mb-4" data-chat-thread></div><form data-message-form><label for="novaMensagem" class="form-label">Enviar resposta administrativa</label><div class="input-group input-group-lg"><input id="novaMensagem" class="form-control" placeholder="Digite a orientacao ou decisao" data-message-field><button class="btn btn-primary" type="submit"><i class="bi bi-send me-2"></i>Enviar</button></div></form></div></section></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div id="appFooter"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/pages/mensagens.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

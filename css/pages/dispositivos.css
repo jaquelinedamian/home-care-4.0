@@ -1,0 +1,228 @@
+.hc-device-shell {
+  --hc-device-border: rgba(15, 23, 42, .1);
+  --hc-device-muted: #64748b;
+  --hc-device-soft: #f8fafc;
+  --hc-device-success: #047857;
+  --hc-device-warning: #b45309;
+  --hc-device-danger: #b91c1c;
+}
+
+.hc-device-hero {
+  background: linear-gradient(135deg, #073b4c 0%, #0d6efd 100%);
+  color: #fff;
+  border-radius: 1.5rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  box-shadow: 0 1rem 2.5rem rgba(15, 23, 42, .14);
+}
+
+.hc-device-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .45rem .85rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .14);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hc-device-hero h1 {
+  font-weight: 800;
+  letter-spacing: 0;
+  max-width: 840px;
+}
+
+.hc-device-hero p {
+  color: rgba(255, 255, 255, .86);
+  max-width: 780px;
+  font-size: 1.1rem;
+}
+
+.hc-device-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+}
+
+.hc-device-card,
+.hc-device-panel {
+  border: 1px solid var(--hc-device-border);
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 .75rem 1.75rem rgba(15, 23, 42, .06);
+}
+
+.hc-device-card {
+  padding: 1.25rem;
+}
+
+.hc-device-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.hc-device-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #0d6efd;
+  background: #eef5ff;
+  font-size: 1.35rem;
+  flex: 0 0 auto;
+}
+
+.hc-device-status {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .35rem .65rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: .84rem;
+  border: 1px solid transparent;
+}
+
+.hc-device-status.is-online {
+  color: var(--hc-device-success);
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+
+.hc-device-status.is-warning {
+  color: var(--hc-device-warning);
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.hc-device-status.is-offline,
+.hc-device-status.is-alert {
+  color: var(--hc-device-danger);
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.hc-device-metric {
+  font-size: clamp(1.65rem, 4vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.hc-device-muted {
+  color: var(--hc-device-muted);
+}
+
+.hc-device-panel {
+  overflow: hidden;
+}
+
+.hc-device-panel-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--hc-device-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hc-device-panel-body {
+  padding: 1.25rem;
+}
+
+.hc-device-table {
+  margin-bottom: 0;
+}
+
+.hc-device-table th {
+  background: var(--hc-device-soft);
+  color: #475569;
+  font-size: .86rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.hc-device-chart {
+  min-height: 220px;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: .5rem;
+  align-items: end;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+}
+
+.hc-device-bar {
+  min-height: 36px;
+  border-radius: .75rem .75rem .35rem .35rem;
+  background: #0d6efd;
+  position: relative;
+}
+
+.hc-device-bar span {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + .35rem);
+  transform: translateX(-50%);
+  font-size: .76rem;
+  font-weight: 800;
+  color: #334155;
+}
+
+.hc-device-alert-list {
+  display: grid;
+  gap: .75rem;
+}
+
+.hc-device-alert {
+  display: flex;
+  gap: .75rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+}
+
+.hc-device-alert i {
+  color: #c2410c;
+  font-size: 1.3rem;
+}
+
+.hc-device-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+}
+
+.hc-device-integration-list {
+  display: grid;
+  gap: .75rem;
+}
+
+.hc-device-integration {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--hc-device-soft);
+  border: 1px solid #e2e8f0;
+}
+
+@media (max-width: 767.98px) {
+  .hc-device-panel {
+    overflow-x: auto;
+  }
+
+  .hc-device-panel-header > * {
+    width: 100%;
+  }
+}

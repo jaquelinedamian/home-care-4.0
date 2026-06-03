@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerenciar permissões | Caixa Inteligente</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4 mb-5">
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+          <div id="appToast" class="toast border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        
+<section class="card border-0 shadow-sm rounded-4 mb-4">
+  <div class="card-body p-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+      <div>
+        <span class="badge text-bg-primary mb-2"><i class="bi bi-people me-1"></i> Permissões</span>
+        <h1 class="h3 fw-bold mb-2">Gerenciar acessos</h1>
+        <p class="text-muted mb-0">Edite permissões, pause acessos ou remova pessoas com segurança.</p>
+      </div>
+      <a href="permissoes-convidar.html" class="btn btn-primary btn-lg align-self-start"><i class="bi bi-person-plus me-1"></i> Novo convite</a>
+    </div>
+  </div>
+</section>
+
+<section class="card border-0 shadow-sm rounded-4 mb-4">
+  <div class="card-body p-4">
+    <div class="row g-3 align-items-end">
+      <div class="col-12 col-lg-5"><label class="form-label">Buscar pessoa</label><input id="busca" class="form-control form-control-lg" type="search" placeholder="Nome, vínculo ou permissão"></div>
+      <div class="col-12 col-md-6 col-lg-4"><label class="form-label">Pessoa acompanhada</label><select id="filtroPessoa" class="form-select form-select-lg"><option value="">Todas</option><option>Maria</option><option>Antônio</option></select></div>
+      <div class="col-12 col-md-6 col-lg-3"><label class="form-label">Status</label><select id="filtroStatus" class="form-select form-select-lg"><option value="">Todos</option><option>Ativo</option><option>Pendente</option><option>Pausado</option></select></div>
+    </div>
+  </div>
+</section>
+
+<section class="row g-4" id="listaAcessos">
+  <div class="col-12 acesso" data-texto="paulo familiar medicamentos exames dona maria" data-pessoa="Maria" data-status="Ativo">
+    <article class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><div class="row g-3 align-items-center"><div class="col-lg"><span class="badge text-bg-success mb-2">Ativo</span><h2 class="h4 mb-1">Paulo Santos</h2><p class="text-muted mb-0">Familiar • Maria • Medicamentos e exames</p></div><div class="col-lg-auto d-grid d-sm-flex gap-2"><button class="btn btn-outline-primary btnEditar" data-bs-toggle="modal" data-bs-target="#modalEditar">Editar</button><button class="btn btn-outline-warning btnPausar">Pausar</button><button class="btn btn-outline-danger btnRemover" data-bs-toggle="modal" data-bs-target="#modalRemover">Remover</button></div></div></div></article>
+  </div>
+  <div class="col-12 acesso" data-texto="ana cuidadora sinais vitais sr antonio" data-pessoa="Antônio" data-status="Pendente">
+    <article class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><div class="row g-3 align-items-center"><div class="col-lg"><span class="badge text-bg-warning mb-2">Pendente</span><h2 class="h4 mb-1">Ana Oliveira</h2><p class="text-muted mb-0">Cuidadora • Antônio • Aguardando aceite</p></div><div class="col-lg-auto d-grid d-sm-flex gap-2"><button class="btn btn-outline-primary btnEditar" data-bs-toggle="modal" data-bs-target="#modalEditar">Editar</button><button class="btn btn-outline-secondary btnReenviar">Reenviar</button><button class="btn btn-outline-danger btnRemover" data-bs-toggle="modal" data-bs-target="#modalRemover">Cancelar</button></div></div></div></article>
+  </div>
+  <div class="col-12 acesso" data-texto="clinica profissional exames dona maria" data-pessoa="Maria" data-status="Pausado">
+    <article class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><div class="row g-3 align-items-center"><div class="col-lg"><span class="badge text-bg-secondary mb-2">Pausado</span><h2 class="h4 mb-1">Clínica Bem Cuidar</h2><p class="text-muted mb-0">Profissional • Maria • Acesso temporário pausado</p></div><div class="col-lg-auto d-grid d-sm-flex gap-2"><button class="btn btn-outline-primary btnEditar" data-bs-toggle="modal" data-bs-target="#modalEditar">Editar</button><button class="btn btn-outline-success btnAtivar">Ativar</button><button class="btn btn-outline-danger btnRemover" data-bs-toggle="modal" data-bs-target="#modalRemover">Remover</button></div></div></div></article>
+  </div>
+</section>
+
+<section class="alert alert-light border-0 shadow-sm rounded-4 mt-4 d-none" id="estadoVazio"><h2 class="h5 mb-1">Nenhum acesso encontrado</h2><p class="text-muted mb-0">Tente limpar filtros ou buscar outro nome.</p></section>
+
+<div class="modal fade" id="modalEditar" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header"><h2 class="modal-title h5">Editar permissões</h2><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-grid gap-3"><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Medicamentos</label></div><div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label">Exames</label></div><div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label">Editar dados</label></div></div></div><div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" data-bs-dismiss="modal" onclick="mostrarToast('Permissões atualizadas.')">Salvar</button></div></div></div></div>
+<div class="modal fade" id="modalRemover" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header"><h2 class="modal-title h5">Remover acesso?</h2><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="text-muted mb-0">A pessoa deixará de ver informações da pessoa acompanhada.</p></div><div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-danger" data-bs-dismiss="modal" onclick="mostrarToast('Acesso removido.')">Remover</button></div></div></div></div>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+
+});
+  </script>
+  <script>
+const busca=document.getElementById("busca"), filtroPessoa=document.getElementById("filtroPessoa"), filtroStatus=document.getElementById("filtroStatus"), acessos=Array.from(document.querySelectorAll(".acesso")), estadoVazio=document.getElementById("estadoVazio");
+function filtrar(){const t=busca.value.trim().toLowerCase(),p=filtroPessoa.value,s=filtroStatus.value;let v=0;acessos.forEach(a=>{const ok=(!t||a.dataset.texto.includes(t))&&(!p||a.dataset.pessoa===p)&&(!s||a.dataset.status===s);a.classList.toggle("d-none",!ok);if(ok)v++;});estadoVazio.classList.toggle("d-none",v>0);}
+[busca,filtroPessoa,filtroStatus].forEach(el=>el.addEventListener("input",filtrar));
+document.querySelectorAll(".btnPausar").forEach(b=>b.addEventListener("click",()=>mostrarToast("Acesso pausado.")));
+document.querySelectorAll(".btnAtivar").forEach(b=>b.addEventListener("click",()=>mostrarToast("Acesso ativado.")));
+document.querySelectorAll(".btnReenviar").forEach(b=>b.addEventListener("click",()=>mostrarToast("Convite reenviado.")));
+</script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

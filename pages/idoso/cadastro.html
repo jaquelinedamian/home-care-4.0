@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro | Home Care 4.0</title>
+  <meta name="description" content="Cadastro em fases do Home Care 4.0, com validação por CPF e gov.br." />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+
+  <link rel="stylesheet" href="../../css/pages/cadastro.css" />
+</head>
+<body class="cadastro-page">
+  <noscript>
+    <div class="alert alert-warning m-4" role="alert">
+      Para realizar o cadastro, ative o JavaScript do navegador.
+    </div>
+  </noscript>
+
+  <header class="public-header" aria-label="Cabeçalho público">
+    <div class="container-fluid px-4 px-lg-5">
+      <div class="public-header-inner">
+        <a class="public-brand" href="../../index.html" aria-label="Voltar para a página inicial do Home Care 4.0">
+          <img src="../../img/logo-home-care.svg" alt="Home Care 4.0" />
+          <span>
+            <strong>Home Care 4.0</strong>
+            <small>Cuidado humano conectado</small>
+          </span>
+        </a>
+
+        <nav class="public-nav" aria-label="Navegação pública">
+          <a href="../../index.html">Início</a>
+          <a href="../../index.html#como-funciona">Como funciona</a>
+          <a href="../../index.html#perfis">Perfis</a>
+          <a href="../../index.html#seguranca">Segurança</a>
+        </nav>
+
+        <div class="public-actions">
+          <a class="btn btn-outline-secondary rounded-pill px-4" href="../../pages/idoso/login.html">Entrar</a>
+          <a class="btn btn-primary rounded-pill px-4" href="../../pages/idoso/cadastro.html?novo=1">Criar conta</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="cadastro-shell" aria-live="polite">
+    <section class="cadastro-aside" aria-label="Resumo do cadastro">
+      <a class="cadastro-brand" href="../../index.html" aria-label="Voltar para página inicial">
+        <img src="../../img/logo-home-care.svg" alt="Home Care 4.0" />
+      </a>
+
+      <div class="cadastro-aside-copy">
+        <span class="cadastro-eyebrow">Cadastro seguro</span>
+        <h1>Vamos criar sua conta com calma.</h1>
+        <p>
+          Em poucos passos, vamos confirmar sua identidade e entender como o Home Care 4.0 pode ajudar você.
+        </p>
+      </div>
+
+      <nav class="cadastro-step-list" id="cadastroStepList" aria-label="Etapas do cadastro"></nav>
+
+      <div class="cadastro-help-card">
+        <i class="bi bi-shield-check" aria-hidden="true"></i>
+        <div>
+          <strong>Seus dados estão protegidos</strong>
+          <p>Usamos CPF e gov.br para garantir mais segurança no cadastro.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cadastro-main" aria-label="Formulário de cadastro">
+      <nav class="hc-breadcrumb" aria-label="breadcrumb">
+        <ol class="hc-breadcrumb-list">
+          <li><a href="../../index.html">Início</a></li>
+          <li class="hc-breadcrumb-current" aria-current="page">Cadastro</li>
+        </ol>
+      </nav>
+
+      <div class="cadastro-card">
+        <div class="cadastro-progress-header">
+          <div>
+            <span class="cadastro-step-counter" id="cadastroStepCounter">Etapa 1 de 5</span>
+            <h2 id="cadastroTitle">Carregando cadastro...</h2>
+          </div>
+          <div class="cadastro-progress-ring" id="cadastroProgressRing" aria-hidden="true">1</div>
+        </div>
+
+        <div class="progress cadastro-progress" role="progressbar" aria-label="Progresso do cadastro" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar" id="cadastroProgressBar"></div>
+        </div>
+
+        <div id="cadastroFeedback" class="cadastro-feedback" hidden></div>
+        <form id="cadastroForm" novalidate></form>
+
+        <div class="cadastro-actions">
+          <button class="btn btn-outline-secondary btn-lg" type="button" id="btnVoltar">
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+            Voltar
+          </button>
+          <button class="btn btn-primary btn-lg" type="button" id="btnContinuar">
+            Continuar
+            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="cadastro-benefits" aria-label="Benefícios do cadastro">
+        <article>
+          <i class="bi bi-lock" aria-hidden="true"></i>
+          <strong>Segurança</strong>
+          <span>Validação por CPF e gov.br.</span>
+        </article>
+        <article>
+          <i class="bi bi-heart-pulse" aria-hidden="true"></i>
+          <strong>Cuidado humano</strong>
+          <span>Fluxo simples, acolhedor e guiado.</span>
+        </article>
+        <article>
+          <i class="bi bi-house-heart" aria-hidden="true"></i>
+          <strong>Tudo em um lugar</strong>
+          <span>Serviços, agenda e acompanhamento.</span>
+        </article>
+      </div>
+    </section>
+  </main>
+
+
+  <footer class="public-footer" aria-label="Rodapé público">
+    <div class="container-fluid px-4 px-lg-5 py-5">
+      <div class="row gy-4 align-items-stretch">
+        <div class="col-lg-4">
+          <img class="public-footer-logo" src="../../img/logo-home-care.svg" alt="Home Care 4.0" />
+          <p class="public-footer-text">
+            Uma plataforma para simplificar o cuidado com idosos, aproximando famílias, profissionais e serviços de saúde em um único lugar.
+          </p>
+        </div>
+
+        <div class="col-6 col-lg-2">
+          <h2 class="public-footer-title">Plataforma</h2>
+          <ul class="public-footer-list">
+            <li><a href="../../index.html#como-funciona">Como funciona</a></li>
+            <li><a href="../../index.html#perfis">Perfis</a></li>
+            <li><a href="../../index.html#seguranca">Segurança</a></li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-lg-3">
+          <h2 class="public-footer-title">Ajuda</h2>
+          <ul class="public-footer-list">
+            <li><a href="#">Central de suporte</a></li>
+            <li><a href="#">Dúvidas frequentes</a></li>
+            <li><a href="#">Acessibilidade</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3">
+          <div class="public-security-card">
+            <span class="public-security-icon"><i class="bi bi-shield-check" aria-hidden="true"></i></span>
+            <div>
+              <strong>Cadastro seguro</strong>
+              <p>Validação por CPF e gov.br para proteger sua identidade e seus dados.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="public-footer-bottom">
+        <small>© 2026 Home Care 4.0 — Todos os direitos reservados.</small>
+        <small>Cuidado, autonomia e conexão humana.</small>
+      </div>
+    </div>
+  </footer>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/pages/cadastro.js"></script>
+</body>
+</html>

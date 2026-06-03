@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Solicitações | Home Care 4.0</title>
+
+  <meta
+    name="description"
+    content="Acompanhe solicitações de serviços, status dos profissionais, confirmações, cancelamentos e mensagens."
+  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+              <div>
+                <p class="text-muted fs-5 mb-1">Serviços</p>
+                <h1 class="fw-bold mb-2">Solicitações</h1>
+                <p class="text-muted fs-5 mb-0">
+                  Acompanhe pedidos enviados, respostas dos profissionais e próximos passos.
+                </p>
+              </div>
+
+              <div class="d-flex flex-wrap gap-2 align-items-start">
+                <a href="servicos.html" class="btn btn-primary btn-lg">
+                  Buscar profissional
+                </a>
+
+                <a href="servicos-atendimentos.html" class="btn btn-outline-primary btn-lg">
+                  Ver atendimentos
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">2</strong>
+                <span class="text-muted">Aguardando</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">1</strong>
+                <span class="text-muted">Em análise</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">1</strong>
+                <span class="text-muted">Confirmada</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">0</strong>
+                <span class="text-muted">Urgentes</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="row g-3 align-items-end">
+                  <div class="col-12 col-lg-5">
+                    <label for="requestSearch" class="form-label fs-5">Buscar solicitação</label>
+                    <input
+                      type="search"
+                      class="form-control form-control-lg"
+                      id="requestSearch"
+                      placeholder="Ex: fisioterapia, Ana Paula, Antônio..."
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6 col-lg-3">
+                    <label for="requestTypeFilter" class="form-label fs-5">Tipo</label>
+                    <select class="form-select form-select-lg" id="requestTypeFilter">
+                      <option value="todos">Todos</option>
+                      <option value="fisioterapia">Fisioterapia</option>
+                      <option value="enfermagem">Enfermagem</option>
+                      <option value="psicologia">Psicologia</option>
+                      <option value="cuidador">Cuidador</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-lg-2">
+                    <label for="requestPersonFilter" class="form-label fs-5">Pessoa</label>
+                    <select class="form-select form-select-lg" id="requestPersonFilter">
+                      <option value="todos">Todos</option>
+                      <option value="antonio">Antônio</option>
+                      <option value="maria">Maria</option>
+                      <option value="eu">Eu</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-lg-2">
+                    <button class="btn btn-outline-secondary btn-lg w-100" id="clearRequestFilters" type="button">
+                      Limpar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4">
+
+          <div class="col-12 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h2 class="h5 fw-bold mb-0">Aguardando</h2>
+                  <span class="badge text-bg-warning">2</span>
+                </div>
+
+                <div class="vstack gap-3 request-column" data-status="aguardando">
+
+                  <article
+                    class="request-card border rounded-4 p-3"
+                    data-status="aguardando"
+                    data-type="fisioterapia"
+                    data-person="antonio"
+                    data-search="fisioterapia domiciliar ana paula antonio aguardando"
+                  >
+                    <span class="badge text-bg-warning mb-2">Aguardando resposta</span>
+                    <h3 class="h6 fw-bold mb-1">Fisioterapia domiciliar</h3>
+                    <p class="text-muted mb-2">Ana Paula Martins • Antônio Damian</p>
+
+                    <div class="small text-muted mb-3">
+                      Enviado hoje às 09:30. A profissional ainda não respondeu.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                      <a href="servicos-profissional-detalhes.html" class="btn btn-outline-primary btn-sm">
+                        Ver detalhes
+                      </a>
+
+                      <a href="mensagens-conversa.html" class="btn btn-outline-secondary btn-sm">
+                        Mensagem
+                      </a>
+
+                      <button
+                        type="button"
+                        class="btn btn-outline-danger btn-sm cancel-request-btn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#cancelRequestModal"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </article>
+
+                  <article
+                    class="request-card border rounded-4 p-3"
+                    data-status="aguardando"
+                    data-type="enfermagem"
+                    data-person="maria"
+                    data-search="enfermagem carlos curativo maria aguardando"
+                  >
+                    <span class="badge text-bg-warning mb-2">Aguardando resposta</span>
+                    <h3 class="h6 fw-bold mb-1">Curativo em casa</h3>
+                    <p class="text-muted mb-2">Carlos Souza • Maria Helena</p>
+
+                    <div class="small text-muted mb-3">
+                      Enviado ontem. Prazo estimado de resposta: até hoje.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                      <a href="servicos-profissional-detalhes.html" class="btn btn-outline-primary btn-sm">
+                        Ver detalhes
+                      </a>
+
+                      <a href="mensagens-conversa.html" class="btn btn-outline-secondary btn-sm">
+                        Mensagem
+                      </a>
+
+                      <button
+                        type="button"
+                        class="btn btn-outline-danger btn-sm cancel-request-btn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#cancelRequestModal"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </article>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h2 class="h5 fw-bold mb-0">Em análise</h2>
+                  <span class="badge text-bg-info">1</span>
+                </div>
+
+                <div class="vstack gap-3 request-column" data-status="analise">
+
+                  <article
+                    class="request-card border rounded-4 p-3"
+                    data-status="analise"
+                    data-type="psicologia"
+                    data-person="eu"
+                    data-search="psicologia renata online em analise eu"
+                  >
+                    <span class="badge text-bg-info mb-2">Profissional analisando</span>
+                    <h3 class="h6 fw-bold mb-1">Consulta psicológica</h3>
+                    <p class="text-muted mb-2">Renata Oliveira • Eu</p>
+
+                    <div class="small text-muted mb-3">
+                      A profissional está revisando a solicitação antes de confirmar.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                      <a href="servicos-profissional-detalhes.html" class="btn btn-outline-primary btn-sm">
+                        Ver detalhes
+                      </a>
+
+                      <a href="mensagens-conversa.html" class="btn btn-outline-secondary btn-sm">
+                        Enviar mensagem
+                      </a>
+
+                      <button type="button" class="btn btn-outline-success btn-sm move-to-confirmed">
+                        Marcar como confirmada
+                      </button>
+                    </div>
+                  </article>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h2 class="h5 fw-bold mb-0">Confirmadas</h2>
+                  <span class="badge text-bg-success">1</span>
+                </div>
+
+                <div class="vstack gap-3 request-column" data-status="confirmada">
+
+                  <article
+                    class="request-card border rounded-4 p-3"
+                    data-status="confirmada"
+                    data-type="fisioterapia"
+                    data-person="antonio"
+                    data-search="fisioterapia confirmada ana paula antonio hoje 15"
+                  >
+                    <span class="badge text-bg-success mb-2">Confirmada</span>
+                    <h3 class="h6 fw-bold mb-1">Fisioterapia domiciliar</h3>
+                    <p class="text-muted mb-2">Ana Paula Martins • Antônio Damian</p>
+
+                    <div class="small text-muted mb-3">
+                      Atendimento confirmado para hoje às 15:00.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                      <a href="servicos-atendimentos.html" class="btn btn-primary btn-sm">
+                        Ver atendimento
+                      </a>
+
+                      <a href="mensagens-conversa.html" class="btn btn-outline-secondary btn-sm">
+                        Conversar
+                      </a>
+
+                      <a href="agenda.html" class="btn btn-outline-primary btn-sm">
+                        Ver na agenda
+                      </a>
+                    </div>
+                  </article>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h2 class="h5 fw-bold mb-0">Canceladas</h2>
+                  <span class="badge text-bg-secondary" id="cancelCountBadge">0</span>
+                </div>
+
+                <div class="vstack gap-3 request-column" data-status="cancelada" id="cancelledColumn">
+                  <div class="alert alert-light border rounded-4 mb-0" id="cancelledEmptyState">
+                    Nenhuma solicitação cancelada.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <div class="alert alert-light border rounded-4 mt-4 d-none" id="emptyRequestsState">
+          <h3 class="h5 fw-bold">Nenhuma solicitação encontrada</h3>
+          <p class="text-muted mb-0">
+            Tente mudar os filtros ou fazer uma nova busca de profissionais.
+          </p>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div
+    class="modal fade"
+    id="cancelRequestModal"
+    tabindex="-1"
+    aria-labelledby="cancelRequestModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5 fw-bold" id="cancelRequestModalLabel">
+            Cancelar solicitação?
+          </h2>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="text-muted fs-5">
+            A solicitação será movida para canceladas e o profissional será avisado.
+          </p>
+
+          <label for="cancelReason" class="form-label fs-5">Motivo</label>
+          <select class="form-select form-select-lg" id="cancelReason">
+            <option>Não preciso mais do atendimento</option>
+            <option>Escolhi outro profissional</option>
+            <option>Horário não atende</option>
+            <option>Outro motivo</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">
+            Voltar
+          </button>
+
+          <button type="button" class="btn btn-danger btn-lg" id="confirmCancelRequestBtn">
+            Confirmar cancelamento
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+
+const requestSearch = document.getElementById("requestSearch");
+    const requestTypeFilter = document.getElementById("requestTypeFilter");
+    const requestPersonFilter = document.getElementById("requestPersonFilter");
+    const clearRequestFilters = document.getElementById("clearRequestFilters");
+    const requestCards = document.querySelectorAll(".request-card");
+    const emptyRequestsState = document.getElementById("emptyRequestsState");
+    const confirmCancelRequestBtn = document.getElementById("confirmCancelRequestBtn");
+    const cancelledColumn = document.getElementById("cancelledColumn");
+    const cancelledEmptyState = document.getElementById("cancelledEmptyState");
+    const cancelCountBadge = document.getElementById("cancelCountBadge");
+
+    let selectedCardToCancel = null;
+    let cancelledCount = 0;
+
+    function applyRequestFilters() {
+      const searchTerm = requestSearch.value.trim().toLowerCase();
+      const type = requestTypeFilter.value;
+      const person = requestPersonFilter.value;
+
+      let visibleCount = 0;
+
+      document.querySelectorAll(".request-card").forEach(function (card) {
+        const matchSearch = searchTerm === "" || card.dataset.search.includes(searchTerm);
+        const matchType = type === "todos" || card.dataset.type === type;
+        const matchPerson = person === "todos" || card.dataset.person === person;
+
+        const shouldShow = matchSearch && matchType && matchPerson;
+
+        card.classList.toggle("d-none", !shouldShow);
+
+        if (shouldShow) {
+          visibleCount++;
+        }
+      });
+
+      emptyRequestsState.classList.toggle("d-none", visibleCount > 0);
+    }
+
+    document.querySelectorAll(".cancel-request-btn").forEach(function (button) {
+      button.addEventListener("click", function () {
+        selectedCardToCancel = button.closest(".request-card");
+      });
+    });
+
+    document.querySelectorAll(".move-to-confirmed").forEach(function (button) {
+      button.addEventListener("click", function () {
+        const card = button.closest(".request-card");
+        const confirmedColumn = document.querySelector('[data-status="confirmada"]');
+
+        card.dataset.status = "confirmada";
+        card.querySelector(".badge").className = "badge text-bg-success mb-2";
+        card.querySelector(".badge").textContent = "Confirmada";
+
+        button.remove();
+
+        confirmedColumn.appendChild(card);
+        applyRequestFilters();
+      });
+    });
+
+    confirmCancelRequestBtn.addEventListener("click", function () {
+      if (!selectedCardToCancel) {
+        return;
+      }
+
+      const badge = selectedCardToCancel.querySelector(".badge");
+
+      selectedCardToCancel.dataset.status = "cancelada";
+      badge.className = "badge text-bg-secondary mb-2";
+      badge.textContent = "Cancelada";
+
+      selectedCardToCancel.querySelector(".d-grid").innerHTML = `
+        <a href="servicos.html" class="btn btn-outline-primary btn-sm">
+          Buscar outro profissional
+        </a>
+        <a href="servicos-historico.html" class="btn btn-outline-secondary btn-sm">
+          Ver histórico
+        </a>
+      `;
+
+      cancelledEmptyState.classList.add("d-none");
+      cancelledColumn.appendChild(selectedCardToCancel);
+
+      cancelledCount++;
+      cancelCountBadge.textContent = cancelledCount;
+
+      const modalElement = document.getElementById("cancelRequestModal");
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      modal.hide();
+
+      selectedCardToCancel = null;
+      applyRequestFilters();
+    });
+
+    requestSearch.addEventListener("input", applyRequestFilters);
+    requestTypeFilter.addEventListener("change", applyRequestFilters);
+    requestPersonFilter.addEventListener("change", applyRequestFilters);
+
+    clearRequestFilters.addEventListener("click", function () {
+      requestSearch.value = "";
+      requestTypeFilter.value = "todos";
+      requestPersonFilter.value = "todos";
+      applyRequestFilters();
+    });
+
+    applyRequestFilters();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

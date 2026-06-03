@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Consultas | Home Care 4.0</title>
+
+  <meta
+    name="description"
+    content="Gerencie consultas agendadas, próximas consultas, teleconsultas, retornos, filtros e histórico de atendimentos da plataforma Home Care 4.0."
+  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+  <link rel="stylesheet" href="../../css/pages/consultas.css" />
+</head>
+
+<body class="hc-consultations-page hc-idoso-module" data-profile-page="idoso">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden hc-module-header">
+              <div class="card-body p-4 p-lg-5">
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-lg-8">
+                    <p class="text-muted fs-5 mb-1" data-consultas-index-kicker>Central de consultas</p>
+                    <h1 class="fw-bold mb-3" data-consultas-index-title>Consultas organizadas, sem susto e sem esquecer retorno</h1>
+                    <p class="hc-profile-note mb-0" data-consultas-index-description>
+                      Acompanhe consultas presenciais, teleconsultas, retornos, orientações de preparo e próximos passos de cada pessoa acompanhada.
+                    </p>
+                  </div>
+
+                  <div class="col-12 col-lg-4">
+                    <div class="d-grid gap-2">
+                      <a href="consultas-agendar.html" class="btn btn-primary btn-lg">
+                        Agendar consulta
+                      </a>
+                      <a href="servicos.html" class="btn btn-outline-primary btn-lg">
+                        Buscar profissional
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4" aria-label="Resumo das consultas">
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Hoje</p>
+                <strong class="display-6 fw-bold">2</strong>
+                <p class="mb-0 text-muted">consultas agendadas</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Esta semana</p>
+                <strong class="display-6 fw-bold">5</strong>
+                <p class="mb-0 text-muted">atendimentos previstos</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Pendências</p>
+                <strong class="display-6 fw-bold">3</strong>
+                <p class="mb-0 text-muted">confirmações ou preparos</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Retornos</p>
+                <strong class="display-6 fw-bold">1</strong>
+                <p class="mb-0 text-muted">retorno recomendado</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4 mb-4">
+          <div class="col-12 col-xl-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Próximas consultas</h2>
+                    <p class="text-muted mb-0">Filtre por pessoa, período, tipo e status.</p>
+                  </div>
+
+                  <div class="d-flex gap-2 flex-wrap">
+                    <a href="consultas-historico.html" class="btn btn-light border">Ver histórico</a>
+                    <button type="button" class="btn btn-outline-secondary" id="clearConsultationFilters">
+                      Limpar filtros
+                    </button>
+                  </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <label for="filterPerson" class="form-label">Pessoa</label>
+                    <select class="form-select consultation-filter" id="filterPerson">
+                      <option value="todos">Todas</option>
+                      <option value="maria">Maria Helena</option>
+                      <option value="joao">João Carlos</option>
+                      <option value="eu">Eu</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <label for="filterPeriod" class="form-label">Período</label>
+                    <select class="form-select consultation-filter" id="filterPeriod">
+                      <option value="todos">Todos</option>
+                      <option value="hoje">Hoje</option>
+                      <option value="semana">Esta semana</option>
+                      <option value="mes">Este mês</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <label for="filterType" class="form-label">Tipo</label>
+                    <select class="form-select consultation-filter" id="filterType">
+                      <option value="todos">Todos</option>
+                      <option value="presencial">Presencial</option>
+                      <option value="teleconsulta">Teleconsulta</option>
+                      <option value="domiciliar">Domiciliar</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <label for="filterStatus" class="form-label">Status</label>
+                    <select class="form-select consultation-filter" id="filterStatus">
+                      <option value="todos">Todos</option>
+                      <option value="confirmada">Confirmada</option>
+                      <option value="pendente">Pendente</option>
+                      <option value="retorno">Retorno</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-column gap-3" id="consultationList">
+                  <article class="card border rounded-4 consultation-item" data-person="maria" data-period="hoje" data-type="domiciliar" data-status="confirmada">
+                    <div class="card-body p-4">
+                      <div class="row g-3 align-items-center">
+                        <div class="col-12 col-lg-2">
+                          <div class="text-center text-lg-start">
+                            <span class="badge text-bg-primary mb-2">Hoje</span>
+                            <strong class="d-block fs-4">14:30</strong>
+                          </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                          <h3 class="h5 fw-bold mb-1">Consulta geriátrica domiciliar</h3>
+                          <p class="mb-1 text-muted">Maria Helena com Dr. Renato Alves</p>
+                          <p class="mb-0 small text-muted">Endereço: Rua das Acácias, 120 · 2,4 km de distância</p>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                          <div class="d-grid gap-2 d-md-flex justify-content-lg-end flex-wrap">
+                            <a href="consultas-detalhes.html" class="btn btn-primary">Ver detalhes</a>
+                            <a href="mensagens-conversa.html" class="btn btn-light border">Mensagem</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Rua+das+Acacias+120" target="_blank" rel="noopener" class="btn btn-outline-primary">Rota</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="card border rounded-4 consultation-item" data-person="eu" data-period="hoje" data-type="teleconsulta" data-status="pendente">
+                    <div class="card-body p-4">
+                      <div class="row g-3 align-items-center">
+                        <div class="col-12 col-lg-2">
+                          <div class="text-center text-lg-start">
+                            <span class="badge text-bg-warning mb-2">Pendente</span>
+                            <strong class="d-block fs-4">18:00</strong>
+                          </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                          <h3 class="h5 fw-bold mb-1">Teleconsulta com psicóloga</h3>
+                          <p class="mb-1 text-muted">Você com Dra. Camila Torres</p>
+                          <p class="mb-0 small text-muted">Confirme presença até 16:00 para liberar o link.</p>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                          <div class="d-grid gap-2 d-md-flex justify-content-lg-end flex-wrap">
+                            <button type="button" class="btn btn-success confirm-consultation">Confirmar</button>
+                            <a href="consultas-detalhes.html" class="btn btn-primary">Ver detalhes</a>
+                            <button type="button" class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#rescheduleModal">Reagendar</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="card border rounded-4 consultation-item" data-person="joao" data-period="semana" data-type="presencial" data-status="retorno">
+                    <div class="card-body p-4">
+                      <div class="row g-3 align-items-center">
+                        <div class="col-12 col-lg-2">
+                          <div class="text-center text-lg-start">
+                            <span class="badge text-bg-info mb-2">Retorno</span>
+                            <strong class="d-block fs-4">Qua · 09:00</strong>
+                          </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                          <h3 class="h5 fw-bold mb-1">Retorno cardiológico</h3>
+                          <p class="mb-1 text-muted">João Carlos com Dra. Paula Mendes</p>
+                          <p class="mb-0 small text-muted">Levar exames recentes e lista de medicamentos em uso.</p>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                          <div class="d-grid gap-2 d-md-flex justify-content-lg-end flex-wrap">
+                            <a href="consultas-detalhes.html" class="btn btn-primary">Ver detalhes</a>
+                            <button type="button" class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#prepareModal">Preparo</button>
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancelar</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="card border rounded-4 consultation-item" data-person="maria" data-period="mes" data-type="presencial" data-status="confirmada">
+                    <div class="card-body p-4">
+                      <div class="row g-3 align-items-center">
+                        <div class="col-12 col-lg-2">
+                          <div class="text-center text-lg-start">
+                            <span class="badge text-bg-success mb-2">Confirmada</span>
+                            <strong class="d-block fs-4">18/05</strong>
+                          </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                          <h3 class="h5 fw-bold mb-1">Consulta de nutrição</h3>
+                          <p class="mb-1 text-muted">Maria Helena com Nutri. Bianca Ramos</p>
+                          <p class="mb-0 small text-muted">Atendimento presencial na clínica parceira.</p>
+                        </div>
+
+                        <div class="col-12 col-lg-4">
+                          <div class="d-grid gap-2 d-md-flex justify-content-lg-end flex-wrap">
+                            <a href="consultas-detalhes.html" class="btn btn-primary">Ver detalhes</a>
+                            <button type="button" class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#rescheduleModal">Reagendar</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+
+                <div class="alert alert-light border rounded-4 mt-4 d-none" id="emptyConsultations">
+                  Nenhuma consulta encontrada com esses filtros. Tente limpar os filtros ou agendar uma nova consulta.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-xl-4">
+            <div class="d-flex flex-column gap-4">
+              <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Atenção antes da consulta</h2>
+
+                  <div class="list-group list-group-flush">
+                    <div class="list-group-item px-0">
+                      <strong class="d-block">Confirmar teleconsulta</strong>
+                      <span class="text-muted">Hoje, até 16:00</span>
+                    </div>
+                    <div class="list-group-item px-0">
+                      <strong class="d-block">Separar exames do João</strong>
+                      <span class="text-muted">Retorno cardiológico de quarta-feira</span>
+                    </div>
+                    <div class="list-group-item px-0">
+                      <strong class="d-block">Atualizar medicamentos da Maria</strong>
+                      <span class="text-muted">Ajuda o profissional a avaliar interações.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Calendário rápido</h2>
+
+                  <label for="quickDate" class="form-label">Escolha uma data</label>
+                  <input type="date" class="form-control form-control-lg mb-3" id="quickDate" />
+
+                  <div class="alert alert-info rounded-4 mb-0" id="dateResult">
+                    Selecione uma data para ver as consultas previstas.
+                  </div>
+                </div>
+              </div>
+
+              <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Histórico recente</h2>
+
+                  <div class="timeline d-flex flex-column gap-3">
+                    <div class="border-start border-3 ps-3">
+                      <strong class="d-block">Consulta de enfermagem</strong>
+                      <span class="text-muted">Ontem · orientação registrada</span>
+                    </div>
+                    <div class="border-start border-3 ps-3">
+                      <strong class="d-block">Fisioterapia domiciliar</strong>
+                      <span class="text-muted">22/04 · evolução positiva</span>
+                    </div>
+                    <div class="border-start border-3 ps-3">
+                      <strong class="d-block">Clínico geral</strong>
+                      <span class="text-muted">15/04 · retorno em 30 dias</span>
+                    </div>
+                  </div>
+
+                  <a href="consultas-historico.html" class="btn btn-light border w-100 mt-4">
+                    Abrir histórico completo
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4">
+          <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <h2 class="h4 fw-bold mb-3">Precisa de ajuda para decidir?</h2>
+                <p class="text-muted mb-4">
+                  Use a busca guiada para informar sintomas, prioridade, distância, preço e preferência de atendimento.
+                </p>
+                <a href="servicos.html" class="btn btn-outline-primary btn-lg w-100">
+                  Encontrar o profissional ideal
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <h2 class="h4 fw-bold mb-3">Resumo para levar na consulta</h2>
+                <p class="text-muted mb-4">
+                  Gere uma visão rápida com medicamentos, exames, vacinas, sinais vitais e histórico da pessoa acompanhada.
+                </p>
+                <button type="button" class="btn btn-primary btn-lg w-100" id="generateSummaryBtn">
+                  Gerar resumo da consulta
+                </button>
+                <div class="alert alert-success rounded-4 mt-3 d-none" id="summaryGenerated">
+                  Resumo criado. No sistema real, esse botão abriria um PDF ou uma página de pré-visualização.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5 fw-bold" id="rescheduleModalLabel">Reagendar consulta</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted">Escolha uma nova data e horário sugeridos.</p>
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label for="newDate" class="form-label">Nova data</label>
+              <input type="date" class="form-control" id="newDate" />
+            </div>
+            <div class="col-12 col-md-6">
+              <label for="newTime" class="form-label">Novo horário</label>
+              <input type="time" class="form-control" id="newTime" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Voltar</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Solicitar reagendamento</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="prepareModal" tabindex="-1" aria-labelledby="prepareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5 fw-bold" id="prepareModalLabel">Preparo da consulta</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="mb-0">
+            <li>Levar exames recentes.</li>
+            <li>Atualizar lista de medicamentos.</li>
+            <li>Anotar sintomas, dúvidas e mudanças percebidas.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5 fw-bold" id="cancelModalLabel">Cancelar consulta</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0">Tem certeza que deseja solicitar o cancelamento desta consulta?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Não cancelar</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Solicitar cancelamento</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+
+
+const consultationFilters = document.querySelectorAll(".consultation-filter");
+    const consultationItems = document.querySelectorAll(".consultation-item");
+    const emptyConsultations = document.getElementById("emptyConsultations");
+    const clearConsultationFilters = document.getElementById("clearConsultationFilters");
+    const quickDate = document.getElementById("quickDate");
+    const dateResult = document.getElementById("dateResult");
+    const generateSummaryBtn = document.getElementById("generateSummaryBtn");
+    const summaryGenerated = document.getElementById("summaryGenerated");
+
+    function applyConsultationFilters() {
+      const selectedPerson = document.getElementById("filterPerson").value;
+      const selectedPeriod = document.getElementById("filterPeriod").value;
+      const selectedType = document.getElementById("filterType").value;
+      const selectedStatus = document.getElementById("filterStatus").value;
+
+      let visibleCount = 0;
+
+      consultationItems.forEach(function (item) {
+        const matchPerson = selectedPerson === "todos" || item.dataset.person === selectedPerson;
+        const matchPeriod = selectedPeriod === "todos" || item.dataset.period === selectedPeriod;
+        const matchType = selectedType === "todos" || item.dataset.type === selectedType;
+        const matchStatus = selectedStatus === "todos" || item.dataset.status === selectedStatus;
+        const shouldShow = matchPerson && matchPeriod && matchType && matchStatus;
+
+        item.classList.toggle("d-none", !shouldShow);
+
+        if (shouldShow) {
+          visibleCount++;
+        }
+      });
+
+      emptyConsultations.classList.toggle("d-none", visibleCount > 0);
+    }
+
+    consultationFilters.forEach(function (filter) {
+      filter.addEventListener("change", applyConsultationFilters);
+    });
+
+    clearConsultationFilters.addEventListener("click", function () {
+      document.getElementById("filterPerson").value = "todos";
+      document.getElementById("filterPeriod").value = "todos";
+      document.getElementById("filterType").value = "todos";
+      document.getElementById("filterStatus").value = "todos";
+      applyConsultationFilters();
+    });
+
+    document.querySelectorAll(".confirm-consultation").forEach(function (button) {
+      button.addEventListener("click", function () {
+        button.textContent = "Confirmada";
+        button.classList.remove("btn-success");
+        button.classList.add("btn-outline-success");
+        button.disabled = true;
+      });
+    });
+
+    quickDate.addEventListener("change", function () {
+      if (!quickDate.value) {
+        dateResult.textContent = "Selecione uma data para ver as consultas previstas.";
+        return;
+      }
+
+      const selectedDate = new Date(quickDate.value + "T00:00:00");
+      const formattedDate = selectedDate.toLocaleDateString("pt-BR");
+
+      dateResult.textContent = "Em " + formattedDate + ", o sistema exibiria as consultas dessa data.";
+    });
+
+    generateSummaryBtn.addEventListener("click", function () {
+      summaryGenerated.classList.remove("d-none");
+    });
+
+    applyConsultationFilters();
+  </script>
+  <script src="../../js/pages/consultas-profile.js"></script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

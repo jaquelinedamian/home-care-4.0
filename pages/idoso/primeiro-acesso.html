@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Primeiro acesso | Home Care 4.0</title>
+  <meta name="description" content="Tutorial de primeiro acesso do Home Care 4.0 com passos simples para configurar perfil, agenda, remédios, contatos e serviços." />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+
+  <style>
+    .hc-first-access-hero {
+      background: linear-gradient(135deg, rgba(13, 110, 253, .10), rgba(25, 135, 84, .08));
+      border: 1px solid rgba(13, 110, 253, .12);
+    }
+
+    .hc-first-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      color: var(--color-secondary);
+      font-weight: 800;
+      margin-bottom: .75rem;
+    }
+
+    .hc-first-title {
+      font-size: clamp(2rem, 4vw, 3.15rem);
+      line-height: 1.06;
+      letter-spacing: -.035em;
+      color: var(--color-primary-dark);
+    }
+
+    .hc-first-lead {
+      font-size: clamp(1.1rem, 2vw, 1.35rem);
+      line-height: 1.55;
+      color: var(--color-text-muted);
+    }
+
+    .hc-first-step {
+      position: relative;
+      min-height: 100%;
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+
+    .hc-first-step:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg) !important;
+    }
+
+    .hc-step-number {
+      width: 3.25rem;
+      height: 3.25rem;
+      border-radius: 1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-primary);
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.35rem;
+      flex: 0 0 auto;
+    }
+
+    .hc-step-icon {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-secondary-light);
+      color: var(--color-secondary);
+      font-size: 1.45rem;
+      flex: 0 0 auto;
+    }
+
+    .hc-first-progress {
+      height: .85rem;
+      border-radius: var(--radius-pill);
+      background: var(--color-primary-light);
+      overflow: hidden;
+    }
+
+    .hc-first-progress span {
+      display: block;
+      height: 100%;
+      width: 20%;
+      border-radius: inherit;
+      background: var(--color-primary);
+    }
+
+    .hc-check-item {
+      display: flex;
+      gap: .75rem;
+      align-items: flex-start;
+      padding: 1rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background: #fff;
+    }
+
+    .hc-check-item i {
+      color: var(--color-success);
+      font-size: 1.35rem;
+      margin-top: .1rem;
+    }
+
+    .hc-first-help {
+      background: rgba(220, 53, 69, .08);
+      border: 1px solid rgba(220, 53, 69, .18);
+    }
+
+    .hc-touch-btn {
+      min-height: 3.35rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .hc-soft-panel {
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(15, 23, 42, .08);
+    }
+  </style>
+</head>
+
+<body data-active-profile="idoso" data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4" aria-label="Atalhos principais">
+          <div class="card-body p-3 p-lg-4">
+            <div class="d-flex flex-wrap gap-2">
+              <a class="btn btn-primary" href="primeiro-acesso.html"><i class="bi bi-stars me-2" aria-hidden="true"></i>Primeiro acesso</a>
+              <a class="btn btn-outline-primary" href="dashboard.html"><i class="bi bi-house me-2" aria-hidden="true"></i>Início</a>
+              <a class="btn btn-outline-primary" href="agenda.html"><i class="bi bi-calendar-check me-2" aria-hidden="true"></i>Agenda</a>
+              <a class="btn btn-outline-primary" href="medicamentos.html"><i class="bi bi-capsule me-2" aria-hidden="true"></i>Remédios</a>
+              <a class="btn btn-outline-primary" href="consultas.html"><i class="bi bi-camera-video me-2" aria-hidden="true"></i>Consultas</a>
+              <a class="btn btn-outline-danger" href="emergencia.html"><i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>Ajuda agora</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4 hc-first-access-hero">
+          <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+              <div class="col-12 col-xl-8">
+                <span class="hc-first-kicker"><i class="bi bi-compass" aria-hidden="true"></i>Guia de primeiro acesso</span>
+                <h1 class="fw-bold hc-first-title mb-3">Vamos configurar sua conta com calma?</h1>
+                <p class="hc-first-lead mb-0">Siga estes passos para deixar sua experiência mais segura, simples e preparada para cuidar de você. Pode fazer um passo por vez, sem pressa.</p>
+              </div>
+              <div class="col-12 col-xl-4">
+                <div class="card border-0 rounded-4 hc-soft-panel">
+                  <div class="card-body p-4">
+                    <p class="fw-bold mb-2">Seu progresso inicial</p>
+                    <div class="hc-first-progress mb-3" aria-label="Progresso de configuração: 20%"><span></span></div>
+                    <p class="text-muted mb-0">Comece pelo perfil. Depois você pode cadastrar remédios, agenda, contatos e preferências.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4" aria-label="Passo a passo recomendado">
+          <div class="col-12 col-lg-6">
+            <article class="card border-0 shadow-sm rounded-4 hc-first-step">
+              <div class="card-body p-4">
+                <div class="d-flex gap-3 align-items-start mb-3">
+                  <span class="hc-step-number">1</span>
+                  <div>
+                    <h2 class="h4 fw-bold mb-2">Complete seu perfil</h2>
+                    <p class="text-muted mb-0">Confirme nome, telefone, endereço, data de nascimento e contatos importantes.</p>
+                  </div>
+                </div>
+                <a href="perfil.html" class="btn btn-outline-primary w-100 hc-touch-btn">Completar perfil</a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <article class="card border-0 shadow-sm rounded-4 hc-first-step">
+              <div class="card-body p-4">
+                <div class="d-flex gap-3 align-items-start mb-3">
+                  <span class="hc-step-number">2</span>
+                  <div>
+                    <h2 class="h4 fw-bold mb-2">Cadastre seus remédios</h2>
+                    <p class="text-muted mb-0">Inclua horários, doses e observações para receber lembretes claros durante o dia.</p>
+                  </div>
+                </div>
+                <a href="medicamentos.html" class="btn btn-outline-primary w-100 hc-touch-btn">Cadastrar remédios</a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <article class="card border-0 shadow-sm rounded-4 hc-first-step">
+              <div class="card-body p-4">
+                <div class="d-flex gap-3 align-items-start mb-3">
+                  <span class="hc-step-number">3</span>
+                  <div>
+                    <h2 class="h4 fw-bold mb-2">Organize sua agenda</h2>
+                    <p class="text-muted mb-0">Veja consultas, exames, vacinas e compromissos de cuidado em um só lugar.</p>
+                  </div>
+                </div>
+                <a href="agenda.html" class="btn btn-outline-primary w-100 hc-touch-btn">Ver minha agenda</a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <article class="card border-0 shadow-sm rounded-4 hc-first-step">
+              <div class="card-body p-4">
+                <div class="d-flex gap-3 align-items-start mb-3">
+                  <span class="hc-step-number">4</span>
+                  <div>
+                    <h2 class="h4 fw-bold mb-2">Adicione pessoas de confiança</h2>
+                    <p class="text-muted mb-0">Permita que familiares ou cuidadores acompanhem avisos, consultas e necessidades.</p>
+                  </div>
+                </div>
+                <a href="permissoes.html" class="btn btn-outline-primary w-100 hc-touch-btn">Configurar permissões</a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12">
+            <article class="card border-0 shadow-sm rounded-4 hc-first-step">
+              <div class="card-body p-4 p-lg-5">
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-lg-8">
+                    <div class="d-flex gap-3 align-items-start">
+                      <span class="hc-step-number">5</span>
+                      <div>
+                        <h2 class="h3 fw-bold mb-2">Conheça os atalhos de ajuda</h2>
+                        <p class="text-muted fs-5 mb-0">Antes de precisar, veja onde ficam os botões de emergência, contatos da família e busca por atendimento.</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-lg-4">
+                    <div class="d-grid gap-2">
+                      <a href="emergencia.html" class="btn btn-danger btn-lg hc-touch-btn"><i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>Ver emergência</a>
+                      <a href="servicos.html" class="btn btn-outline-primary btn-lg hc-touch-btn">Encontrar atendimento</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="row g-4 mb-4">
+          <div class="col-12 col-xl-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <h2 class="h4 fw-bold mb-3">Comece por aqui</h2>
+                <div class="d-grid gap-3">
+                  <div class="hc-check-item"><i class="bi bi-check-circle-fill" aria-hidden="true"></i><div><strong>Confira seus dados pessoais</strong><p class="text-muted mb-0">Isso ajuda profissionais e familiares a terem informações corretas.</p></div></div>
+                  <div class="hc-check-item"><i class="bi bi-check-circle-fill" aria-hidden="true"></i><div><strong>Cadastre pelo menos um contato de emergência</strong><p class="text-muted mb-0">Assim, alguém de confiança pode ser avisado quando necessário.</p></div></div>
+                  <div class="hc-check-item"><i class="bi bi-check-circle-fill" aria-hidden="true"></i><div><strong>Inclua o primeiro remédio ou consulta</strong><p class="text-muted mb-0">A plataforma fica mais útil quando já existe uma rotina registrada.</p></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-xl-5">
+            <div class="card border-0 shadow-sm rounded-4 h-100 hc-first-help">
+              <div class="card-body p-4">
+                <span class="hc-step-icon mb-3"><i class="bi bi-heart-pulse" aria-hidden="true"></i></span>
+                <h2 class="h4 fw-bold mb-3">Está com dificuldade?</h2>
+                <p class="fs-5 text-muted">Você pode pedir ajuda para um familiar ou usar os botões de suporte. A ideia é que ninguém precise configurar tudo sozinho.</p>
+                <div class="d-grid gap-2">
+                  <a href="notificacoes.html" class="btn btn-light border btn-lg hc-touch-btn">Falar com minha família</a>
+                  <a href="alertas.html" class="btn btn-outline-danger btn-lg hc-touch-btn">Ver meus alertas</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+              <div class="col-12 col-lg-8">
+                <h2 class="h3 fw-bold mb-2">Quando terminar, volte para a tela inicial</h2>
+                <p class="text-muted fs-5 mb-0">Lá você acompanha sua rotina do dia, consultas, remédios e avisos importantes.</p>
+              </div>
+              <div class="col-12 col-lg-4">
+                <a href="dashboard.html" class="btn btn-primary btn-lg w-100 hc-touch-btn"><i class="bi bi-house-heart me-2" aria-hidden="true"></i>Ir para início</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/app-shell.js"></script>
+  <script src="../../js/main.js"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/profile-switcher.js"></script>
+</body>
+</html>

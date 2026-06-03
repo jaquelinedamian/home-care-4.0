@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Dispositivos | Home Care 4.0</title>
+
+  <meta
+    name="description"
+    content="Gerencie dispositivos conectados, sincronização de sinais vitais, alertas, permissões e histórico de monitoramento da plataforma Home Care 4.0."
+  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+          <div id="appToast" class="toast border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+              <div class="card-body p-4 p-lg-5">
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-lg-8">
+                    <p class="text-muted fs-5 mb-1">Dispositivos conectados</p>
+                    <h1 class="fw-bold mb-3">Monitoramento integrado, seguro e fácil de acompanhar</h1>
+                    <p class="text-muted fs-5 mb-0">
+                      Gerencie relógios, sensores, oxímetros e dispositivos de pressão vinculados às pessoas cuidadas. Acompanhe status, última sincronização, bateria e leituras recentes.
+                    </p>
+                  </div>
+
+                  <div class="col-12 col-lg-4">
+                    <div class="d-grid gap-2">
+                      <a href="sinais-vitais-conectar-dispositivo.html" class="btn btn-primary btn-lg">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Conectar dispositivo
+                      </a>
+                      <button class="btn btn-outline-primary btn-lg" type="button" id="syncAllBtn">
+                        <i class="bi bi-arrow-repeat me-1"></i>
+                        Sincronizar todos
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4" aria-label="Resumo dos dispositivos">
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Conectados</p>
+                <strong class="display-6 fw-bold" id="metricConnected">0</strong>
+                <p class="mb-0 text-muted">dispositivos ativos</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Atenção</p>
+                <strong class="display-6 fw-bold" id="metricAttention">0</strong>
+                <p class="mb-0 text-muted">precisam de cuidado</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Leituras hoje</p>
+                <strong class="display-6 fw-bold" id="metricReadings">0</strong>
+                <p class="mb-0 text-muted">registros recebidos</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Bateria baixa</p>
+                <strong class="display-6 fw-bold" id="metricBattery">0</strong>
+                <p class="mb-0 text-muted">abaixo de 25%</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4" aria-label="Filtros de dispositivos">
+          <div class="card-body p-4">
+            <div class="row g-3 align-items-end">
+              <div class="col-12 col-lg-4">
+                <label for="searchDevice" class="form-label fw-semibold">Buscar dispositivo</label>
+                <input id="searchDevice" type="search" class="form-control form-control-lg device-filter" placeholder="Ex.: relógio, oxímetro, pressão" />
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-2">
+                <label for="filterPerson" class="form-label fw-semibold">Pessoa</label>
+                <select id="filterPerson" class="form-select form-select-lg device-filter">
+                  <option value="todos">Todas</option>
+                  <option value="maria">Maria Helena</option>
+                  <option value="antonio">Antônio Carlos</option>
+                  <option value="jaqueline">Jaqueline</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-2">
+                <label for="filterType" class="form-label fw-semibold">Tipo</label>
+                <select id="filterType" class="form-select form-select-lg device-filter">
+                  <option value="todos">Todos</option>
+                  <option value="relogio">Relógio</option>
+                  <option value="oximetro">Oxímetro</option>
+                  <option value="pressao">Pressão</option>
+                  <option value="sensor">Sensor</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-4 col-lg-2">
+                <label for="filterStatus" class="form-label fw-semibold">Status</label>
+                <select id="filterStatus" class="form-select form-select-lg device-filter">
+                  <option value="todos">Todos</option>
+                  <option value="conectado">Conectado</option>
+                  <option value="atencao">Atenção</option>
+                  <option value="offline">Offline</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-lg-2 d-grid">
+                <button class="btn btn-outline-secondary btn-lg" type="button" id="clearFiltersBtn">
+                  Limpar filtros
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4 mb-4" id="devicesList" aria-label="Lista de dispositivos"></section>
+
+        <section class="card border-0 shadow-sm rounded-4 d-none" id="emptyState">
+          <div class="card-body p-5 text-center">
+            <i class="bi bi-search display-5 text-primary"></i>
+            <h2 class="h4 fw-bold mt-3">Nenhum dispositivo encontrado</h2>
+            <p class="text-muted mb-4">Tente limpar os filtros ou buscar por outro nome.</p>
+            <button class="btn btn-primary btn-lg" type="button" id="emptyClearBtn">Limpar filtros</button>
+          </div>
+        </section>
+
+        <section class="row g-4 mt-1">
+          <div class="col-12 col-xl-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <p class="text-muted mb-1">Atividade recente</p>
+                    <h2 class="h4 fw-bold mb-0">Últimas sincronizações</h2>
+                  </div>
+                  <button class="btn btn-outline-primary" type="button" id="generateReportBtn">
+                    Gerar resumo
+                  </button>
+                </div>
+
+                <div class="list-group list-group-flush" id="activityList"></div>
+
+                <div class="alert alert-primary border-0 rounded-4 mt-4 d-none" id="reportBox">
+                  <strong>Resumo gerado:</strong>
+                  os dispositivos ativos estão registrando leituras regularmente. Priorize carregar o oxímetro e revisar permissões do sensor de presença.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-xl-5">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Apoio ao cuidado</p>
+                <h2 class="h4 fw-bold mb-3">Ações rápidas</h2>
+
+                <div class="d-grid gap-3">
+                  <button class="btn btn-light border btn-lg text-start" type="button" data-quick-action="alertas">
+                    <i class="bi bi-bell me-2 text-primary"></i>
+                    Revisar alertas de sinais vitais
+                  </button>
+                  <button class="btn btn-light border btn-lg text-start" type="button" data-quick-action="permissoes">
+                    <i class="bi bi-shield-check me-2 text-primary"></i>
+                    Conferir permissões familiares
+                  </button>
+                  <button class="btn btn-light border btn-lg text-start" type="button" data-quick-action="manual">
+                    <i class="bi bi-journal-text me-2 text-primary"></i>
+                    Ver orientações de conexão
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="modal fade" id="deviceModal" tabindex="-1" aria-labelledby="deviceModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 rounded-4 shadow">
+        <div class="modal-header border-0 pb-0">
+          <div>
+            <p class="text-muted mb-1" id="deviceModalSubtitle">Gerenciamento do dispositivo</p>
+            <h2 class="modal-title h4 fw-bold" id="deviceModalTitle">Dispositivo</h2>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <ul class="nav nav-pills gap-2 mb-4" id="deviceTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="detailsTab" data-bs-toggle="pill" data-bs-target="#detailsPanel" type="button" role="tab">Detalhes</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="settingsTab" data-bs-toggle="pill" data-bs-target="#settingsPanel" type="button" role="tab">Configurações</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="historyTab" data-bs-toggle="pill" data-bs-target="#historyPanel" type="button" role="tab">Histórico</button>
+            </li>
+          </ul>
+
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="detailsPanel" role="tabpanel" aria-labelledby="detailsTab" tabindex="0">
+              <div class="row g-3 mb-4" id="deviceDetailsGrid"></div>
+
+              <div class="progress mb-3 d-none" id="syncProgressBox" style="height: 12px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" id="syncProgress" style="width: 0%;"></div>
+              </div>
+
+              <div class="d-grid d-md-flex gap-2">
+                <button class="btn btn-primary btn-lg" type="button" id="modalSyncBtn">
+                  <i class="bi bi-arrow-repeat me-1"></i>
+                  Sincronizar agora
+                </button>
+                <button class="btn btn-outline-primary btn-lg" type="button" id="modalReadingBtn">
+                  <i class="bi bi-activity me-1"></i>
+                  Simular leitura
+                </button>
+                <button class="btn btn-outline-danger btn-lg ms-md-auto" type="button" id="modalDeleteBtn">
+                  <i class="bi bi-trash me-1"></i>
+                  Deletar
+                </button>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="settingsPanel" role="tabpanel" aria-labelledby="settingsTab" tabindex="0">
+              <form id="deviceSettingsForm" class="row g-3">
+                <div class="col-12 col-md-6">
+                  <label for="editDeviceName" class="form-label fw-semibold">Nome do dispositivo</label>
+                  <input id="editDeviceName" class="form-control form-control-lg" type="text" required />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label for="editPerson" class="form-label fw-semibold">Pessoa vinculada</label>
+                  <select id="editPerson" class="form-select form-select-lg" required>
+                    <option value="maria">Maria Helena</option>
+                    <option value="antonio">Antônio Carlos</option>
+                    <option value="jaqueline">Jaqueline</option>
+                  </select>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label for="editFrequency" class="form-label fw-semibold">Frequência de sincronização</label>
+                  <select id="editFrequency" class="form-select form-select-lg">
+                    <option value="15">A cada 15 minutos</option>
+                    <option value="30">A cada 30 minutos</option>
+                    <option value="60">A cada 1 hora</option>
+                    <option value="manual">Manual</option>
+                  </select>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label for="editAlertLevel" class="form-label fw-semibold">Nível de alerta</label>
+                  <select id="editAlertLevel" class="form-select form-select-lg">
+                    <option value="padrao">Padrão</option>
+                    <option value="sensivel">Mais sensível</option>
+                    <option value="reduzido">Reduzido</option>
+                  </select>
+                </div>
+
+                <div class="col-12">
+                  <div class="form-check form-switch fs-5">
+                    <input class="form-check-input" type="checkbox" role="switch" id="editFamilyNotification" />
+                    <label class="form-check-label" for="editFamilyNotification">Notificar familiares em leituras críticas</label>
+                  </div>
+                </div>
+
+                <div class="col-12 d-grid d-md-flex gap-2">
+                  <button class="btn btn-primary btn-lg" type="submit">Salvar alterações</button>
+                  <button class="btn btn-outline-secondary btn-lg" type="button" id="cancelEditBtn">Cancelar</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="tab-pane fade" id="historyPanel" role="tabpanel" aria-labelledby="historyTab" tabindex="0">
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Evento</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="deviceHistoryTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-4 shadow">
+        <div class="modal-header border-0">
+          <h2 class="modal-title h4 fw-bold" id="confirmDeleteTitle">Deletar dispositivo?</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <p class="text-muted fs-5" id="confirmDeleteText">Esta ação removerá o dispositivo da listagem.</p>
+          <div class="alert alert-warning border-0 rounded-4">
+            O histórico simulado desta tela também será removido da interface atual.
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger btn-lg" id="confirmDeleteBtn">Sim, deletar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+
+function setActiveSidebarLink() {
+      const currentPath = window.location.pathname.replace(/\\/g, "/");
+      document.querySelectorAll("#appSidebar .sidebar-link").forEach(function (link) {
+        const href = link.getAttribute("href") || "";
+        const normalizedHref = href.replace("../pages/", "/pages/").replace(/^\.\.\//, "/").replace(/^\//, "");
+        const isDevicePage = currentPath.includes("/sinais-vitais/dispositivos") && href.includes("sinais-vitais/dispositivos.html");
+        link.classList.toggle("active", isDevicePage || currentPath.endsWith(normalizedHref));
+      });
+    }
+
+    const peopleLabels = {
+      maria: "Maria Helena",
+      antonio: "Antônio Carlos",
+      jaqueline: "Jaqueline"
+    };
+
+    let devices = [
+      {
+        id: 1,
+        name: "Relógio inteligente",
+        type: "relogio",
+        typeLabel: "Relógio",
+        person: "maria",
+        status: "conectado",
+        battery: 82,
+        readingsToday: 18,
+        lastSync: "Hoje, 14:20",
+        icon: "bi-smartwatch",
+        description: "Monitora batimentos, passos, sono e detecção de quedas.",
+        frequency: "15",
+        alertLevel: "padrao",
+        familyNotification: true,
+        history: [
+          ["Hoje, 14:20", "Sincronização automática", "Concluída"],
+          ["Hoje, 09:10", "Leitura de frequência cardíaca", "Normal"],
+          ["Ontem, 22:40", "Monitoramento do sono iniciado", "Concluído"]
+        ]
+      },
+      {
+        id: 2,
+        name: "Oxímetro de dedo",
+        type: "oximetro",
+        typeLabel: "Oxímetro",
+        person: "antonio",
+        status: "atencao",
+        battery: 18,
+        readingsToday: 4,
+        lastSync: "Hoje, 11:05",
+        icon: "bi-droplet-half",
+        description: "Mede saturação de oxigênio e batimentos cardíacos.",
+        frequency: "30",
+        alertLevel: "sensivel",
+        familyNotification: true,
+        history: [
+          ["Hoje, 11:05", "Leitura de oxigenação", "Atenção"],
+          ["Hoje, 08:30", "Bateria baixa identificada", "Pendente"],
+          ["Ontem, 18:00", "Sincronização manual", "Concluída"]
+        ]
+      },
+      {
+        id: 3,
+        name: "Medidor de pressão",
+        type: "pressao",
+        typeLabel: "Pressão",
+        person: "maria",
+        status: "conectado",
+        battery: 64,
+        readingsToday: 3,
+        lastSync: "Hoje, 13:00",
+        icon: "bi-heart-pulse",
+        description: "Registra pressão arterial sistólica, diastólica e pulso.",
+        frequency: "60",
+        alertLevel: "padrao",
+        familyNotification: true,
+        history: [
+          ["Hoje, 13:00", "Pressão registrada", "Normal"],
+          ["Hoje, 07:30", "Pressão registrada", "Normal"],
+          ["Ontem, 20:10", "Relatório diário enviado", "Concluído"]
+        ]
+      },
+      {
+        id: 4,
+        name: "Sensor de presença",
+        type: "sensor",
+        typeLabel: "Sensor",
+        person: "jaqueline",
+        status: "offline",
+        battery: 41,
+        readingsToday: 0,
+        lastSync: "Ontem, 21:18",
+        icon: "bi-broadcast-pin",
+        description: "Ajuda a identificar movimentação em cômodos e possíveis ausências prolongadas.",
+        frequency: "30",
+        alertLevel: "reduzido",
+        familyNotification: false,
+        history: [
+          ["Ontem, 21:18", "Dispositivo ficou offline", "Atenção"],
+          ["Ontem, 20:45", "Movimento detectado", "Normal"],
+          ["Ontem, 18:15", "Sincronização automática", "Concluída"]
+        ]
+      }
+    ];
+
+    let selectedDeviceId = null;
+
+    const devicesList = document.getElementById("devicesList");
+    const activityList = document.getElementById("activityList");
+    const emptyState = document.getElementById("emptyState");
+    const deviceModalElement = document.getElementById("deviceModal");
+    const deleteModalElement = document.getElementById("confirmDeleteModal");
+    const deviceModal = new bootstrap.Modal(deviceModalElement);
+    const deleteModal = new bootstrap.Modal(deleteModalElement);
+
+    function getStatusBadge(status) {
+      if (status === "conectado") return "text-bg-success";
+      if (status === "atencao") return "text-bg-warning";
+      return "text-bg-secondary";
+    }
+
+    function getStatusLabel(status) {
+      if (status === "conectado") return "Conectado";
+      if (status === "atencao") return "Atenção";
+      return "Offline";
+    }
+
+    function showToast(message) {
+      document.getElementById("toastMessage").textContent = message;
+      bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
+    }
+
+    function renderMetrics() {
+      document.getElementById("metricConnected").textContent = devices.filter(function (device) { return device.status === "conectado"; }).length;
+      document.getElementById("metricAttention").textContent = devices.filter(function (device) { return device.status === "atencao" || device.status === "offline"; }).length;
+      document.getElementById("metricReadings").textContent = devices.reduce(function (sum, device) { return sum + device.readingsToday; }, 0);
+      document.getElementById("metricBattery").textContent = devices.filter(function (device) { return device.battery < 25; }).length;
+    }
+
+    function renderDevices() {
+      const search = document.getElementById("searchDevice").value.trim().toLowerCase();
+      const person = document.getElementById("filterPerson").value;
+      const type = document.getElementById("filterType").value;
+      const status = document.getElementById("filterStatus").value;
+
+      const filteredDevices = devices.filter(function (device) {
+        const matchesSearch = !search || (device.name + " " + device.description + " " + device.typeLabel + " " + peopleLabels[device.person]).toLowerCase().includes(search);
+        const matchesPerson = person === "todos" || device.person === person;
+        const matchesType = type === "todos" || device.type === type;
+        const matchesStatus = status === "todos" || device.status === status;
+        return matchesSearch && matchesPerson && matchesType && matchesStatus;
+      });
+
+      devicesList.innerHTML = filteredDevices.map(function (device) {
+        return `
+          <div class="col-12 col-md-6 col-xl-4 device-item">
+            <article class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4 d-flex flex-column">
+                <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                  <span class="icon-circle bg-primary-subtle text-primary">
+                    <i class="bi ${device.icon}"></i>
+                  </span>
+                  <span class="badge ${getStatusBadge(device.status)}">${getStatusLabel(device.status)}</span>
+                </div>
+
+                <h2 class="h4 fw-bold mb-2">${device.name}</h2>
+                <p class="text-muted mb-3">${device.description}</p>
+
+                <div class="border rounded-4 p-3 mb-3 bg-light">
+                  <div class="d-flex justify-content-between gap-3 mb-2">
+                    <span class="text-muted">Pessoa</span>
+                    <strong>${peopleLabels[device.person]}</strong>
+                  </div>
+                  <div class="d-flex justify-content-between gap-3 mb-2">
+                    <span class="text-muted">Bateria</span>
+                    <strong>${device.battery}%</strong>
+                  </div>
+                  <div class="d-flex justify-content-between gap-3">
+                    <span class="text-muted">Última sync</span>
+                    <strong>${device.lastSync}</strong>
+                  </div>
+                </div>
+
+                <div class="progress mb-4" style="height: 10px;" aria-label="Bateria do dispositivo">
+                  <div class="progress-bar" style="width: ${device.battery}%;"></div>
+                </div>
+
+                <div class="d-grid gap-2 mt-auto">
+                  <button class="btn btn-primary btn-lg manage-device-btn" type="button" data-id="${device.id}">
+                    Gerenciar
+                  </button>
+                  <button class="btn btn-outline-primary btn-lg quick-sync-btn" type="button" data-id="${device.id}">
+                    Sincronizar
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        `;
+      }).join("");
+
+      emptyState.classList.toggle("d-none", filteredDevices.length > 0);
+      bindDeviceButtons();
+      renderMetrics();
+      renderActivity();
+    }
+
+    function renderActivity() {
+      const activities = devices
+        .flatMap(function (device) {
+          return device.history.slice(0, 2).map(function (item) {
+            return {
+              device: device.name,
+              date: item[0],
+              event: item[1],
+              status: item[2]
+            };
+          });
+        })
+        .slice(0, 6);
+
+      activityList.innerHTML = activities.map(function (activity) {
+        return `
+          <div class="list-group-item px-0 d-flex justify-content-between align-items-start gap-3">
+            <div>
+              <strong>${activity.event}</strong>
+              <p class="text-muted mb-0">${activity.device} • ${activity.date}</p>
+            </div>
+            <span class="badge text-bg-light">${activity.status}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function bindDeviceButtons() {
+      document.querySelectorAll(".manage-device-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+          openDeviceModal(Number(button.dataset.id));
+        });
+      });
+
+      document.querySelectorAll(".quick-sync-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+          syncDevice(Number(button.dataset.id), false);
+        });
+      });
+    }
+
+    function getSelectedDevice() {
+      return devices.find(function (device) { return device.id === selectedDeviceId; });
+    }
+
+    function openDeviceModal(id) {
+      selectedDeviceId = id;
+      const device = getSelectedDevice();
+      if (!device) return;
+
+      document.getElementById("deviceModalTitle").textContent = device.name;
+      document.getElementById("deviceModalSubtitle").textContent = peopleLabels[device.person] + " • " + device.typeLabel;
+      document.getElementById("editDeviceName").value = device.name;
+      document.getElementById("editPerson").value = device.person;
+      document.getElementById("editFrequency").value = device.frequency;
+      document.getElementById("editAlertLevel").value = device.alertLevel;
+      document.getElementById("editFamilyNotification").checked = device.familyNotification;
+
+      renderModalDetails();
+      bootstrap.Tab.getOrCreateInstance(document.getElementById("detailsTab")).show();
+      deviceModal.show();
+    }
+
+    function renderModalDetails() {
+      const device = getSelectedDevice();
+      if (!device) return;
+
+      document.getElementById("deviceDetailsGrid").innerHTML = `
+        <div class="col-12 col-md-6">
+          <div class="border rounded-4 p-3 h-100">
+            <p class="text-muted mb-1">Status</p>
+            <strong>${getStatusLabel(device.status)}</strong>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="border rounded-4 p-3 h-100">
+            <p class="text-muted mb-1">Bateria</p>
+            <strong>${device.battery}%</strong>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="border rounded-4 p-3 h-100">
+            <p class="text-muted mb-1">Leituras hoje</p>
+            <strong>${device.readingsToday}</strong>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="border rounded-4 p-3 h-100">
+            <p class="text-muted mb-1">Última sincronização</p>
+            <strong>${device.lastSync}</strong>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("deviceHistoryTable").innerHTML = device.history.map(function (item) {
+        return `
+          <tr>
+            <td>${item[0]}</td>
+            <td>${item[1]}</td>
+            <td><span class="badge text-bg-light">${item[2]}</span></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function syncDevice(id, fromModal) {
+      const device = devices.find(function (item) { return item.id === id; });
+      if (!device) return;
+
+      const now = new Date();
+      device.lastSync = "Hoje, " + now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      device.status = "conectado";
+      device.readingsToday += 1;
+      device.history.unshift([device.lastSync, "Sincronização manual", "Concluída"]);
+
+      if (fromModal) {
+        const progressBox = document.getElementById("syncProgressBox");
+        const progressBar = document.getElementById("syncProgress");
+        progressBox.classList.remove("d-none");
+        progressBar.style.width = "0%";
+
+        let progress = 0;
+        const interval = setInterval(function () {
+          progress += 25;
+          progressBar.style.width = progress + "%";
+
+          if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(function () {
+              progressBox.classList.add("d-none");
+              renderModalDetails();
+              renderDevices();
+              showToast(device.name + " sincronizado com sucesso.");
+            }, 300);
+          }
+        }, 180);
+      } else {
+        renderDevices();
+        showToast(device.name + " sincronizado com sucesso.");
+      }
+    }
+
+    document.querySelectorAll(".device-filter").forEach(function (filter) {
+      filter.addEventListener("input", renderDevices);
+      filter.addEventListener("change", renderDevices);
+    });
+
+    function clearFilters() {
+      document.getElementById("searchDevice").value = "";
+      document.getElementById("filterPerson").value = "todos";
+      document.getElementById("filterType").value = "todos";
+      document.getElementById("filterStatus").value = "todos";
+      renderDevices();
+    }
+
+    document.getElementById("clearFiltersBtn").addEventListener("click", clearFilters);
+    document.getElementById("emptyClearBtn").addEventListener("click", clearFilters);
+
+    document.getElementById("syncAllBtn").addEventListener("click", function () {
+      devices.forEach(function (device) {
+        const now = new Date();
+        device.lastSync = "Hoje, " + now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+        device.status = "conectado";
+        device.readingsToday += 1;
+        device.history.unshift([device.lastSync, "Sincronização geral", "Concluída"]);
+      });
+      renderDevices();
+      showToast("Todos os dispositivos foram sincronizados.");
+    });
+
+    document.getElementById("modalSyncBtn").addEventListener("click", function () {
+      syncDevice(selectedDeviceId, true);
+    });
+
+    document.getElementById("modalReadingBtn").addEventListener("click", function () {
+      const device = getSelectedDevice();
+      if (!device) return;
+
+      const now = new Date();
+      const time = "Hoje, " + now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      device.readingsToday += 1;
+      device.lastSync = time;
+      device.history.unshift([time, "Nova leitura simulada", "Normal"]);
+
+      renderModalDetails();
+      renderDevices();
+      showToast("Nova leitura simulada para " + device.name + ".");
+    });
+
+    document.getElementById("deviceSettingsForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+      const device = getSelectedDevice();
+      if (!device) return;
+
+      device.name = document.getElementById("editDeviceName").value.trim();
+      device.person = document.getElementById("editPerson").value;
+      device.frequency = document.getElementById("editFrequency").value;
+      device.alertLevel = document.getElementById("editAlertLevel").value;
+      device.familyNotification = document.getElementById("editFamilyNotification").checked;
+      device.history.unshift(["Agora", "Configurações atualizadas", "Concluída"]);
+
+      document.getElementById("deviceModalTitle").textContent = device.name;
+      document.getElementById("deviceModalSubtitle").textContent = peopleLabels[device.person] + " • " + device.typeLabel;
+      renderModalDetails();
+      renderDevices();
+      showToast("Configurações salvas com sucesso.");
+      bootstrap.Tab.getOrCreateInstance(document.getElementById("detailsTab")).show();
+    });
+
+    document.getElementById("cancelEditBtn").addEventListener("click", function () {
+      bootstrap.Tab.getOrCreateInstance(document.getElementById("detailsTab")).show();
+    });
+
+    document.getElementById("modalDeleteBtn").addEventListener("click", function () {
+      const device = getSelectedDevice();
+      if (!device) return;
+      document.getElementById("confirmDeleteText").textContent = "Você está prestes a remover “" + device.name + "” da pessoa vinculada " + peopleLabels[device.person] + ".";
+      deleteModal.show();
+    });
+
+    document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+      const device = getSelectedDevice();
+      if (!device) return;
+      devices = devices.filter(function (item) { return item.id !== selectedDeviceId; });
+      deleteModal.hide();
+      deviceModal.hide();
+      renderDevices();
+      showToast(device.name + " foi removido da listagem.");
+    });
+
+    document.getElementById("generateReportBtn").addEventListener("click", function () {
+      document.getElementById("reportBox").classList.toggle("d-none");
+    });
+
+    document.querySelectorAll("[data-quick-action]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        const action = button.dataset.quickAction;
+        if (action === "alertas") showToast("Abrindo revisão de alertas simulada.");
+        if (action === "permissoes") showToast("Abrindo conferência de permissões simulada.");
+        if (action === "manual") showToast("Orientações de conexão exibidas na interface simulada.");
+      });
+    });
+
+    renderDevices();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

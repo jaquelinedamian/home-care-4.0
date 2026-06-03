@@ -1,0 +1,232 @@
+
+
+.hc-profile-switcher {
+  position: sticky;
+  top: var(--header-height, 72px);
+  z-index: calc(var(--z-header, 1030) - 1);
+  min-height: var(--profile-switcher-height, 76px);
+  border-bottom: var(--border-width, 1px) solid var(--color-border, #e5e7eb);
+  background-color: var(--color-surface, #ffffff);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(16, 24, 40, 0.06));
+}
+
+.hc-profile-switcher-header {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-3, 0.75rem) var(--space-6, 1.5rem) 0;
+  color: var(--color-text, #1f2937);
+  font-size: var(--font-size-base, 1.125rem);
+}
+
+.hc-profile-switcher-header strong {
+  color: var(--color-text-strong, #111827);
+}
+
+.hc-profile-switcher-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4, 1rem);
+  min-height: var(--profile-switcher-height, 76px);
+  padding: var(--space-3, 0.75rem) var(--space-6, 1.5rem);
+}
+
+.hc-profile-switcher-context {
+  display: grid;
+  gap: var(--space-1, 0.25rem);
+  min-width: 240px;
+}
+
+.hc-profile-switcher-context span {
+  color: var(--color-text-muted, #667085);
+  font-size: var(--font-size-sm, 1.125rem);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+.hc-profile-switcher-context strong {
+  color: var(--color-text-strong, #111827);
+  font-size: var(--font-size-lg, 1.375rem);
+  line-height: 1.2;
+}
+
+.hc-profile-switcher-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-2, 0.5rem) var(--space-6, 1.5rem) var(--space-3, 0.75rem);
+}
+
+.hc-profile-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2, 0.5rem);
+  min-height: 48px;
+  padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+  border: 2px solid var(--color-border, #e5e7eb);
+  border-radius: var(--radius-md, 0.75rem);
+  background-color: var(--color-surface, #ffffff);
+  color: var(--color-text, #1f2937);
+  font-size: var(--font-size-base, 1.125rem);
+  font-weight: var(--font-weight-semibold, 600);
+  cursor: pointer;
+}
+
+.hc-profile-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hc-profile-option:hover,
+.hc-profile-option:focus,
+.hc-profile-option.is-active {
+  border-color: var(--color-primary, #001b4b);
+  background-color: var(--color-primary-light, #e8eef8);
+  color: var(--color-primary, #001b4b);
+}
+
+body.theme-contrast .hc-profile-switcher,
+body.theme-contrast .hc-profile-option {
+  background-color: var(--color-surface, #111111);
+  color: var(--color-text, #ffffff);
+  border-color: var(--color-border, #ffffff);
+  box-shadow: none;
+}
+
+body.theme-contrast .hc-mobile-quick-nav,
+body.theme-contrast .hc-mobile-quick-nav a {
+  background-color: var(--color-surface, #111111) !important;
+  color: var(--color-text, #ffffff) !important;
+  border-color: var(--color-border, #ffffff) !important;
+  box-shadow: none !important;
+}
+
+body.theme-contrast .hc-profile-option.is-active,
+body.theme-contrast .hc-profile-option:hover,
+body.theme-contrast .hc-profile-option:focus,
+body.theme-contrast .hc-mobile-quick-nav a.is-active,
+body.theme-contrast .hc-mobile-quick-nav a:hover,
+body.theme-contrast .hc-mobile-quick-nav a:focus {
+  background-color: var(--color-primary-light, #1a1a1a);
+  color: var(--color-text, #ffffff);
+}
+
+@media (max-width: 991.98px) {
+  .hc-profile-switcher {
+    position: static;
+    min-height: auto;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  .hc-profile-switcher-inner {
+    display: grid;
+    min-height: auto;
+    padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  }
+
+  .hc-profile-switcher-context {
+    min-width: 0;
+  }
+
+  .hc-profile-switcher-options {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(10.5rem, 1fr));
+    width: 100%;
+    margin-left: 0;
+    overflow-x: auto;
+    padding: 0.15rem 0.1rem 0.35rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .hc-profile-option {
+    min-height: 76px;
+    justify-content: center;
+    border-radius: 1rem;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+    scroll-snap-align: start;
+  }
+
+  .hc-profile-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    font-size: 1.8rem;
+  }
+
+  .hc-profile-switcher-header {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.85rem;
+    color: var(--color-text, #1f2937);
+    font-size: var(--font-size-md, 1.25rem);
+  }
+
+  .hc-profile-switcher-header strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #0d6efd;
+  }
+
+  .hc-profile-switcher-header strong::after {
+    content: "\F282";
+    font-family: "bootstrap-icons";
+    font-size: 0.9em;
+  }
+
+  .hc-mobile-quick-nav {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(6.1rem, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: 1rem;
+    padding: 0.9rem;
+    overflow-x: auto;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 1.25rem;
+    background: var(--color-surface, #ffffff);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgba(16, 24, 40, 0.06));
+  }
+
+  .hc-mobile-quick-nav a {
+    display: grid;
+    place-items: center;
+    gap: 0.45rem;
+    min-height: 92px;
+    padding: 0.75rem 0.45rem;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 1rem;
+    background: var(--color-surface, #ffffff);
+    color: var(--color-text-strong, #111827);
+    font-weight: var(--font-weight-bold, 700);
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+  }
+
+  .hc-mobile-quick-nav a.is-active,
+  .hc-mobile-quick-nav a:hover,
+  .hc-mobile-quick-nav a:focus {
+    border-color: rgba(13, 110, 253, 0.42);
+    background: var(--color-primary-light, #e8eef8);
+    color: #0d6efd;
+  }
+
+  .hc-mobile-quick-nav i {
+    font-size: 2.35rem;
+  }
+}
+
+@media (max-width: 430px) {
+  .hc-profile-switcher-options {
+    grid-template-columns: repeat(4, minmax(9.5rem, 1fr));
+  }
+
+  .hc-profile-option {
+    min-height: 70px;
+  }
+}

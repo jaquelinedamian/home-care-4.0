@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home Care 4.0 | Cuidado domiciliar conectado</title>
+  <meta name="description" content="Home Care 4.0 é uma plataforma demonstrativa para organizar cuidado domiciliar, família, profissionais, agenda, medicamentos e emergências." />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/pages/cadastro.css" />
+  <link rel="stylesheet" href="css/pages/home.css" />
+</head>
+<body class="home-page">
+  <a href="#conteudo-principal" class="hc-skip-link">Pular para o conteúdo principal</a>
+
+  <header class="public-header" aria-label="Cabeçalho público">
+    <div class="container-fluid px-4 px-lg-5">
+      <div class="public-header-inner">
+        <a class="public-brand" href="cadastro.html" aria-label="Página inicial do Home Care 4.0">
+          <img src="img/logo-home-care.svg" alt="Home Care 4.0" />
+          <span>
+            <strong>Home Care 4.0</strong>
+            <small>Cuidado humano conectado</small>
+          </span>
+        </a>
+
+        <nav class="public-nav" aria-label="Navegação pública">
+          <a href="#projeto">Projeto</a>
+          <a href="#como-funciona">Como funciona</a>
+          <a href="#perfis">Perfis</a>
+          <a href="#seguranca">Segurança</a>
+        </nav>
+
+        <div class="public-actions">
+          <a class="btn btn-outline-secondary rounded-pill px-4" href="pages/idoso/login.html">Entrar</a>
+          <a class="btn btn-primary rounded-pill px-4" href="pages/idoso/cadastro.html?novo=1">Criar conta</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo-principal" tabindex="-1">
+    <section class="home-hero" aria-label="Apresentação do Home Care 4.0">
+      <div class="container">
+        <div class="home-hero-grid">
+          <div class="home-hero-copy">
+            <span class="home-kicker"><i class="bi bi-heart-pulse" aria-hidden="true"></i> Economia Prateada, cuidado e autonomia</span>
+            <h1>Uma plataforma para deixar o cuidado domiciliar mais claro, seguro e humano.</h1>
+            <p>
+              O Home Care 4.0 organiza a rotina do idoso, aproxima familiares e conecta profissionais validados em uma experiência simples de entender e fácil de demonstrar.
+            </p>
+            <div class="home-hero-actions">
+              <a class="btn btn-primary btn-lg" href="pages/idoso/cadastro.html?novo=1">
+                <i class="bi bi-person-plus me-2" aria-hidden="true"></i>
+                Começar cadastro
+              </a>
+              <a class="btn btn-outline-primary btn-lg" href="#como-funciona">
+                <i class="bi bi-play-circle me-2" aria-hidden="true"></i>
+                Conhecer o fluxo
+              </a>
+            </div>
+          </div>
+
+          <div class="home-care-panel" aria-label="Resumo visual do cuidado">
+            <div class="home-care-person">
+              <img src="img/perfil-idoso.svg" alt="" aria-hidden="true" />
+              <div>
+                <span>Hoje para Dona Maria</span>
+                <strong>3 cuidados importantes</strong>
+              </div>
+            </div>
+
+            <div class="home-care-list">
+              <article>
+                <i class="bi bi-capsule" aria-hidden="true"></i>
+                <div>
+                  <strong>Próximo remédio</strong>
+                  <span>Losartana às 14h</span>
+                </div>
+              </article>
+              <article>
+                <i class="bi bi-calendar-check" aria-hidden="true"></i>
+                <div>
+                  <strong>Consulta confirmada</strong>
+                  <span>Geriatra amanhã, 10h</span>
+                </div>
+              </article>
+              <article>
+                <i class="bi bi-shield-check" aria-hidden="true"></i>
+                <div>
+                  <strong>Família acompanhando</strong>
+                  <span>2 pessoas com permissão</span>
+                </div>
+              </article>
+            </div>
+
+            <div class="home-care-footer">
+              <span><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i> Emergência sempre visível</span>
+              <a href="pages/idoso/cadastro.html?novo=1">Ver demo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-section" id="projeto">
+      <div class="container">
+        <div class="home-section-heading">
+          <span class="home-kicker"><i class="bi bi-stars" aria-hidden="true"></i> Sobre o projeto</span>
+          <h2>Cuidado organizado sem transformar o idoso em operador de sistema.</h2>
+          <p>
+            A proposta é reduzir a confusão da rotina de saúde: o idoso vê o essencial, a família acompanha o cuidado e o profissional trabalha com agenda, solicitações e validação.
+          </p>
+        </div>
+
+        <div class="home-value-grid">
+          <article>
+            <i class="bi bi-universal-access" aria-hidden="true"></i>
+            <h3>Acessível desde o primeiro clique</h3>
+            <p>Fonte grande, botões claros, contraste, linguagem direta e poucos caminhos para quem precisa de simplicidade.</p>
+          </article>
+          <article>
+            <i class="bi bi-people" aria-hidden="true"></i>
+            <h3>Família presente sem invadir</h3>
+            <p>Permissões, pessoas cuidadas, alertas e histórico ajudam a acompanhar o cuidado com responsabilidade.</p>
+          </article>
+          <article>
+            <i class="bi bi-person-vcard" aria-hidden="true"></i>
+            <h3>Profissionais com validação</h3>
+            <p>O prestador informa profissão, conselho ativo e escolhe serviços compatíveis antes de operar na plataforma.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-section home-flow-band" id="como-funciona">
+      <div class="container">
+        <div class="home-section-heading">
+          <span class="home-kicker"><i class="bi bi-list-check" aria-hidden="true"></i> Jornada guiada</span>
+          <h2>Depois do cadastro, cada perfil vai para seu primeiro acesso.</h2>
+          <p>
+            A pessoa não cai direto na home pública: ela encontra uma página inicial com próximos passos para entender por onde começar.
+          </p>
+        </div>
+
+        <div class="home-flow">
+          <article>
+            <span>1</span>
+            <h3>Identidade</h3>
+            <p>Dados básicos, CPF e simulação de validação gov.br.</p>
+          </article>
+          <article>
+            <span>2</span>
+            <h3>Perfil</h3>
+            <p>Escolha entre idoso, familiar ou profissional.</p>
+          </article>
+          <article>
+            <span>3</span>
+            <h3>Dados específicos</h3>
+            <p>Familiar vincula o idoso; profissional valida conselho e serviços.</p>
+          </article>
+          <article>
+            <span>4</span>
+            <h3>Primeiro acesso</h3>
+            <p>Um mini tutorial mostra os próximos passos do perfil escolhido.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-section" id="perfis">
+      <div class="container">
+        <div class="home-section-heading">
+          <span class="home-kicker"><i class="bi bi-diagram-3" aria-hidden="true"></i> Multi-perfil</span>
+          <h2>Uma plataforma, quatro formas de navegar.</h2>
+        </div>
+
+        <div class="home-profile-grid">
+          <article>
+            <img src="img/perfil-idoso.svg" alt="" aria-hidden="true" />
+            <h3>Idoso</h3>
+            <p>Vê remédios, consultas, alertas, ajuda e emergência em uma interface simples.</p>
+            <a href="pages/idoso/primeiro-acesso.html">Ver primeiro acesso</a>
+          </article>
+          <article>
+            <img src="img/perfil-familiar.svg" alt="" aria-hidden="true" />
+            <h3>Familiar</h3>
+            <p>Cadastra e acompanha pessoas cuidadas, agenda, alertas e permissões.</p>
+            <a href="pages/familiar/primeiro-acesso.html">Ver primeiro acesso</a>
+          </article>
+          <article>
+            <img src="img/perfil-profissional.svg" alt="" aria-hidden="true" />
+            <h3>Profissional</h3>
+            <p>Gerencia solicitações, agenda, atendimentos, documentos e serviços prestados.</p>
+            <a href="pages/profissional/primeiro-acesso.html">Ver primeiro acesso</a>
+          </article>
+          <article>
+            <img src="img/perfil-admin.svg" alt="" aria-hidden="true" />
+            <h3>Admin</h3>
+            <p>Controla validações, usuários, serviços, alertas e relatórios operacionais.</p>
+            <a href="pages/admin/dashboard.html">Ver painel</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-section" id="seguranca">
+      <div class="container">
+        <div class="home-security">
+          <div>
+            <span class="home-kicker"><i class="bi bi-lock" aria-hidden="true"></i> Segurança e confiança</span>
+            <h2>O demonstrativo mostra uma lógica responsável para dados sensíveis.</h2>
+            <p>
+              CPF, gov.br, permissões familiares e conselho profissional aparecem no fluxo porque saúde domiciliar exige identidade clara, autorização e rastreabilidade.
+            </p>
+          </div>
+          <a class="btn btn-primary btn-lg" href="pages/idoso/cadastro.html?novo=1">Iniciar o cadastro guiado</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="public-footer" aria-label="Rodapé público">
+    <div class="container-fluid px-4 px-lg-5 py-5">
+      <div class="row gy-4 align-items-stretch">
+        <div class="col-lg-5">
+          <img class="public-footer-logo" src="img/logo-home-care.svg" alt="Home Care 4.0" />
+          <p class="public-footer-text">
+            Protótipo acadêmico para centralização de cuidado domiciliar, acessibilidade, familiares, profissionais e serviços de saúde.
+          </p>
+        </div>
+
+        <div class="col-6 col-lg-2">
+          <h2 class="public-footer-title">Plataforma</h2>
+          <ul class="public-footer-list">
+            <li><a href="#projeto">Projeto</a></li>
+            <li><a href="#como-funciona">Como funciona</a></li>
+            <li><a href="#perfis">Perfis</a></li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-lg-2">
+          <h2 class="public-footer-title">Acesso</h2>
+          <ul class="public-footer-list">
+            <li><a href="pages/idoso/login.html">Entrar</a></li>
+            <li><a href="pages/idoso/cadastro.html?novo=1">Criar conta</a></li>
+            <li><a href="#seguranca">Segurança</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3">
+          <div class="public-security-card">
+            <span class="public-security-icon"><i class="bi bi-shield-check" aria-hidden="true"></i></span>
+            <div>
+              <strong>Cadastro seguro</strong>
+              <p>Fluxo demonstrativo com CPF, gov.br, vínculo familiar e validação profissional.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="public-footer-bottom">
+        <small>© 2026 Home Care 4.0</small>
+        <small>Cuidado, autonomia e conexão humana.</small>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

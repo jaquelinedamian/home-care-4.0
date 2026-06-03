@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Adicionar Vacina | Home Care 4.0</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080;">
+          <div id="appToast" class="toast border-0 shadow">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Registro salvo.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+          </div>
+        </div>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-lg-5">
+            <p class="text-muted fs-5 mb-1">Adicionar vacina</p>
+            <h1 class="fw-bold mb-3">Vamos registrar uma vacina aplicada</h1>
+            <p class="text-muted fs-5 mb-0">
+              Preencha as informações principais para manter a carteira sempre atualizada.
+            </p>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4">
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-2">
+                <strong>Etapa <span id="etapaAtual">1</span> de 3</strong>
+                <span class="text-muted" id="textoEtapa">Pessoa e vacina</span>
+              </div>
+              <div class="progress" style="height:12px;">
+                <div id="barraProgresso" class="progress-bar" style="width:33%;"></div>
+              </div>
+            </div>
+
+            <form id="formVacina">
+              <div class="etapa" data-etapa="1">
+                <div class="row g-3">
+                  <div class="col-12 col-lg-6">
+                    <label for="pessoa" class="form-label">Pessoa vacinada</label>
+                    <select id="pessoa" class="form-select form-select-lg" required>
+                      <option value="">Selecione</option>
+                      <option>Maria</option>
+                      <option>Antônio</option>
+                      <option>Eu</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-lg-6">
+                    <label for="vacina" class="form-label">Nome da vacina</label>
+                    <input id="vacina" class="form-control form-control-lg" placeholder="Ex.: Influenza, COVID-19" required>
+                  </div>
+
+                  <div class="col-12">
+                    <label for="tipoDose" class="form-label">Dose</label>
+                    <select id="tipoDose" class="form-select form-select-lg">
+                      <option>1ª dose</option>
+                      <option>2ª dose</option>
+                      <option>Reforço</option>
+                      <option>Dose anual</option>
+                      <option>Dose única</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="etapa d-none" data-etapa="2">
+                <div class="row g-3">
+                  <div class="col-12 col-lg-6">
+                    <label for="dataAplicacao" class="form-label">Data de aplicação</label>
+                    <input type="date" id="dataAplicacao" class="form-control form-control-lg" required>
+                  </div>
+
+                  <div class="col-12 col-lg-6">
+                    <label for="localAplicacao" class="form-label">Local de aplicação</label>
+                    <input id="localAplicacao" class="form-control form-control-lg" placeholder="Ex.: UBS Central">
+                  </div>
+
+                  <div class="col-12 col-lg-6">
+                    <label for="lote" class="form-label">Lote</label>
+                    <input id="lote" class="form-control form-control-lg" placeholder="Ex.: AB1234">
+                  </div>
+
+                  <div class="col-12 col-lg-6">
+                    <label for="proximaDose" class="form-label">Próxima dose</label>
+                    <input type="date" id="proximaDose" class="form-control form-control-lg">
+                  </div>
+                </div>
+              </div>
+
+              <div class="etapa d-none" data-etapa="3">
+                <h2 class="h4 mb-3">Confira antes de salvar</h2>
+
+                <div class="p-4 rounded-4 bg-light d-grid gap-3">
+                  <div>
+                    <span class="text-muted d-block">Pessoa</span>
+                    <strong id="resumoPessoa">-</strong>
+                  </div>
+                  <div>
+                    <span class="text-muted d-block">Vacina</span>
+                    <strong id="resumoVacina">-</strong>
+                  </div>
+                  <div>
+                    <span class="text-muted d-block">Dose</span>
+                    <strong id="resumoDose">-</strong>
+                  </div>
+                  <div>
+                    <span class="text-muted d-block">Aplicação</span>
+                    <strong id="resumoAplicacao">-</strong>
+                  </div>
+                  <div>
+                    <span class="text-muted d-block">Próxima dose</span>
+                    <strong id="resumoProxima">Não informada</strong>
+                  </div>
+                </div>
+
+                <label for="observacoes" class="form-label mt-4">Observações</label>
+                <textarea id="observacoes" class="form-control form-control-lg" rows="3" placeholder="Ex.: reação leve, orientação recebida..."></textarea>
+              </div>
+
+              <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+                <button type="button" class="btn btn-outline-secondary btn-lg w-100" id="btnVoltar" disabled>
+                  Voltar
+                </button>
+                <button type="button" class="btn btn-primary btn-lg w-100" id="btnContinuar">
+                  Continuar
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <footer class="app-footer bg-white border-top">
+    <div class="container py-3">
+      <p class="mb-0 text-muted">Home Care 4.0 — Plataforma de centralização de cuidados e serviços.</p>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let etapa = 1;
+
+    const textos = {
+      1: "Pessoa e vacina",
+      2: "Aplicação",
+      3: "Resumo final"
+    };
+
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
+    }
+
+    function formatarData(valor) {
+      if (!valor) return "Não informada";
+      return new Date(valor + "T00:00:00").toLocaleDateString("pt-BR");
+    }
+
+    function atualizarResumo() {
+      document.getElementById("resumoPessoa").textContent = document.getElementById("pessoa").value || "-";
+      document.getElementById("resumoVacina").textContent = document.getElementById("vacina").value || "-";
+      document.getElementById("resumoDose").textContent = document.getElementById("tipoDose").value || "-";
+      document.getElementById("resumoAplicacao").textContent = formatarData(document.getElementById("dataAplicacao").value);
+      document.getElementById("resumoProxima").textContent = formatarData(document.getElementById("proximaDose").value);
+    }
+
+    function atualizarTela() {
+      document.querySelectorAll(".etapa").forEach(function(item) {
+        item.classList.toggle("d-none", Number(item.dataset.etapa) !== etapa);
+      });
+
+      document.getElementById("etapaAtual").textContent = etapa;
+      document.getElementById("textoEtapa").textContent = textos[etapa];
+      document.getElementById("barraProgresso").style.width = etapa === 1 ? "33%" : etapa === 2 ? "66%" : "100%";
+      document.getElementById("btnVoltar").disabled = etapa === 1;
+      document.getElementById("btnContinuar").textContent = etapa === 3 ? "Salvar vacina" : "Continuar";
+
+      atualizarResumo();
+    }
+
+    function validarEtapa() {
+      if (etapa === 1) {
+        if (!document.getElementById("pessoa").value || !document.getElementById("vacina").value.trim()) {
+          mostrarToast("Preencha pessoa e nome da vacina.");
+          return false;
+        }
+      }
+
+      if (etapa === 2) {
+        if (!document.getElementById("dataAplicacao").value) {
+          mostrarToast("Informe a data de aplicação.");
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    document.getElementById("btnContinuar").addEventListener("click", function() {
+      if (!validarEtapa()) return;
+
+      if (etapa < 3) {
+        etapa++;
+        atualizarTela();
+        return;
+      }
+
+      const registro = {
+        pessoa: document.getElementById("pessoa").value,
+        vacina: document.getElementById("vacina").value,
+        dose: document.getElementById("tipoDose").value,
+        data: document.getElementById("dataAplicacao").value,
+        local: document.getElementById("localAplicacao").value,
+        lote: document.getElementById("lote").value,
+        proximaDose: document.getElementById("proximaDose").value,
+        observacoes: document.getElementById("observacoes").value
+      };
+
+      localStorage.setItem("vacinaAdicionada", JSON.stringify(registro));
+      mostrarToast("Vacina registrada com sucesso.");
+    });
+
+    document.getElementById("btnVoltar").addEventListener("click", function() {
+      if (etapa > 1) {
+        etapa--;
+        atualizarTela();
+      }
+    });
+
+    atualizarTela();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Horários dos Medicamentos | Home Care 4.0</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+  <link rel="stylesheet" href="../../css/pages/medicamentos.css" />
+</head>
+
+<body class="hc-medication-page hc-idoso-module" data-profile-page="idoso">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3 hc-toast-container">
+          <div id="appToast" class="toast align-items-center border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+          <div>
+            <span class="badge text-bg-primary mb-2">Medicamentos</span>
+            <h1 class="h3 mb-1">Configurar horários</h1>
+            <p class="text-muted mb-0">
+              Ajuste os horários das doses, recorrência e lembretes de cada medicamento.
+            </p>
+          </div>
+
+          <div class="d-flex flex-column flex-sm-row gap-2">
+            <a href="medicamentos.html" class="btn btn-outline-secondary">Voltar</a>
+            <a href="medicamentos-adicionar.html" class="btn btn-primary">Adicionar medicamento</a>
+          </div>
+        </div>
+
+        <div class="row g-4">
+
+          <div class="col-xl-8">
+
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-1">Selecionar medicamento</h2>
+                <p class="text-muted mb-4">
+                  Escolha o medicamento para editar a rotina de horários.
+                </p>
+
+                <div class="row g-3">
+                  <div class="col-md-8">
+                    <label for="medicamentoSelecionado" class="form-label">Medicamento</label>
+                    <select id="medicamentoSelecionado" class="form-select">
+                      <option value="1">Losartana 50mg • Maria</option>
+                      <option value="2">Metformina 850mg • Maria</option>
+                      <option value="3">Vitamina D • Antônio</option>
+                      <option value="4">Omeprazol 20mg • Eu</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label for="tipoAlerta" class="form-label">Alerta principal</label>
+                    <select id="tipoAlerta" class="form-select">
+                      <option>Notificação no aplicativo</option>
+                      <option>Som na caixa inteligente</option>
+                      <option>LED na caixa inteligente</option>
+                      <option>Vibração na caixa inteligente</option>
+                      <option>Todos os alertas</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-1">Recorrência</h2>
+                <p class="text-muted mb-4">
+                  Defina quando essa rotina deve acontecer.
+                </p>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="frequencia" class="form-label">Frequência</label>
+                    <select id="frequencia" class="form-select">
+                      <option value="diario">Todos os dias</option>
+                      <option value="dias-alternados">Dias alternados</option>
+                      <option value="semanal">Dias específicos da semana</option>
+                      <option value="personalizado">Personalizado</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-3">
+                    <label for="dataInicio" class="form-label">Início</label>
+                    <input type="date" id="dataInicio" class="form-control" />
+                  </div>
+
+                  <div class="col-md-3">
+                    <label for="dataFim" class="form-label">Fim</label>
+                    <input type="date" id="dataFim" class="form-control" />
+                  </div>
+
+                  <div class="col-12">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" role="switch" id="usoContinuo" checked />
+                      <label class="form-check-label" for="usoContinuo">
+                        Rotina de uso contínuo, sem data final
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="col-12" id="diasSemanaWrapper">
+                    <label class="form-label">Dias da semana</label>
+                    <div class="d-flex flex-wrap gap-2" id="diasSemana">
+                      <input type="checkbox" class="btn-check dia-semana" id="diaSeg" value="Seg" checked />
+                      <label class="btn btn-outline-primary" for="diaSeg">Seg</label>
+
+                      <input type="checkbox" class="btn-check dia-semana" id="diaTer" value="Ter" checked />
+                      <label class="btn btn-outline-primary" for="diaTer">Ter</label>
+
+                      <input type="checkbox" class="btn-check dia-semana" id="diaQua" value="Qua" checked />
+                      <label class="btn btn-outline-primary" for="diaQua">Qua</label>
+
+                      <input type="checkbox" class="btn-check dia-semana" id="diaQui" value="Qui" checked />
+                      <label class="btn btn-outline-primary" for="diaQui">Qui</label>
+
+                      <input type="checkbox" class="btn-check dia-semana" id="diaSex" value="Sex" checked />
+                      <label class="btn btn-outline-primary" for="diaSex">Sex</label>
+
+                      <input type="checkbox" class="btn-check dia-semana" id="diaSab" value="Sáb" checked />
+                      <label class="btn btn-outline-primary" for="diaSab">Sáb</label>
+
+                      <input type="checkbox" class="btn-check dia-semana" id="diaDom" value="Dom" checked />
+                      <label class="btn btn-outline-primary" for="diaDom">Dom</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <h2 class="h5 mb-1">Horários das doses</h2>
+                    <p class="text-muted mb-0">
+                      Adicione, edite ou remova os horários de lembrete.
+                    </p>
+                  </div>
+
+                  <button type="button" class="btn btn-outline-primary" id="btnAdicionarHorario">
+                    + Adicionar horário
+                  </button>
+                </div>
+
+                <div id="listaHorarios" class="d-grid gap-3"></div>
+
+                <div id="semHorarios" class="text-center py-5 d-none">
+                  <h3 class="h5">Nenhum horário configurado</h3>
+                  <p class="text-muted mb-3">Adicione pelo menos um horário para ativar os lembretes.</p>
+                  <button type="button" class="btn btn-primary" id="btnAdicionarPrimeiroHorario">
+                    Adicionar primeiro horário
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+              <button type="button" class="btn btn-outline-secondary" id="btnRestaurar">
+                Restaurar padrão
+              </button>
+
+              <div class="d-flex flex-column flex-sm-row gap-2">
+                <button type="button" class="btn btn-outline-primary" id="btnTestarAlerta">
+                  Testar alerta
+                </button>
+                <button type="button" class="btn btn-success" id="btnSalvar">
+                  Salvar horários
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="col-xl-4">
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Resumo da rotina</h2>
+
+                <div class="d-grid gap-3">
+                  <div>
+                    <small class="text-muted">Medicamento</small>
+                    <p class="fw-semibold mb-0" id="resumoMedicamento">Losartana 50mg</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Pessoa acompanhada</small>
+                    <p class="fw-semibold mb-0" id="resumoPessoa">Maria</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Recorrência</small>
+                    <p class="fw-semibold mb-0" id="resumoRecorrencia">Todos os dias</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Horários</small>
+                    <p class="fw-semibold mb-0" id="resumoHorarios">08:00, 20:00</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Alerta</small>
+                    <p class="fw-semibold mb-0" id="resumoAlerta">Notificação no aplicativo</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Próximas doses geradas</h2>
+                <div id="proximasDoses" class="d-grid gap-2"></div>
+              </div>
+            </section>
+
+            <section class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Resultado ao salvar</h2>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item px-0">Atualiza a agenda diária</li>
+                  <li class="list-group-item px-0">Recalcula próximos alertas</li>
+                  <li class="list-group-item px-0">Registra alteração no histórico</li>
+                  <li class="list-group-item px-0">Sincroniza com dispositivo, quando conectado</li>
+                </ul>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="modal fade" id="modalSucesso" tabindex="-1" aria-labelledby="modalSucessoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="modalSucessoLabel">Horários salvos</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="alert alert-success border-0 rounded-4">
+            <strong>Rotina atualizada com sucesso.</strong><br />
+            Os horários foram salvos e os próximos alertas foram recalculados.
+          </div>
+
+          <div id="resultadoSalvo" class="row g-3"></div>
+        </div>
+
+        <div class="modal-footer">
+          <a href="medicamentos.html" class="btn btn-primary">Ir para medicamentos</a>
+          <a href="medicamentos-confirmar-dose.html" class="btn btn-outline-primary">Ver confirmação de dose</a>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Continuar editando</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalTesteAlerta" tabindex="-1" aria-labelledby="modalTesteAlertaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="modalTesteAlertaLabel">Teste de alerta</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="alert alert-info border-0 rounded-4 mb-0">
+            <strong id="testeTitulo">Hora do medicamento</strong><br />
+            <span id="testeMensagem">Este é um exemplo de como o alerta aparecerá para o usuário.</span>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const medicamentos = {
+      1: {
+        nome: "Losartana 50mg",
+        pessoa: "Maria",
+        horarios: ["08:00", "20:00"],
+        alerta: "Notificação no aplicativo",
+        frequencia: "diario"
+      },
+      2: {
+        nome: "Metformina 850mg",
+        pessoa: "Maria",
+        horarios: ["10:00", "22:00"],
+        alerta: "Todos os alertas",
+        frequencia: "diario"
+      },
+      3: {
+        nome: "Vitamina D",
+        pessoa: "Antônio",
+        horarios: ["14:00"],
+        alerta: "Notificação no aplicativo",
+        frequencia: "semanal"
+      },
+      4: {
+        nome: "Omeprazol 20mg",
+        pessoa: "Eu",
+        horarios: ["07:00"],
+        alerta: "Som na caixa inteligente",
+        frequencia: "diario"
+      }
+    };
+
+    let horariosAtuais = [];
+    let contadorHorarios = 0;
+
+    const toast = new bootstrap.Toast(document.getElementById("appToast"));
+    const modalSucesso = new bootstrap.Modal(document.getElementById("modalSucesso"));
+    const modalTesteAlerta = new bootstrap.Modal(document.getElementById("modalTesteAlerta"));
+
+    const medicamentoSelecionado = document.getElementById("medicamentoSelecionado");
+    const tipoAlerta = document.getElementById("tipoAlerta");
+    const frequencia = document.getElementById("frequencia");
+    const dataInicio = document.getElementById("dataInicio");
+    const dataFim = document.getElementById("dataFim");
+    const usoContinuo = document.getElementById("usoContinuo");
+
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      toast.show();
+    }
+
+    function hojeISO() {
+      return new Date().toISOString().split("T")[0];
+    }
+
+    function formatarData(data) {
+      return data.toLocaleDateString("pt-BR", {
+        weekday: "short",
+        day: "2-digit",
+        month: "2-digit"
+      });
+    }
+
+    function medicamentoAtual() {
+      return medicamentos[medicamentoSelecionado.value];
+    }
+
+    function carregarMedicamento() {
+      const med = medicamentoAtual();
+
+      horariosAtuais = [...med.horarios];
+      tipoAlerta.value = med.alerta;
+      frequencia.value = med.frequencia;
+
+      if (!dataInicio.value) {
+        dataInicio.value = hojeISO();
+      }
+
+      renderizarHorarios();
+      atualizarResumo();
+      mostrarToast("Rotina carregada.");
+    }
+
+    function adicionarHorario(valor = "") {
+      const horario = valor || "08:00";
+      horariosAtuais.push(horario);
+      horariosAtuais = organizarHorarios(horariosAtuais);
+      renderizarHorarios();
+      atualizarResumo();
+    }
+
+    function organizarHorarios(lista) {
+      return [...new Set(lista.filter(Boolean))].sort();
+    }
+
+    function renderizarHorarios() {
+      const container = document.getElementById("listaHorarios");
+      const empty = document.getElementById("semHorarios");
+
+      container.innerHTML = "";
+      contadorHorarios = 0;
+
+      if (horariosAtuais.length === 0) {
+        empty.classList.remove("d-none");
+        return;
+      }
+
+      empty.classList.add("d-none");
+
+      horariosAtuais.forEach(function (horario, index) {
+        contadorHorarios += 1;
+
+        const item = document.createElement("div");
+        item.className = "card border rounded-4";
+        item.innerHTML = `
+          <div class="card-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-md-3">
+                <span class="badge text-bg-light">Dose ${index + 1}</span>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label visually-hidden" for="horario-${index}">Horário</label>
+                <input
+                  type="time"
+                  class="form-control horario-input"
+                  id="horario-${index}"
+                  value="${horario}"
+                  data-index="${index}"
+                />
+              </div>
+
+              <div class="col-md-3">
+                <span class="text-muted small">Alerta: ${tipoAlerta.value}</span>
+              </div>
+
+              <div class="col-md-2 text-md-end">
+                <button
+                  class="btn btn-outline-danger"
+                  type="button"
+                  data-remover="${index}"
+                >
+                  Remover
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(item);
+      });
+    }
+
+    function diasSelecionados() {
+      return Array.from(document.querySelectorAll(".dia-semana:checked"))
+        .map(function (input) {
+          return input.value;
+        });
+    }
+
+    function textoRecorrencia() {
+      const map = {
+        "diario": "Todos os dias",
+        "dias-alternados": "Dias alternados",
+        "semanal": "Dias específicos: " + (diasSelecionados().join(", ") || "nenhum dia selecionado"),
+        "personalizado": "Personalizado"
+      };
+
+      return map[frequencia.value] || "Não definido";
+    }
+
+    function atualizarResumo() {
+      const med = medicamentoAtual();
+      horariosAtuais = organizarHorarios(horariosAtuais);
+
+      document.getElementById("resumoMedicamento").textContent = med.nome;
+      document.getElementById("resumoPessoa").textContent = med.pessoa;
+      document.getElementById("resumoRecorrencia").textContent = textoRecorrencia();
+      document.getElementById("resumoHorarios").textContent =
+        horariosAtuais.length ? horariosAtuais.join(", ") : "Nenhum horário";
+      document.getElementById("resumoAlerta").textContent = tipoAlerta.value;
+
+      gerarProximasDoses();
+    }
+
+    function gerarProximasDoses() {
+      const container = document.getElementById("proximasDoses");
+      const med = medicamentoAtual();
+      const inicio = dataInicio.value ? new Date(dataInicio.value + "T00:00:00") : new Date();
+
+      container.innerHTML = "";
+
+      if (horariosAtuais.length === 0) {
+        container.innerHTML = `<p class="text-muted mb-0">Nenhuma dose será gerada sem horário.</p>`;
+        return;
+      }
+
+      const proximas = [];
+
+      for (let dia = 0; dia < 4; dia += 1) {
+        const data = new Date(inicio);
+        data.setDate(inicio.getDate() + dia);
+
+        horariosAtuais.forEach(function (hora) {
+          if (proximas.length < 6) {
+            proximas.push({
+              data,
+              hora
+            });
+          }
+        });
+      }
+
+      proximas.forEach(function (dose) {
+        const item = document.createElement("div");
+        item.className = "border rounded-4 p-3 bg-light";
+        item.innerHTML = `
+          <strong>${dose.hora}</strong>
+          <p class="text-muted mb-0 small">${formatarData(dose.data)} • ${med.nome}</p>
+        `;
+
+        container.appendChild(item);
+      });
+    }
+
+    function validarHorarios() {
+      if (horariosAtuais.length === 0) {
+        mostrarToast("Adicione pelo menos um horário.");
+        return false;
+      }
+
+      if (!dataInicio.value) {
+        mostrarToast("Informe a data de início.");
+        dataInicio.focus();
+        return false;
+      }
+
+      if (frequencia.value === "semanal" && diasSelecionados().length === 0) {
+        mostrarToast("Selecione pelo menos um dia da semana.");
+        return false;
+      }
+
+      return true;
+    }
+
+    function salvarHorarios() {
+      if (!validarHorarios()) return;
+
+      const med = medicamentoAtual();
+
+      med.horarios = [...horariosAtuais];
+      med.alerta = tipoAlerta.value;
+      med.frequencia = frequencia.value;
+
+      const cards = [
+        {
+          titulo: "Medicamento",
+          texto: med.nome + " • " + med.pessoa
+        },
+        {
+          titulo: "Horários salvos",
+          texto: horariosAtuais.join(", ")
+        },
+        {
+          titulo: "Recorrência",
+          texto: textoRecorrencia()
+        },
+        {
+          titulo: "Alerta",
+          texto: tipoAlerta.value
+        },
+        {
+          titulo: "Início",
+          texto: dataInicio.value
+        },
+        {
+          titulo: "Fim",
+          texto: usoContinuo.checked ? "Uso contínuo" : (dataFim.value || "Não informado")
+        }
+      ];
+
+      document.getElementById("resultadoSalvo").innerHTML = cards.map(function (card) {
+        return `
+          <div class="col-md-6">
+            <div class="card border-0 bg-light rounded-4 h-100">
+              <div class="card-body">
+                <small class="text-muted">${card.titulo}</small>
+                <h3 class="h6 mb-0">${card.texto}</h3>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      modalSucesso.show();
+      mostrarToast("Horários salvos.");
+      atualizarResumo();
+    }
+
+    function testarAlerta() {
+      if (!validarHorarios()) return;
+
+      const med = medicamentoAtual();
+      const primeiroHorario = horariosAtuais[0];
+
+      document.getElementById("testeTitulo").textContent = "Hora do medicamento";
+      document.getElementById("testeMensagem").textContent =
+        `${med.pessoa}: tomar ${med.nome} às ${primeiroHorario}. Alerta configurado como: ${tipoAlerta.value}.`;
+
+      modalTesteAlerta.show();
+    }
+
+    function restaurarPadrao() {
+      const med = medicamentoAtual();
+
+      horariosAtuais = [...med.horarios];
+      tipoAlerta.value = med.alerta;
+      frequencia.value = med.frequencia;
+
+      renderizarHorarios();
+      atualizarResumo();
+      mostrarToast("Horários restaurados.");
+    }
+
+    document.getElementById("btnAdicionarHorario").addEventListener("click", function () {
+      adicionarHorario("");
+      mostrarToast("Horário adicionado.");
+    });
+
+    document.getElementById("btnAdicionarPrimeiroHorario").addEventListener("click", function () {
+      adicionarHorario("08:00");
+      mostrarToast("Primeiro horário adicionado.");
+    });
+
+    document.getElementById("listaHorarios").addEventListener("input", function (event) {
+      if (!event.target.classList.contains("horario-input")) return;
+
+      const index = Number(event.target.dataset.index);
+      horariosAtuais[index] = event.target.value;
+      horariosAtuais = organizarHorarios(horariosAtuais);
+
+      atualizarResumo();
+    });
+
+    document.getElementById("listaHorarios").addEventListener("click", function (event) {
+      const button = event.target.closest("[data-remover]");
+      if (!button) return;
+
+      const index = Number(button.dataset.remover);
+      horariosAtuais.splice(index, 1);
+
+      renderizarHorarios();
+      atualizarResumo();
+      mostrarToast("Horário removido.");
+    });
+
+    medicamentoSelecionado.addEventListener("change", carregarMedicamento);
+
+    tipoAlerta.addEventListener("change", function () {
+      renderizarHorarios();
+      atualizarResumo();
+    });
+
+    frequencia.addEventListener("change", atualizarResumo);
+    dataInicio.addEventListener("change", atualizarResumo);
+    dataFim.addEventListener("change", atualizarResumo);
+
+    usoContinuo.addEventListener("change", function () {
+      dataFim.disabled = usoContinuo.checked;
+      if (usoContinuo.checked) {
+        dataFim.value = "";
+      }
+
+      atualizarResumo();
+    });
+
+    document.querySelectorAll(".dia-semana").forEach(function (input) {
+      input.addEventListener("change", atualizarResumo);
+    });
+
+    document.getElementById("btnSalvar").addEventListener("click", salvarHorarios);
+    document.getElementById("btnTestarAlerta").addEventListener("click", testarAlerta);
+    document.getElementById("btnRestaurar").addEventListener("click", restaurarPadrao);
+
+    dataInicio.value = hojeISO();
+    dataFim.disabled = true;
+    carregarMedicamento();
+  </script>
+  <script src="../../js/pages/medicamentos-profile.js"></script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

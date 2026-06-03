@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Completar cadastro | Home Care 4.0</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+          <div id="appToast" class="toast align-items-center border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+              <div class="col-12 col-lg-8">
+                <p class="text-muted fs-5 mb-1">Completar cadastro</p>
+                <h1 class="fw-bold mb-3">Dados profissionais por etapas</h1>
+                <p class="text-muted fs-5 mb-0">Informe formação, conselho, experiência e atuação atual. Os campos se adaptam à profissão escolhida.</p>
+              </div>
+              <div class="col-12 col-lg-4">
+                <div class="d-grid gap-2">
+                  <a href="cadastro.html" class="btn btn-outline-secondary btn-lg"><i class="bi bi-arrow-left me-2"></i>Voltar</a>
+                  <a href="validacao.html" class="btn btn-outline-primary btn-lg"><i class="bi bi-shield-check me-2"></i>Ir para validação</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong>Etapa <span id="etapaAtual">1</span> de 4</strong>
+              <span class="text-muted" id="nomeEtapa">Identificação profissional</span>
+            </div>
+            <div class="progress mb-4"><div id="barraEtapa" class="progress-bar w-25"></div></div>
+
+            <form id="formCompletar">
+              <div class="etapa-cadastro" data-etapa="1">
+                <div class="row g-3">
+                  <div class="col-12 col-lg-6">
+                    <label for="profissao" class="form-label">Profissão</label>
+                    <select id="profissao" class="form-select form-select-lg" required>
+                      <option value="Médico">Médico</option>
+                      <option value="Fisioterapeuta">Fisioterapeuta</option>
+                      <option value="Enfermeiro">Enfermeiro</option>
+                      <option value="Psicólogo">Psicólogo</option>
+                      <option value="Cuidador">Cuidador</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-lg-6">
+                    <label for="especialidade" class="form-label" id="labelEspecialidade">Especialidade</label>
+                    <input id="especialidade" class="form-control form-control-lg" placeholder="Ex.: Geriatria">
+                  </div>
+
+                  <div class="col-12 col-lg-6">
+                    <label for="anoFormacao" class="form-label">Ano de formação</label>
+                    <input id="anoFormacao" type="number" min="1950" max="2026" class="form-control form-control-lg" placeholder="Ex.: 2018" required>
+                  </div>
+
+                  <div class="col-12 col-lg-6">
+                    <label for="instituicao" class="form-label">Instituição de formação</label>
+                    <input id="instituicao" class="form-control form-control-lg" placeholder="Ex.: Universidade Federal..." required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="etapa-cadastro d-none" data-etapa="2">
+                <div class="row g-3">
+                  <div class="col-12 col-lg-5">
+                    <label for="conselho" class="form-label" id="labelConselho">Conselho profissional</label>
+                    <input id="conselho" class="form-control form-control-lg" placeholder="Ex.: CRM-SP 123456">
+                  </div>
+
+                  <div class="col-12 col-lg-4">
+                    <label for="ufConselho" class="form-label">UF do conselho</label>
+                    <select id="ufConselho" class="form-select form-select-lg">
+                      <option>SP</option><option>RJ</option><option>MG</option><option>PR</option><option>RS</option><option>BA</option><option>PE</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-lg-3">
+                    <label for="situacaoConselho" class="form-label">Situação</label>
+                    <select id="situacaoConselho" class="form-select form-select-lg">
+                      <option>Ativo</option>
+                      <option>Em renovação</option>
+                      <option>Não se aplica</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="alert alert-warning border-0 rounded-4 mb-0">
+                      <i class="bi bi-shield-exclamation me-2"></i>
+                      Profissões com conselho serão liberadas para atendimento somente após validação.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="etapa-cadastro d-none" data-etapa="3">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label for="curriculo" class="form-label">Currículo profissional</label>
+                    <textarea id="curriculo" class="form-control form-control-lg" rows="5" placeholder="Conte onde trabalhou, funções exercidas e principais experiências." required></textarea>
+                  </div>
+
+                  <div class="col-12 col-lg-6">
+                    <label for="localAtual" class="form-label">Atuação atual</label>
+                    <input id="localAtual" class="form-control form-control-lg" placeholder="Ex.: Atendimento domiciliar, clínica, hospital">
+                  </div>
+
+                  <div class="col-12 col-lg-6">
+                    <label for="tempoExperiencia" class="form-label">Tempo de experiência</label>
+                    <select id="tempoExperiencia" class="form-select form-select-lg">
+                      <option>Menos de 1 ano</option>
+                      <option>1 a 3 anos</option>
+                      <option>4 a 7 anos</option>
+                      <option>8 anos ou mais</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="etapa-cadastro d-none" data-etapa="4">
+                <h2 class="h4 mb-3">Resumo do perfil</h2>
+                <div class="row g-3" id="resumoCadastro"></div>
+
+                <div class="form-check mt-4">
+                  <input class="form-check-input" type="checkbox" id="confirmarDados">
+                  <label class="form-check-label" for="confirmarDados">
+                    Confirmo que os dados profissionais informados são verdadeiros.
+                  </label>
+                </div>
+              </div>
+
+              <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+                <button type="button" class="btn btn-outline-secondary btn-lg w-100" id="btnVoltar" disabled><i class="bi bi-arrow-left me-2"></i>Voltar</button>
+                <button type="button" class="btn btn-primary btn-lg w-100" id="btnContinuar">Continuar <i class="bi bi-arrow-right ms-2"></i></button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
+    }
+
+
+    let etapa = 1;
+    const nomes = ["Identificação profissional", "Conselho e registro", "Experiência", "Resumo final"];
+
+    function ajustarCampos() {
+      const profissao = document.getElementById("profissao").value;
+      const labelConselho = document.getElementById("labelConselho");
+      const labelEspecialidade = document.getElementById("labelEspecialidade");
+      const conselho = document.getElementById("conselho");
+
+      const mapas = {
+        "Médico": ["CRM", "Especialidade médica"],
+        "Fisioterapeuta": ["CREFITO", "Área da fisioterapia"],
+        "Enfermeiro": ["COREN", "Área de enfermagem"],
+        "Psicólogo": ["CRP", "Abordagem ou área clínica"],
+        "Cuidador": ["Certificados e cursos", "Tipo de cuidado"]
+      };
+
+      labelConselho.textContent = mapas[profissao][0];
+      labelEspecialidade.textContent = mapas[profissao][1];
+      conselho.placeholder = profissao === "Cuidador" ? "Ex.: Curso de cuidador, primeiros socorros" : "Informe número e UF do conselho";
+    }
+
+    function montarResumo() {
+      const dados = [
+        ["Profissão", document.getElementById("profissao").value],
+        ["Especialidade/área", document.getElementById("especialidade").value || "Não informado"],
+        ["Ano de formação", document.getElementById("anoFormacao").value || "Não informado"],
+        ["Instituição", document.getElementById("instituicao").value || "Não informado"],
+        ["Registro", document.getElementById("conselho").value || "Não informado"],
+        ["Atuação atual", document.getElementById("localAtual").value || "Não informado"]
+      ];
+
+      document.getElementById("resumoCadastro").innerHTML = dados.map(function(item) {
+        return '<div class="col-12 col-md-6"><div class="p-3 rounded-4 bg-light"><span class="text-muted d-block">' + item[0] + '</span><strong>' + item[1] + '</strong></div></div>';
+      }).join("");
+    }
+
+    function atualizarEtapa() {
+      document.querySelectorAll(".etapa-cadastro").forEach(function(el) {
+        el.classList.toggle("d-none", Number(el.dataset.etapa) !== etapa);
+      });
+
+      document.getElementById("etapaAtual").textContent = etapa;
+      document.getElementById("nomeEtapa").textContent = nomes[etapa - 1];
+      document.getElementById("barraEtapa").className = "progress-bar w-" + (etapa === 1 ? "25" : etapa === 2 ? "50" : etapa === 3 ? "75" : "100");
+      document.getElementById("btnVoltar").disabled = etapa === 1;
+      document.getElementById("btnContinuar").innerHTML = etapa === 4 ? '<i class="bi bi-check-circle me-2"></i>Enviar para validação' : 'Continuar <i class="bi bi-arrow-right ms-2"></i>';
+
+      if (etapa === 4) montarResumo();
+    }
+
+    function validarEtapa() {
+      if (etapa === 1 && (!document.getElementById("anoFormacao").value || !document.getElementById("instituicao").value.trim())) {
+        mostrarToast("Informe formação e instituição.");
+        return false;
+      }
+
+      if (etapa === 3 && !document.getElementById("curriculo").value.trim()) {
+        mostrarToast("Preencha o currículo profissional.");
+        return false;
+      }
+
+      if (etapa === 4 && !document.getElementById("confirmarDados").checked) {
+        mostrarToast("Confirme que os dados estão corretos.");
+        return false;
+      }
+
+      return true;
+    }
+
+    document.getElementById("profissao").addEventListener("change", ajustarCampos);
+
+    document.getElementById("btnContinuar").addEventListener("click", function () {
+      if (!validarEtapa()) return;
+
+      if (etapa < 4) {
+        etapa++;
+        atualizarEtapa();
+        return;
+      }
+
+      localStorage.setItem("perfilProfissionalStatus", "Aguardando validação");
+      mostrarToast("Cadastro enviado para validação.");
+      setTimeout(function () { window.location.href = "validacao.html"; }, 800);
+    });
+
+    document.getElementById("btnVoltar").addEventListener("click", function () {
+      if (etapa > 1) {
+        etapa--;
+        atualizarEtapa();
+      }
+    });
+
+    ajustarCampos();
+    atualizarEtapa();
+
+  </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+
+});
+</script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

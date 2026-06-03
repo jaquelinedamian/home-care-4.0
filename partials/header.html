@@ -1,0 +1,355 @@
+<a href="#conteudo-principal" class="hc-skip-link">
+  Pular para o conteúdo principal
+</a>
+
+
+<header class="hc-desktop-header d-none d-lg-block">
+  <nav class="hc-desktop-navbar" aria-label="Navegação principal">
+    <div class="hc-desktop-container">
+
+      <a
+        href="/pages/idoso/dashboard.html"
+        class="hc-desktop-brand"
+        aria-label="Ir para o início"
+        data-route-key="dashboard"
+      >
+        <img
+          src="/img/logo-home-care.svg"
+          alt="Home Care 4.0"
+          class="hc-desktop-logo"
+        />
+      </a>
+
+      <div class="hc-desktop-nav">
+        <a href="/pages/idoso/dashboard.html" data-route-key="dashboard">Início</a>
+        <a href="/pages/idoso/agenda.html" data-route-key="agenda">Agenda</a>
+        <a href="/pages/idoso/alertas.html" data-route-key="alertas">Alertas</a>
+        <a href="/pages/idoso/notificacoes.html" data-route-key="notificacoes">Notificações</a>
+      </div>
+
+      <form class="hc-global-search" role="search" data-global-search-form>
+        <label class="visually-hidden" for="hcGlobalSearch">Busca global</label>
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input id="hcGlobalSearch" type="search" name="q" placeholder="Buscar na plataforma" autocomplete="off" />
+        <button type="submit">Buscar</button>
+      </form>
+
+      <div class="hc-desktop-actions">
+
+        <a href="/pages/idoso/emergencia.html" class="btn btn-danger hc-emergency-btn" data-route-key="emergencia">
+          <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+          <span>Emergência</span>
+        </a>
+
+        <div class="dropdown">
+          <button
+            class="btn btn-outline-secondary dropdown-toggle hc-header-btn"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="bi bi-universal-access-circle" aria-hidden="true"></i>
+            <span>Acessibilidade</span>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end hc-dropdown-menu">
+            <li>
+              <button class="dropdown-item" type="button" data-accessibility="decrease-font">
+                <i class="bi bi-dash-circle me-2" aria-hidden="true"></i>
+                Diminuir fonte
+              </button>
+            </li>
+
+            <li>
+              <button class="dropdown-item" type="button" data-accessibility="increase-font">
+                <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+                Aumentar fonte
+              </button>
+            </li>
+
+            <li>
+              <button class="dropdown-item" type="button" data-accessibility="toggle-contrast">
+                <i class="bi bi-circle-half me-2" aria-hidden="true"></i>
+                Alto contraste
+              </button>
+            </li>
+
+            <li><hr class="dropdown-divider" /></li>
+
+            <li>
+              <button class="dropdown-item" type="button" data-accessibility="reset">
+                <i class="bi bi-arrow-counterclockwise me-2" aria-hidden="true"></i>
+                Resetar ajustes
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div class="dropdown">
+          <button
+            class="btn btn-outline-secondary dropdown-toggle hc-user-button"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <span class="hc-user-avatar" aria-hidden="true">J</span>
+            <span>Jaqueline</span>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end hc-dropdown-menu">
+            <li class="hc-dropdown-profile-status">
+              <span>Perfil ativo</span>
+              <strong data-current-profile-label>Idoso</strong>
+            </li>
+
+            <li><hr class="dropdown-divider" /></li>
+
+            <li>
+              <a class="dropdown-item" href="/pages/idoso/conta-perfil.html">
+                <i class="bi bi-person me-2" aria-hidden="true"></i>
+                Minha conta
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item" href="/pages/idoso/conta-configuracoes.html">
+                <i class="bi bi-gear me-2" aria-hidden="true"></i>
+                Configurações da conta
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item" href="/pages/idoso/conta-suporte.html">
+                <i class="bi bi-question-circle me-2" aria-hidden="true"></i>
+                Suporte
+              </a>
+            </li>
+
+            <li><hr class="dropdown-divider" /></li>
+
+            <li>
+              <a class="dropdown-item text-danger" href="/index.html">
+                <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>
+                Sair
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+</header>
+
+
+<header class="hc-mobile-header d-lg-none">
+  <nav class="hc-mobile-navbar" aria-label="Navegação mobile">
+
+    <a
+      href="/pages/idoso/dashboard.html"
+      class="hc-mobile-brand"
+      aria-label="Ir para o início"
+      data-route-key="dashboard"
+    >
+      <img
+        src="/img/icone-home-care2.svg"
+        alt="Home Care 4.0"
+        class="hc-mobile-logo"
+      />
+      <span class="hc-mobile-brand-text">Home Care 4.0</span>
+    </a>
+
+    <div class="hc-mobile-actions">
+
+      <a href="/pages/idoso/emergencia.html" class="hc-mobile-emergency-btn" data-route-key="emergencia">
+        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+        <span>Emergência</span>
+      </a>
+
+      <button
+        class="hc-mobile-menu-btn"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#hcMobileHeaderMenu"
+        aria-controls="hcMobileHeaderMenu"
+        aria-label="Abrir menu"
+      >
+        <i class="bi bi-list" aria-hidden="true"></i>
+      </button>
+
+    </div>
+  </nav>
+  <form class="hc-global-search hc-mobile-global-search" role="search" data-global-search-form>
+    <label class="visually-hidden" for="hcMobileGlobalSearch">Busca global</label>
+    <i class="bi bi-search" aria-hidden="true"></i>
+    <input id="hcMobileGlobalSearch" type="search" name="q" placeholder="Buscar na plataforma" autocomplete="off" />
+    <button type="submit">Buscar</button>
+  </form>
+</header>
+
+
+<div
+  class="offcanvas offcanvas-end hc-mobile-offcanvas d-lg-none"
+  tabindex="-1"
+  id="hcMobileHeaderMenu"
+  aria-labelledby="hcMobileHeaderMenuTitle"
+>
+  <div class="offcanvas-header hc-mobile-offcanvas-header">
+
+    <div class="hc-mobile-menu-title">
+      <img
+        src="/img/icone-home-care2.svg"
+        alt=""
+        class="hc-mobile-menu-icon"
+        aria-hidden="true"
+      />
+
+      <div>
+        <h2 id="hcMobileHeaderMenuTitle">Menu</h2>
+        <p>Escolha como deseja navegar</p>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="offcanvas"
+      aria-label="Fechar menu"
+    ></button>
+  </div>
+
+  <div class="offcanvas-body hc-mobile-offcanvas-body">
+
+    <div class="hc-mobile-profile-status">
+      <span>Perfil ativo</span>
+      <strong>
+        <span data-current-profile-label>Idoso</span>
+      </strong>
+    </div>
+
+    <a href="/pages/idoso/emergencia.html" class="hc-mobile-emergency-full" data-route-key="emergencia">
+      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+      <span>Emergência</span>
+    </a>
+
+    <section class="hc-mobile-profile-switcher" aria-label="Selecionar perfil">
+      <h3>Trocar visão</h3>
+
+      <div class="hc-mobile-profile-grid">
+        <button
+          type="button"
+          class="hc-mobile-profile-card is-active"
+          data-profile-option="idoso"
+          aria-pressed="true"
+        >
+          <img src="/img/perfil-idoso.svg" alt="" aria-hidden="true" />
+          <span>Idoso</span>
+        </button>
+
+        <button
+          type="button"
+          class="hc-mobile-profile-card"
+          data-profile-option="familiar"
+          aria-pressed="false"
+        >
+          <img src="/img/perfil-familiar.svg" alt="" aria-hidden="true" />
+          <span>Familiar</span>
+        </button>
+
+        <button
+          type="button"
+          class="hc-mobile-profile-card"
+          data-profile-option="profissional"
+          aria-pressed="false"
+        >
+          <img src="/img/perfil-profissional.svg" alt="" aria-hidden="true" />
+          <span>Profissional</span>
+        </button>
+
+        <button
+          type="button"
+          class="hc-mobile-profile-card"
+          data-profile-option="admin"
+          aria-pressed="false"
+        >
+          <img src="/img/perfil-admin.svg" alt="" aria-hidden="true" />
+          <span>Admin</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="hc-mobile-menu-section is-active" data-profile-menu="idoso" aria-label="Menu do idoso">
+      <h3>Idoso</h3>
+      <a href="/pages/idoso/dashboard.html"><i class="bi bi-house" aria-hidden="true"></i><span>Início</span></a>
+      <a href="/pages/idoso/agenda.html"><i class="bi bi-calendar-check" aria-hidden="true"></i><span>Agenda</span></a>
+      <a href="/pages/idoso/medicamentos.html"><i class="bi bi-capsule" aria-hidden="true"></i><span>Medicamentos</span></a>
+      <a href="/pages/idoso/confirmar-dose.html"><i class="bi bi-check2-circle" aria-hidden="true"></i><span>Confirmar dose</span></a>
+      <a href="/pages/idoso/consultas.html"><i class="bi bi-camera-video" aria-hidden="true"></i><span>Consultas</span></a>
+      <a href="/pages/idoso/exames.html"><i class="bi bi-file-earmark-medical" aria-hidden="true"></i><span>Exames</span></a>
+      <a href="/pages/idoso/vacinas.html"><i class="bi bi-eyedropper" aria-hidden="true"></i><span>Vacinas</span></a>
+      <a href="/pages/idoso/sinais-vitais.html"><i class="bi bi-heart-pulse" aria-hidden="true"></i><span>Sinais vitais</span></a>
+      <a href="/pages/idoso/busca.html"><i class="bi bi-search" aria-hidden="true"></i><span>Busca</span></a>
+      <a href="/pages/idoso/servicos.html"><i class="bi bi-search" aria-hidden="true"></i><span>Serviços</span></a>
+      <a href="/pages/idoso/alertas.html"><i class="bi bi-bell" aria-hidden="true"></i><span>Alertas</span></a>
+      <a href="/pages/idoso/notificacoes.html"><i class="bi bi-chat-dots" aria-hidden="true"></i><span>Notificações</span></a>
+      <a href="/pages/idoso/mensagens.html"><i class="bi bi-envelope" aria-hidden="true"></i><span>Mensagens</span></a>
+    </section>
+
+    <section class="hc-mobile-menu-section d-none" data-profile-menu="familiar" aria-label="Menu do familiar" hidden>
+      <h3>Familiar</h3>
+      <a href="/pages/familiar/dashboard.html"><i class="bi bi-house" aria-hidden="true"></i><span>Início</span></a>
+      <a href="/pages/familiar/pessoas-cuidadas.html"><i class="bi bi-people" aria-hidden="true"></i><span>Pessoas cuidadas</span></a>
+      <a href="/pages/familiar/cadastrar-pessoa.html"><i class="bi bi-person-plus" aria-hidden="true"></i><span>Cadastrar pessoa</span></a>
+      <a href="/pages/familiar/agenda.html"><i class="bi bi-calendar-check" aria-hidden="true"></i><span>Agenda</span></a>
+      <a href="/pages/familiar/medicamentos.html"><i class="bi bi-capsule" aria-hidden="true"></i><span>Medicamentos</span></a>
+      <a href="/pages/familiar/consultas.html"><i class="bi bi-camera-video" aria-hidden="true"></i><span>Consultas</span></a>
+      <a href="/pages/familiar/exames.html"><i class="bi bi-file-earmark-medical" aria-hidden="true"></i><span>Exames</span></a>
+      <a href="/pages/familiar/sinais-vitais.html"><i class="bi bi-heart-pulse" aria-hidden="true"></i><span>Sinais vitais</span></a>
+      <a href="/pages/familiar/busca.html"><i class="bi bi-search" aria-hidden="true"></i><span>Busca</span></a>
+      <a href="/pages/familiar/servicos.html"><i class="bi bi-search" aria-hidden="true"></i><span>Serviços</span></a>
+      <a href="/pages/familiar/alertas.html"><i class="bi bi-bell" aria-hidden="true"></i><span>Alertas</span></a>
+      <a href="/pages/familiar/notificacoes.html"><i class="bi bi-chat-dots" aria-hidden="true"></i><span>Notificações</span></a>
+      <a href="/pages/familiar/mensagens.html"><i class="bi bi-envelope" aria-hidden="true"></i><span>Mensagens</span></a>
+    </section>
+
+    <section class="hc-mobile-menu-section d-none" data-profile-menu="profissional" aria-label="Menu do profissional" hidden>
+      <h3>Profissional</h3>
+      <a href="/pages/profissional/dashboard.html"><i class="bi bi-house" aria-hidden="true"></i><span>Início</span></a>
+      <a href="/pages/profissional/agenda.html"><i class="bi bi-calendar-check" aria-hidden="true"></i><span>Agenda</span></a>
+      <a href="/pages/profissional/solicitacoes.html"><i class="bi bi-inbox" aria-hidden="true"></i><span>Solicitações</span></a>
+      <a href="/pages/profissional/mensagens.html"><i class="bi bi-envelope" aria-hidden="true"></i><span>Mensagens</span></a>
+      <a href="/pages/profissional/atendimentos.html"><i class="bi bi-clipboard2-pulse" aria-hidden="true"></i><span>Atendimentos</span></a>
+      <a href="/pages/profissional/historico.html"><i class="bi bi-clock-history" aria-hidden="true"></i><span>Histórico</span></a>
+      <a href="/pages/profissional/busca.html"><i class="bi bi-search" aria-hidden="true"></i><span>Busca</span></a>
+      <a href="/pages/profissional/meus-perfis.html"><i class="bi bi-person-badge" aria-hidden="true"></i><span>Meus perfis</span></a>
+      <a href="/pages/profissional/financeiro.html"><i class="bi bi-wallet2" aria-hidden="true"></i><span>Financeiro</span></a>
+    </section>
+
+    <section class="hc-mobile-menu-section d-none" data-profile-menu="admin" aria-label="Menu do admin" hidden>
+      <h3>Admin</h3>
+      <a href="/pages/admin/dashboard.html"><i class="bi bi-speedometer2" aria-hidden="true"></i><span>Painel</span></a>
+      <a href="/pages/admin/usuarios.html"><i class="bi bi-person-gear" aria-hidden="true"></i><span>Usuários</span></a>
+      <a href="/pages/admin/profissionais.html"><i class="bi bi-person-badge" aria-hidden="true"></i><span>Profissionais</span></a>
+      <a href="/pages/admin/validacao-profissional.html"><i class="bi bi-shield-check" aria-hidden="true"></i><span>Validação</span></a>
+      <a href="/pages/admin/servicos.html"><i class="bi bi-grid" aria-hidden="true"></i><span>Serviços</span></a>
+      <a href="/pages/admin/solicitacoes.html"><i class="bi bi-inbox" aria-hidden="true"></i><span>Solicitações</span></a>
+      <a href="/pages/admin/agenda.html"><i class="bi bi-calendar-check" aria-hidden="true"></i><span>Agenda</span></a>
+      <a href="/pages/admin/alertas.html"><i class="bi bi-bell" aria-hidden="true"></i><span>Alertas</span></a>
+      <a href="/pages/admin/busca.html"><i class="bi bi-search" aria-hidden="true"></i><span>Busca</span></a>
+      <a href="/pages/admin/mensagens.html"><i class="bi bi-envelope" aria-hidden="true"></i><span>Mensagens</span></a>
+      <a href="/pages/admin/relatorios.html"><i class="bi bi-bar-chart" aria-hidden="true"></i><span>Relatórios</span></a>
+      <a href="/pages/admin/auditoria.html"><i class="bi bi-shield-lock" aria-hidden="true"></i><span>Auditoria</span></a>
+      <a href="/pages/admin/configuracoes.html"><i class="bi bi-gear" aria-hidden="true"></i><span>Configurações</span></a>
+    </section>
+
+    <section class="hc-mobile-menu-section" aria-label="Conta e suporte">
+      <h3>Conta</h3>
+      <a href="/pages/idoso/conta-perfil.html"><i class="bi bi-person" aria-hidden="true"></i><span>Minha conta</span></a>
+      <a href="/pages/idoso/conta-configuracoes.html"><i class="bi bi-gear" aria-hidden="true"></i><span>Configurações</span></a>
+      <a href="/pages/idoso/conta-suporte.html"><i class="bi bi-question-circle" aria-hidden="true"></i><span>Suporte</span></a>
+      <a href="/index.html" class="hc-mobile-danger"><i class="bi bi-box-arrow-right" aria-hidden="true"></i><span>Sair</span></a>
+    </section>
+
+  </div>
+</div>

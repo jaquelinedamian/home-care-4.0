@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sono | Home Care 4.0</title>
+<style>
+    .sleep-score-ring {
+      width: 148px;
+      height: 148px;
+      border-radius: 50%;
+      background: conic-gradient(var(--bs-primary) 0 82%, #e9ecef 82% 100%);
+      display: grid;
+      place-items: center;
+      margin-inline: auto;
+    }
+
+    .sleep-score-ring-inner {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .sleep-stage-bar {
+      min-height: 34px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #eef2f7;
+      display: flex;
+    }
+
+    .sleep-stage {
+      min-height: 34px;
+      transition: width .25s ease;
+    }
+
+    .sleep-timeline-hour {
+      font-size: .9rem;
+      color: #6c757d;
+    }
+
+    .night-card.active {
+      border-color: rgba(13, 110, 253, .55) !important;
+      box-shadow: 0 .75rem 1.5rem rgba(13, 110, 253, .12) !important;
+    }
+
+    .metric-chip {
+      border: 1px solid #e9ecef;
+      background: #fff;
+      border-radius: 999px;
+      padding: .55rem .85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      font-weight: 600;
+    }
+
+    .insight-card {
+      border-left: 5px solid var(--bs-primary);
+    }
+  </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080;">
+          <div id="appToast" class="toast border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+              <div class="col-lg-8">
+                <p class="text-muted fs-5 mb-1">
+                  <i class="bi bi-moon-stars me-2 text-primary"></i>
+                  Monitoramento do sono
+                </p>
+                <h1 class="fw-bold mb-3">Entenda o descanso de forma simples</h1>
+                <p class="text-muted fs-5 mb-0">
+                  Acompanhe duração, qualidade, despertares, frequência cardíaca e sinais coletados por anel ou relógio inteligente.
+                </p>
+              </div>
+
+              <div class="col-lg-4 d-grid gap-2">
+                <button class="btn btn-primary btn-lg" type="button" id="btnRelatorio">
+                  <i class="bi bi-file-earmark-text me-2"></i>
+                  Gerar relatório
+                </button>
+                <a href="sinais-vitais-dispositivos.html" class="btn btn-outline-primary btn-lg">
+                  <i class="bi bi-smartwatch me-2"></i>
+                  Ver dispositivos
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-4">
+                <label for="pessoaFiltro" class="form-label fw-semibold">Pessoa monitorada</label>
+                <select id="pessoaFiltro" class="form-select form-select-lg">
+                  <option value="Maria" selected>Maria</option>
+                  <option value="Seu Antônio">Seu Antônio</option>
+                  <option value="Helena">Helena</option>
+                </select>
+              </div>
+
+              <div class="col-md-4">
+                <label for="periodoFiltro" class="form-label fw-semibold">Período</label>
+                <select id="periodoFiltro" class="form-select form-select-lg">
+                  <option value="7" selected>Últimos 7 dias</option>
+                  <option value="15">Últimos 15 dias</option>
+                  <option value="30">Últimos 30 dias</option>
+                </select>
+              </div>
+
+              <div class="col-md-4 d-grid">
+                <button class="btn btn-outline-primary btn-lg" type="button" id="btnAtualizarDados">
+                  <i class="bi bi-arrow-repeat me-2"></i>
+                  Atualizar dados
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4" aria-label="Indicadores principais do sono">
+          <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <i class="bi bi-moon fs-1 text-primary"></i>
+                <p class="text-muted mt-3 mb-1">Tempo total</p>
+                <h2 class="fw-bold mb-0" id="tempoTotal">7h20</h2>
+                <span class="badge text-bg-success mt-2" id="tempoStatus">Dentro do ideal</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <i class="bi bi-heart-pulse fs-1 text-primary"></i>
+                <p class="text-muted mt-3 mb-1">Batimentos médios</p>
+                <h2 class="fw-bold mb-0" id="batimentosMedios">68 bpm</h2>
+                <span class="badge text-bg-primary mt-2">Durante o sono</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <i class="bi bi-sunrise fs-1 text-primary"></i>
+                <p class="text-muted mt-3 mb-1">Despertares</p>
+                <h2 class="fw-bold mb-0" id="despertares">3</h2>
+                <span class="badge text-bg-warning mt-2">Acompanhar</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <i class="bi bi-thermometer-half fs-1 text-primary"></i>
+                <p class="text-muted mt-3 mb-1">Temperatura</p>
+                <h2 class="fw-bold mb-0" id="temperaturaMedia">36,3°C</h2>
+                <span class="badge text-bg-success mt-2">Estável</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4 mb-4">
+          <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4 text-center">
+                <h2 class="h4 mb-4">Qualidade da noite</h2>
+                <div class="sleep-score-ring mb-3" id="scoreRing">
+                  <div class="sleep-score-ring-inner">
+                    <div>
+                      <div class="display-6 fw-bold" id="scoreSono">82</div>
+                      <div class="text-muted">de 100</div>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-muted mb-3" id="scoreDescricao">
+                  Sono bom, com pequenas interrupções durante a madrugada.
+                </p>
+                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                  <span class="metric-chip"><i class="bi bi-circle-fill text-success"></i> Boa recuperação</span>
+                  <span class="metric-chip"><i class="bi bi-circle-fill text-warning"></i> 3 despertares</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <h2 class="h4 mb-1">Resumo da noite</h2>
+                    <p class="text-muted mb-0">Distribuição estimada das fases do sono.</p>
+                  </div>
+                  <button class="btn btn-light border" type="button" id="btnCompararSemana">
+                    <i class="bi bi-bar-chart-line me-2"></i>
+                    Comparar semana
+                  </button>
+                </div>
+
+                <div class="sleep-stage-bar mb-3" aria-label="Fases do sono">
+                  <div class="sleep-stage bg-primary" id="barProfundo" style="width:30%" title="Sono profundo"></div>
+                  <div class="sleep-stage bg-info" id="barLeve" style="width:55%" title="Sono leve"></div>
+                  <div class="sleep-stage bg-warning" id="barDesperto" style="width:15%" title="Desperto"></div>
+                </div>
+
+                <div class="d-flex justify-content-between mb-4 sleep-timeline-hour">
+                  <span>22:40</span>
+                  <span>02:00</span>
+                  <span>06:00</span>
+                </div>
+
+                <div class="d-grid gap-3">
+                  <div>
+                    <div class="d-flex justify-content-between mb-1">
+                      <span><i class="bi bi-moon me-2"></i>Sono profundo</span>
+                      <strong id="sonoProfundo">2h10</strong>
+                    </div>
+                    <div class="progress" style="height:12px;">
+                      <div class="progress-bar" id="progressProfundo" style="width:30%;"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="d-flex justify-content-between mb-1">
+                      <span><i class="bi bi-cloud-moon me-2"></i>Sono leve</span>
+                      <strong id="sonoLeve">4h00</strong>
+                    </div>
+                    <div class="progress" style="height:12px;">
+                      <div class="progress-bar" id="progressLeve" style="width:55%;"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="d-flex justify-content-between mb-1">
+                      <span><i class="bi bi-sunrise me-2"></i>Tempo acordada</span>
+                      <strong id="tempoAcordado">1h10</strong>
+                    </div>
+                    <div class="progress" style="height:12px;">
+                      <div class="progress-bar" id="progressAcordado" style="width:15%;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4">
+          <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <h2 class="h4 mb-1">Histórico recente</h2>
+                    <p class="text-muted mb-0">Clique em uma noite para ver o resumo acima.</p>
+                  </div>
+                  <button class="btn btn-outline-primary" type="button" id="btnAdicionarRegistro">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Adicionar registro manual
+                  </button>
+                </div>
+
+                <div class="row g-3" id="listaNoites"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 mb-4 insight-card">
+              <div class="card-body p-4">
+                <h2 class="h4 mb-3">
+                  <i class="bi bi-lightbulb me-2 text-primary"></i>
+                  Orientação inteligente
+                </h2>
+                <p class="text-muted mb-3" id="orientacaoTexto">
+                  A noite foi tranquila. Mantenha horário regular e evite telas perto da hora de dormir.
+                </p>
+                <div class="d-grid gap-2">
+                  <button class="btn btn-outline-primary btn-lg" type="button" id="btnDica">
+                    Receber dica diária
+                  </button>
+                  <button class="btn btn-light border btn-lg" type="button" id="btnCompartilhar">
+                    <i class="bi bi-share me-2"></i>
+                    Compartilhar com cuidador
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <h2 class="h4 mb-3">Dispositivo conectado</h2>
+                <div class="d-flex align-items-start gap-3 p-3 border rounded-4 mb-3">
+                  <i class="bi bi-circle fs-2 text-primary"></i>
+                  <div>
+                    <strong>Anel inteligente</strong>
+                    <p class="text-muted mb-1">Sincronizado há 12 minutos</p>
+                    <span class="badge text-bg-success">Conectado</span>
+                  </div>
+                </div>
+                <a href="sinais-vitais-conectar-dispositivo.html" class="btn btn-primary btn-lg w-100">
+                  <i class="bi bi-bluetooth me-2"></i>
+                  Conectar outro dispositivo
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="modal fade" id="modalRegistroSono" tabindex="-1" aria-labelledby="modalRegistroSonoTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-4 shadow">
+        <div class="modal-header border-0">
+          <div>
+            <p class="text-muted mb-1">Registro manual</p>
+            <h2 class="modal-title h4 fw-bold" id="modalRegistroSonoTitulo">Adicionar noite de sono</h2>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="registroData" class="form-label fw-semibold">Data</label>
+              <input type="date" id="registroData" class="form-control form-control-lg">
+            </div>
+            <div class="col-6">
+              <label for="registroHoras" class="form-label fw-semibold">Horas</label>
+              <input type="number" id="registroHoras" class="form-control form-control-lg" min="0" max="14" value="7">
+            </div>
+            <div class="col-6">
+              <label for="registroMinutos" class="form-label fw-semibold">Minutos</label>
+              <input type="number" id="registroMinutos" class="form-control form-control-lg" min="0" max="59" value="20">
+            </div>
+            <div class="col-12">
+              <label for="registroObservacao" class="form-label fw-semibold">Observação</label>
+              <textarea id="registroObservacao" class="form-control" rows="3" placeholder="Ex.: acordou durante a madrugada, sentiu cansaço, dormiu melhor..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-light border btn-lg" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary btn-lg" id="btnSalvarRegistro">Salvar registro</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+async
+document.querySelectorAll(".sidebar-link").forEach(link => {
+        const href = link.getAttribute("href") || "";
+        link.classList.toggle("active", href.endsWith(paginaAtual));
+      });
+    }
+
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
+    }
+
+    const noites = [
+      {
+        id: 1,
+        data: "Hoje",
+        periodo: "22:40 - 06:00",
+        tempo: "7h20",
+        score: 82,
+        bpm: 68,
+        despertares: 3,
+        temperatura: "36,3°C",
+        profundo: "2h10",
+        leve: "4h00",
+        acordado: "1h10",
+        profundoPercent: 30,
+        levePercent: 55,
+        acordadoPercent: 15,
+        status: "Boa noite",
+        orientacao: "A noite foi tranquila. Mantenha horário regular e evite telas perto da hora de dormir."
+      },
+      {
+        id: 2,
+        data: "Ontem",
+        periodo: "23:15 - 05:50",
+        tempo: "6h35",
+        score: 74,
+        bpm: 72,
+        despertares: 5,
+        temperatura: "36,5°C",
+        profundo: "1h35",
+        leve: "3h55",
+        acordado: "1h05",
+        profundoPercent: 24,
+        levePercent: 60,
+        acordadoPercent: 16,
+        status: "Sono leve",
+        orientacao: "Houve mais despertares que o ideal. Observe consumo de líquidos à noite, ruídos e desconfortos no quarto."
+      },
+      {
+        id: 3,
+        data: "Segunda",
+        periodo: "22:20 - 06:10",
+        tempo: "7h50",
+        score: 88,
+        bpm: 66,
+        despertares: 2,
+        temperatura: "36,2°C",
+        profundo: "2h25",
+        leve: "4h35",
+        acordado: "0h50",
+        profundoPercent: 31,
+        levePercent: 58,
+        acordadoPercent: 11,
+        status: "Excelente",
+        orientacao: "Boa recuperação noturna. Esse padrão pode servir como referência para os próximos dias."
+      }
+    ];
+
+    let noiteSelecionada = noites[0];
+
+    const listaNoites = document.getElementById("listaNoites");
+    const modalRegistro = new bootstrap.Modal(document.getElementById("modalRegistroSono"));
+
+    function renderizarHistorico() {
+      listaNoites.innerHTML = noites.map(noite => `
+        <div class="col-md-6">
+          <button
+            class="card night-card border shadow-sm rounded-4 h-100 w-100 text-start ${noite.id === noiteSelecionada.id ? "active" : ""}"
+            type="button"
+            data-id="${noite.id}"
+          >
+            <div class="card-body p-3">
+              <div class="d-flex justify-content-between gap-3 mb-2">
+                <strong>${noite.data}</strong>
+                <span class="badge ${noite.score >= 85 ? "text-bg-success" : noite.score >= 75 ? "text-bg-primary" : "text-bg-warning"}">${noite.status}</span>
+              </div>
+              <p class="text-muted mb-2">${noite.periodo}</p>
+              <div class="d-flex justify-content-between">
+                <span><i class="bi bi-moon me-1"></i>${noite.tempo}</span>
+                <span><i class="bi bi-award me-1"></i>${noite.score}/100</span>
+              </div>
+            </div>
+          </button>
+        </div>
+      `).join("");
+
+      document.querySelectorAll(".night-card").forEach(card => {
+        card.addEventListener("click", () => {
+          const id = Number(card.dataset.id);
+          noiteSelecionada = noites.find(noite => noite.id === id);
+          atualizarResumo();
+          renderizarHistorico();
+          mostrarToast(`Resumo de ${noiteSelecionada.data.toLowerCase()} carregado.`);
+        });
+      });
+    }
+
+    function atualizarResumo() {
+      document.getElementById("tempoTotal").textContent = noiteSelecionada.tempo;
+      document.getElementById("scoreSono").textContent = noiteSelecionada.score;
+      document.getElementById("batimentosMedios").textContent = `${noiteSelecionada.bpm} bpm`;
+      document.getElementById("despertares").textContent = noiteSelecionada.despertares;
+      document.getElementById("temperaturaMedia").textContent = noiteSelecionada.temperatura;
+      document.getElementById("sonoProfundo").textContent = noiteSelecionada.profundo;
+      document.getElementById("sonoLeve").textContent = noiteSelecionada.leve;
+      document.getElementById("tempoAcordado").textContent = noiteSelecionada.acordado;
+      document.getElementById("orientacaoTexto").textContent = noiteSelecionada.orientacao;
+      document.getElementById("scoreDescricao").textContent = noiteSelecionada.orientacao;
+
+      document.getElementById("scoreRing").style.background = `conic-gradient(var(--bs-primary) 0 ${noiteSelecionada.score}%, #e9ecef ${noiteSelecionada.score}% 100%)`;
+
+      document.getElementById("barProfundo").style.width = `${noiteSelecionada.profundoPercent}%`;
+      document.getElementById("barLeve").style.width = `${noiteSelecionada.levePercent}%`;
+      document.getElementById("barDesperto").style.width = `${noiteSelecionada.acordadoPercent}%`;
+      document.getElementById("progressProfundo").style.width = `${noiteSelecionada.profundoPercent}%`;
+      document.getElementById("progressLeve").style.width = `${noiteSelecionada.levePercent}%`;
+      document.getElementById("progressAcordado").style.width = `${noiteSelecionada.acordadoPercent}%`;
+
+      const tempoStatus = document.getElementById("tempoStatus");
+      tempoStatus.textContent = noiteSelecionada.score >= 80 ? "Dentro do ideal" : "Pode melhorar";
+      tempoStatus.className = `badge mt-2 ${noiteSelecionada.score >= 80 ? "text-bg-success" : "text-bg-warning"}`;
+    }
+
+    document.getElementById("btnRelatorio").addEventListener("click", () => {
+      mostrarToast(`Relatório de sono de ${document.getElementById("pessoaFiltro").value} preparado.`);
+    });
+
+    document.getElementById("btnDica").addEventListener("click", () => {
+      mostrarToast("Dica diária ativada para o cuidador e para a pessoa monitorada.");
+    });
+
+    document.getElementById("btnCompartilhar").addEventListener("click", () => {
+      mostrarToast("Resumo compartilhado com o cuidador responsável.");
+    });
+
+    document.getElementById("btnCompararSemana").addEventListener("click", () => {
+      const media = Math.round(noites.reduce((acc, noite) => acc + noite.score, 0) / noites.length);
+      mostrarToast(`Média recente de qualidade do sono: ${media}/100.`);
+    });
+
+    document.getElementById("btnAtualizarDados").addEventListener("click", () => {
+      mostrarToast("Dados sincronizados com os dispositivos conectados.");
+    });
+
+    document.getElementById("pessoaFiltro").addEventListener("change", event => {
+      mostrarToast(`Dados de sono de ${event.target.value} carregados.`);
+    });
+
+    document.getElementById("periodoFiltro").addEventListener("change", event => {
+      mostrarToast(`Período atualizado para os últimos ${event.target.value} dias.`);
+    });
+
+    document.getElementById("btnAdicionarRegistro").addEventListener("click", () => {
+      document.getElementById("registroData").valueAsDate = new Date();
+      modalRegistro.show();
+    });
+
+    document.getElementById("btnSalvarRegistro").addEventListener("click", () => {
+      const horas = Number(document.getElementById("registroHoras").value || 0);
+      const minutos = Number(document.getElementById("registroMinutos").value || 0);
+
+      if (horas <= 0 && minutos <= 0) {
+        mostrarToast("Informe uma duração válida para salvar o registro.");
+        return;
+      }
+
+      const novoRegistro = {
+        id: Date.now(),
+        data: "Registro manual",
+        periodo: "Informado pelo cuidador",
+        tempo: `${horas}h${String(minutos).padStart(2, "0")}`,
+        score: horas >= 7 ? 78 : 64,
+        bpm: 70,
+        despertares: 0,
+        temperatura: "Não medida",
+        profundo: "Não informado",
+        leve: "Não informado",
+        acordado: "Não informado",
+        profundoPercent: 25,
+        levePercent: 60,
+        acordadoPercent: 15,
+        status: "Manual",
+        orientacao: "Registro manual salvo. Para análises mais precisas, mantenha um dispositivo conectado durante a noite."
+      };
+
+      noites.unshift(novoRegistro);
+      noiteSelecionada = novoRegistro;
+      atualizarResumo();
+      renderizarHistorico();
+      modalRegistro.hide();
+      mostrarToast("Registro manual de sono salvo com sucesso.");
+    });
+
+    atualizarResumo();
+    renderizarHistorico();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

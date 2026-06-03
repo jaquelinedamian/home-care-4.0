@@ -1,0 +1,55 @@
+<section class="hc-profile-switcher" data-hc-profile-switcher aria-label="Troca de perfil">
+  <div class="hc-profile-switcher-header">
+    <span>Você está navegando como</span>
+    <strong data-current-profile-label>Idoso</strong>
+  </div>
+
+  <div class="hc-profile-switcher-options" role="group" aria-label="Selecionar visão do sistema">
+    <button type="button" class="hc-profile-option is-active" data-profile-option="idoso" aria-pressed="true">
+      <span class="hc-profile-icon"><i class="bi bi-person-fill" aria-hidden="true"></i></span>
+      <span>Idoso</span>
+    </button>
+
+    <button type="button" class="hc-profile-option" data-profile-option="familiar" aria-pressed="false">
+      <span class="hc-profile-icon"><i class="bi bi-people" aria-hidden="true"></i></span>
+      <span>Familiar</span>
+    </button>
+
+    <button type="button" class="hc-profile-option" data-profile-option="profissional" aria-pressed="false">
+      <span class="hc-profile-icon"><i class="bi bi-briefcase" aria-hidden="true"></i></span>
+      <span>Profissional</span>
+    </button>
+
+    <button type="button" class="hc-profile-option" data-profile-option="admin" aria-pressed="false">
+      <span class="hc-profile-icon"><i class="bi bi-shield-check" aria-hidden="true"></i></span>
+      <span>Admin</span>
+    </button>
+  </div>
+
+  <nav class="hc-mobile-quick-nav d-lg-none" aria-label="Atalhos principais do perfil">
+    <a href="/pages/idoso/dashboard.html" class="is-active" data-route-key="dashboard">
+      <i class="bi bi-house" aria-hidden="true"></i>
+      <span>Início</span>
+    </a>
+
+    <a href="/pages/idoso/agenda.html" data-route-key="agenda">
+      <i class="bi bi-calendar-check" aria-hidden="true"></i>
+      <span>Agenda</span>
+    </a>
+
+    <a href="/pages/idoso/medicamentos.html" data-route-key="medicamentos">
+      <i class="bi bi-capsule" aria-hidden="true"></i>
+      <span>Remédios</span>
+    </a>
+
+    <a href="/pages/idoso/consultas.html" data-route-key="consultas">
+      <i class="bi bi-chat-square-text" aria-hidden="true"></i>
+      <span>Consultas</span>
+    </a>
+
+    <a href="/pages/idoso/sinais-vitais.html" data-route-key="saude">
+      <i class="bi bi-heart-pulse" aria-hidden="true"></i>
+      <span>Saúde</span>
+    </a>
+  </nav>
+</section>

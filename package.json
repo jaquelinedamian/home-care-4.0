@@ -1,0 +1,13 @@
+{
+  "name": "home-care-4-tcc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Home Care 4.0 - documentação visual para TCC",
+  "scripts": {
+    "apendice:screenshots": "node tools/generate-apendice-screenshots.js",
+    "validate:encoding": "node tools/validate-encoding.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.44.0"
+  }
+}

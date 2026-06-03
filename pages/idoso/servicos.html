@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Buscar Serviços | Home Care 4.0</title>
+
+  <meta
+    name="description"
+    content="Busque profissionais e serviços verificados para atendimento domiciliar, consultas, exames, fisioterapia, enfermagem e cuidados."
+  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4 p-lg-5">
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-lg-7">
+                    <p class="text-muted fs-5 mb-1">Serviços verificados</p>
+                    <h1 class="fw-bold mb-3">Encontre ajuda perto de você</h1>
+                    <p class="text-muted fs-5 mb-0">
+                      Busque profissionais com conselho ativo para consultas, cuidados, exames e atendimentos em casa.
+                    </p>
+                  </div>
+
+                  <div class="col-12 col-lg-5">
+                    <label for="searchService" class="form-label fs-5">
+                      O que você precisa?
+                    </label>
+
+                    <div class="input-group input-group-lg">
+                      <input
+                        type="search"
+                        class="form-control"
+                        id="searchService"
+                        placeholder="Ex: fisioterapia, enfermeiro, exame em casa..."
+                      />
+                      <button class="btn btn-primary" type="button" id="searchBtn">
+                        Buscar
+                      </button>
+                    </div>
+
+                    <small class="text-muted d-block mt-2">
+                      Você também pode escolher uma categoria abaixo.
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <h2 class="h4 fw-bold mb-3">Categorias</h2>
+
+            <div class="row g-3">
+              <div class="col-6 col-md-4 col-xl-2">
+                <button class="btn btn-light border rounded-4 w-100 h-100 p-3 category-filter active" data-category="todos">
+                  <strong class="d-block">Todos</strong>
+                  <span class="text-muted">Geral</span>
+                </button>
+              </div>
+
+              <div class="col-6 col-md-4 col-xl-2">
+                <button class="btn btn-light border rounded-4 w-100 h-100 p-3 category-filter" data-category="enfermagem">
+                  <strong class="d-block">Enfermagem</strong>
+                  <span class="text-muted">Cuidados</span>
+                </button>
+              </div>
+
+              <div class="col-6 col-md-4 col-xl-2">
+                <button class="btn btn-light border rounded-4 w-100 h-100 p-3 category-filter" data-category="fisioterapia">
+                  <strong class="d-block">Fisioterapia</strong>
+                  <span class="text-muted">Reabilitação</span>
+                </button>
+              </div>
+
+              <div class="col-6 col-md-4 col-xl-2">
+                <button class="btn btn-light border rounded-4 w-100 h-100 p-3 category-filter" data-category="cuidador">
+                  <strong class="d-block">Cuidador</strong>
+                  <span class="text-muted">Acompanhamento</span>
+                </button>
+              </div>
+
+              <div class="col-6 col-md-4 col-xl-2">
+                <button class="btn btn-light border rounded-4 w-100 h-100 p-3 category-filter" data-category="exames">
+                  <strong class="d-block">Exames</strong>
+                  <span class="text-muted">Em casa</span>
+                </button>
+              </div>
+
+              <div class="col-6 col-md-4 col-xl-2">
+                <button class="btn btn-light border rounded-4 w-100 h-100 p-3 category-filter" data-category="psicologia">
+                  <strong class="d-block">Psicologia</strong>
+                  <span class="text-muted">Cuidado emocional</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4 mb-4">
+          <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <h2 class="h4 fw-bold mb-3">Filtros simples</h2>
+
+                <div class="mb-3">
+                  <label for="distanceFilter" class="form-label fs-5">Distância</label>
+                  <select class="form-select form-select-lg service-filter" id="distanceFilter">
+                    <option value="todos">Qualquer distância</option>
+                    <option value="perto">Até 3 km</option>
+                    <option value="medio">Até 10 km</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="availabilityFilter" class="form-label fs-5">Disponibilidade</label>
+                  <select class="form-select form-select-lg service-filter" id="availabilityFilter">
+                    <option value="todos">Qualquer horário</option>
+                    <option value="hoje">Disponível hoje</option>
+                    <option value="semana">Esta semana</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="attendanceFilter" class="form-label fs-5">Atendimento</label>
+                  <select class="form-select form-select-lg service-filter" id="attendanceFilter">
+                    <option value="todos">Todos</option>
+                    <option value="casa">Atende em casa</option>
+                    <option value="online">Online</option>
+                  </select>
+                </div>
+
+                <div class="form-check form-switch fs-5 mb-3">
+                  <input class="form-check-input service-filter-check" type="checkbox" id="verifiedOnly" checked />
+                  <label class="form-check-label" for="verifiedOnly">
+                    Apenas profissionais verificados
+                  </label>
+                </div>
+
+                <button class="btn btn-outline-secondary btn-lg w-100" id="clearFiltersBtn" type="button">
+                  Limpar filtros
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Profissionais próximos</h2>
+                    <p class="text-muted mb-0" id="mapDescription">
+                      Mostrando profissionais próximos ao endereço ou localização atual.
+                    </p>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-outline-primary" id="reloadMapBtn">
+                      Atualizar mapa
+                    </button>
+
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=profissionais%20de%20saude%20perto%20de%20mim"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="btn btn-outline-secondary"
+                      id="openMapsLink"
+                    >
+                      Abrir no Google Maps
+                    </a>
+                  </div>
+                </div>
+
+                <div class="rounded-4 overflow-hidden border position-relative" style="height: 360px;">
+                  <div
+                    id="mapLoader"
+                    class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white"
+                    style="z-index: 2;"
+                  >
+                    <div class="text-center">
+                      <div class="spinner-border mb-2" role="status" aria-hidden="true"></div>
+                      <p class="mb-0 text-muted">Carregando profissionais próximos...</p>
+                    </div>
+                  </div>
+
+                  <iframe
+                    id="mapFrame"
+                    src="https://www.google.com/maps?q=profissionais%20de%20saude%20Sao%20Paulo&z=13&output=embed"
+                    width="100%"
+                    height="100%"
+                    style="border:0;"
+                    loading="lazy"
+                    allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Mapa de profissionais próximos"
+                  ></iframe>
+                </div>
+
+                <p class="text-muted mt-3 mb-0">
+                  Dica: ao permitir localização, o mapa busca profissionais próximos de você. Se não permitir, usamos São Paulo como referência.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4">
+          <div class="col-12">
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+              <div>
+                <h2 class="h4 fw-bold mb-1">Resultados encontrados</h2>
+                <p class="text-muted mb-0" id="resultCountText">
+                  Mostrando profissionais verificados próximos.
+                </p>
+              </div>
+
+              <a href="servicos-categorias.html" class="btn btn-outline-primary align-self-start">
+                Ver todas as categorias
+              </a>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="vstack gap-3" id="professionalList">
+
+              <article
+                class="professional-card card border-0 shadow-sm rounded-4"
+                data-category="fisioterapia"
+                data-distance="perto"
+                data-availability="hoje"
+                data-attendance="casa"
+                data-verified="true"
+                data-search="ana paula fisioterapia domiciliar reabilitação crefito"
+                data-map-query="Ana Paula fisioterapia São Paulo"
+              >
+                <div class="card-body p-4">
+                  <div class="row g-3 align-items-center">
+                    <div class="col-12 col-md-2">
+                      <div
+                        class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold mx-auto"
+                        style="width:80px;height:80px;font-size:1.4rem;"
+                      >
+                        AP
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                      <div class="d-flex flex-wrap gap-2 mb-2">
+                        <span class="badge text-bg-success">Conselho ativo</span>
+                        <span class="badge text-bg-primary">Atende em casa</span>
+                      </div>
+
+                      <h3 class="h5 fw-bold mb-1">Ana Paula Martins</h3>
+                      <p class="mb-1">Fisioterapeuta • CREFITO ativo</p>
+                      <p class="text-muted mb-0">
+                        1,8 km • Disponível hoje • Avaliação 4,9
+                      </p>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary focus-map-btn">
+                          Ver no mapa
+                        </button>
+                        <a href="servicos-profissional-detalhes.html" class="btn btn-primary btn-lg">
+                          Ver profissional
+                        </a>
+                        <a href="servicos-agendar.html" class="btn btn-outline-secondary">
+                          Agendar
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article
+                class="professional-card card border-0 shadow-sm rounded-4"
+                data-category="enfermagem"
+                data-distance="medio"
+                data-availability="semana"
+                data-attendance="casa"
+                data-verified="true"
+                data-search="carlos enfermeiro coren curativo medicação home care"
+                data-map-query="Carlos Souza enfermeiro São Paulo"
+              >
+                <div class="card-body p-4">
+                  <div class="row g-3 align-items-center">
+                    <div class="col-12 col-md-2">
+                      <div
+                        class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold mx-auto"
+                        style="width:80px;height:80px;font-size:1.4rem;"
+                      >
+                        CS
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                      <div class="d-flex flex-wrap gap-2 mb-2">
+                        <span class="badge text-bg-success">Conselho ativo</span>
+                        <span class="badge text-bg-primary">Atende em casa</span>
+                      </div>
+
+                      <h3 class="h5 fw-bold mb-1">Carlos Souza</h3>
+                      <p class="mb-1">Enfermeiro • COREN ativo</p>
+                      <p class="text-muted mb-0">
+                        5,4 km • Esta semana • Avaliação 4,8
+                      </p>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary focus-map-btn">
+                          Ver no mapa
+                        </button>
+                        <a href="servicos-profissional-detalhes.html" class="btn btn-primary btn-lg">
+                          Ver profissional
+                        </a>
+                        <a href="servicos-agendar.html" class="btn btn-outline-secondary">
+                          Agendar
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article
+                class="professional-card card border-0 shadow-sm rounded-4"
+                data-category="cuidador"
+                data-distance="perto"
+                data-availability="hoje"
+                data-attendance="casa"
+                data-verified="true"
+                data-search="marina cuidadora idosos acompanhamento banho alimentação"
+                data-map-query="Marina Lima cuidadora idosos São Paulo"
+              >
+                <div class="card-body p-4">
+                  <div class="row g-3 align-items-center">
+                    <div class="col-12 col-md-2">
+                      <div
+                        class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center fw-bold mx-auto"
+                        style="width:80px;height:80px;font-size:1.4rem;"
+                      >
+                        ML
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                      <div class="d-flex flex-wrap gap-2 mb-2">
+                        <span class="badge text-bg-success">Perfil validado</span>
+                        <span class="badge text-bg-primary">Atende em casa</span>
+                      </div>
+
+                      <h3 class="h5 fw-bold mb-1">Marina Lima</h3>
+                      <p class="mb-1">Cuidadora de idosos</p>
+                      <p class="text-muted mb-0">
+                        2,6 km • Disponível hoje • Avaliação 4,7
+                      </p>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary focus-map-btn">
+                          Ver no mapa
+                        </button>
+                        <a href="servicos-profissional-detalhes.html" class="btn btn-primary btn-lg">
+                          Ver profissional
+                        </a>
+                        <a href="servicos-agendar.html" class="btn btn-outline-secondary">
+                          Agendar
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article
+                class="professional-card card border-0 shadow-sm rounded-4"
+                data-category="psicologia"
+                data-distance="medio"
+                data-availability="semana"
+                data-attendance="online"
+                data-verified="true"
+                data-search="renata psicologa crp atendimento online idosos família"
+                data-map-query="Renata Oliveira psicóloga São Paulo"
+              >
+                <div class="card-body p-4">
+                  <div class="row g-3 align-items-center">
+                    <div class="col-12 col-md-2">
+                      <div
+                        class="rounded-circle bg-info text-dark d-flex align-items-center justify-content-center fw-bold mx-auto"
+                        style="width:80px;height:80px;font-size:1.4rem;"
+                      >
+                        RO
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                      <div class="d-flex flex-wrap gap-2 mb-2">
+                        <span class="badge text-bg-success">Conselho ativo</span>
+                        <span class="badge text-bg-info">Online</span>
+                      </div>
+
+                      <h3 class="h5 fw-bold mb-1">Renata Oliveira</h3>
+                      <p class="mb-1">Psicóloga • CRP ativo</p>
+                      <p class="text-muted mb-0">
+                        Online • Esta semana • Avaliação 4,9
+                      </p>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary focus-map-btn">
+                          Ver no mapa
+                        </button>
+                        <a href="servicos-profissional-detalhes.html" class="btn btn-primary btn-lg">
+                          Ver profissional
+                        </a>
+                        <a href="servicos-agendar.html" class="btn btn-outline-secondary">
+                          Agendar
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+
+            <div class="alert alert-light border rounded-4 mt-4 d-none" id="emptyResults">
+              <h3 class="h5 fw-bold">Nenhum profissional encontrado</h3>
+              <p class="text-muted mb-3">
+                Tente mudar a busca ou limpar os filtros.
+              </p>
+              <button type="button" class="btn btn-outline-primary" id="resetSearchBtn">
+                Limpar busca e filtros
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+
+const searchInput = document.getElementById("searchService");
+    const categoryButtons = document.querySelectorAll(".category-filter");
+    const professionalCards = document.querySelectorAll(".professional-card");
+    const distanceFilter = document.getElementById("distanceFilter");
+    const availabilityFilter = document.getElementById("availabilityFilter");
+    const attendanceFilter = document.getElementById("attendanceFilter");
+    const verifiedOnly = document.getElementById("verifiedOnly");
+    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+    const resetSearchBtn = document.getElementById("resetSearchBtn");
+    const emptyResults = document.getElementById("emptyResults");
+    const resultCountText = document.getElementById("resultCountText");
+
+    const mapFrame = document.getElementById("mapFrame");
+    const mapLoader = document.getElementById("mapLoader");
+    const reloadMapBtn = document.getElementById("reloadMapBtn");
+    const openMapsLink = document.getElementById("openMapsLink");
+    const mapDescription = document.getElementById("mapDescription");
+    const focusMapButtons = document.querySelectorAll(".focus-map-btn");
+
+    let selectedCategory = "todos";
+    let currentLat = null;
+    let currentLng = null;
+
+    function setMapLoader(isVisible) {
+      if (!mapLoader) return;
+      mapLoader.style.display = isVisible ? "flex" : "none";
+    }
+
+    function updateMap(query, zoom) {
+      setMapLoader(true);
+
+      mapFrame.src =
+        "https://www.google.com/maps?q=" +
+        encodeURIComponent(query) +
+        "&z=" +
+        zoom +
+        "&output=embed";
+
+      openMapsLink.href =
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(query);
+
+      mapFrame.onload = function () {
+        setMapLoader(false);
+      };
+    }
+
+    function loadFallbackMap() {
+      const fallbackQuery = "profissionais de saude Sao Paulo SP";
+      mapDescription.textContent =
+        "Mostrando profissionais próximos usando São Paulo como referência.";
+
+      updateMap(fallbackQuery, 13);
+    }
+
+    function loadProfessionalsMap() {
+      setMapLoader(true);
+
+      if (!navigator.geolocation) {
+        loadFallbackMap();
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          currentLat = position.coords.latitude;
+          currentLng = position.coords.longitude;
+
+          const mapQuery =
+            "profissionais de saude perto de " + currentLat + "," + currentLng;
+
+          mapDescription.textContent =
+            "Mostrando profissionais próximos com base na sua localização atual.";
+
+          updateMap(mapQuery, 14);
+        },
+        function () {
+          loadFallbackMap();
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 8000,
+          maximumAge: 60000
+        }
+      );
+    }
+
+    function focusProfessionalOnMap(card) {
+      const professionalQuery = card.dataset.mapQuery;
+
+      if (currentLat && currentLng) {
+        updateMap(professionalQuery + " perto de " + currentLat + "," + currentLng, 15);
+      } else {
+        updateMap(professionalQuery, 15);
+      }
+
+      mapDescription.textContent =
+        "Mapa focado no profissional selecionado.";
+    }
+
+    function applyServiceFilters() {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const selectedDistance = distanceFilter.value;
+      const selectedAvailability = availabilityFilter.value;
+      const selectedAttendance = attendanceFilter.value;
+      const onlyVerified = verifiedOnly.checked;
+
+      let visibleCount = 0;
+
+      professionalCards.forEach(function (card) {
+        const matchSearch = searchTerm === "" || card.dataset.search.includes(searchTerm);
+        const matchCategory = selectedCategory === "todos" || card.dataset.category === selectedCategory;
+        const matchDistance = selectedDistance === "todos" || card.dataset.distance === selectedDistance || selectedDistance === "medio";
+        const matchAvailability = selectedAvailability === "todos" || card.dataset.availability === selectedAvailability || selectedAvailability === "semana";
+        const matchAttendance = selectedAttendance === "todos" || card.dataset.attendance === selectedAttendance;
+        const matchVerified = !onlyVerified || card.dataset.verified === "true";
+
+        const shouldShow =
+          matchSearch &&
+          matchCategory &&
+          matchDistance &&
+          matchAvailability &&
+          matchAttendance &&
+          matchVerified;
+
+        card.classList.toggle("d-none", !shouldShow);
+
+        if (shouldShow) {
+          visibleCount++;
+        }
+      });
+
+      emptyResults.classList.toggle("d-none", visibleCount > 0);
+      resultCountText.textContent = visibleCount + " profissional(is) encontrado(s).";
+    }
+
+    categoryButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        selectedCategory = button.dataset.category;
+
+        categoryButtons.forEach(function (item) {
+          item.classList.remove("active");
+        });
+
+        button.classList.add("active");
+
+        applyServiceFilters();
+      });
+    });
+
+    searchInput.addEventListener("input", applyServiceFilters);
+    distanceFilter.addEventListener("change", applyServiceFilters);
+    availabilityFilter.addEventListener("change", applyServiceFilters);
+    attendanceFilter.addEventListener("change", applyServiceFilters);
+    verifiedOnly.addEventListener("change", applyServiceFilters);
+
+    clearFiltersBtn.addEventListener("click", function () {
+      distanceFilter.value = "todos";
+      availabilityFilter.value = "todos";
+      attendanceFilter.value = "todos";
+      verifiedOnly.checked = true;
+      applyServiceFilters();
+    });
+
+    resetSearchBtn.addEventListener("click", function () {
+      searchInput.value = "";
+      selectedCategory = "todos";
+
+      categoryButtons.forEach(function (item) {
+        item.classList.toggle("active", item.dataset.category === "todos");
+      });
+
+      distanceFilter.value = "todos";
+      availabilityFilter.value = "todos";
+      attendanceFilter.value = "todos";
+      verifiedOnly.checked = true;
+
+      applyServiceFilters();
+    });
+
+    reloadMapBtn.addEventListener("click", loadProfessionalsMap);
+
+    focusMapButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        const card = button.closest(".professional-card");
+        focusProfessionalOnMap(card);
+
+        document.getElementById("mapFrame").scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      });
+    });
+
+    loadProfessionalsMap();
+    applyServiceFilters();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alertas | Home Care 4.0</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+          <div id="appToast" class="toast border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+              <div class="col-12 col-lg">
+                <p class="text-muted fs-5 mb-1"><i class="bi bi-bell-fill me-2"></i>Central de alertas</p>
+                <h1 class="fw-bold mb-3">Alertas importantes em ordem de prioridade</h1>
+                <p class="text-muted fs-5 mb-0">Veja riscos, atrasos, lembretes e situações que precisam de uma ação rápida.</p>
+              </div>
+                  <div class="col-12 col-lg-4">
+                    <div class="d-grid gap-2">
+                      <a href="configuracoes.html" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle me-2"></i>Configurar alertas</a>
+                      <button class="btn btn-outline-primary btn-lg" id="btnMarcarTodos"><i class="bi bi-check2-circle me-2"></i>Marcar como vistos</button>
+                    </div>
+                  </div>
+            </div>
+          </div>
+        </section>
+        <section class="row g-3 mb-4">
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-light rounded-circle p-3"><i class="bi bi-exclamation-triangle fs-3 text-primary"></i></div>
+                  <div>
+                    <p class="text-muted mb-1">Críticos</p>
+                    <h2 class="fw-bold mb-0">2</h2>
+                    <p class="text-muted mb-0">precisam de ação</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-light rounded-circle p-3"><i class="bi bi-clock-history fs-3 text-primary"></i></div>
+                  <div>
+                    <p class="text-muted mb-1">Hoje</p>
+                    <h2 class="fw-bold mb-0">5</h2>
+                    <p class="text-muted mb-0">alertas ativos</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-light rounded-circle p-3"><i class="bi bi-heart-pulse fs-3 text-primary"></i></div>
+                  <div>
+                    <p class="text-muted mb-1">Saúde</p>
+                    <h2 class="fw-bold mb-0">3</h2>
+                    <p class="text-muted mb-0">monitoramentos</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-light rounded-circle p-3"><i class="bi bi-check-circle fs-3 text-primary"></i></div>
+                  <div>
+                    <p class="text-muted mb-1">Resolvidos</p>
+                    <h2 class="fw-bold mb-0">12</h2>
+                    <p class="text-muted mb-0">nos últimos dias</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4">
+            <div class="row g-3 align-items-end">
+              <div class="col-12 col-lg-5">
+                <label for="buscaAlerta" class="form-label">Buscar alerta</label>
+                <input id="buscaAlerta" class="form-control form-control-lg" type="search" placeholder="Ex.: pressão, remédio, consulta">
+              </div>
+              <div class="col-12 col-md-6 col-lg-3">
+                <label for="filtroTipo" class="form-label">Tipo</label>
+                <select id="filtroTipo" class="form-select form-select-lg">
+                  <option value="">Todos</option>
+                  <option value="Saúde">Saúde</option>
+                  <option value="Medicamento">Medicamento</option>
+                  <option value="Consulta">Consulta</option>
+                  <option value="Sistema">Sistema</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 col-lg-2">
+                <label for="filtroPrioridade" class="form-label">Prioridade</label>
+                <select id="filtroPrioridade" class="form-select form-select-lg">
+                  <option value="">Todas</option>
+                  <option value="Alta">Alta</option>
+                  <option value="Média">Média</option>
+                  <option value="Baixa">Baixa</option>
+                </select>
+              </div>
+              <div class="col-12 col-lg-2">
+                <button class="btn btn-outline-secondary btn-lg w-100" id="btnLimpar"><i class="bi bi-x-circle me-2"></i>Limpar</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3" id="listaAlertas">
+          <div class="col-12 alerta-item" data-texto="pressao alta dona maria saude" data-tipo="Saúde" data-prioridade="Alta">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                  <div class="d-flex gap-3">
+                    <i class="bi bi-heart-pulse-fill fs-2 text-danger"></i>
+                    <div>
+                      <span class="badge text-bg-danger mb-2">Alta prioridade</span>
+                      <h2 class="h4 mb-1">Pressão acima do esperado</h2>
+                      <p class="text-muted mb-0">Maria registrou 16/10 às 08:20. Confirme a medição e avalie contato profissional.</p>
+                    </div>
+                  </div>
+                  <div class="d-grid d-sm-flex gap-2">
+                    <a href="sinais-vitais-alertas.html" class="btn btn-primary">Ver sinais</a>
+                    <button class="btn btn-outline-primary btnAcao">Resolvido</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 alerta-item" data-texto="medicamento atraso losartana dona maria" data-tipo="Medicamento" data-prioridade="Alta">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                  <div class="d-flex gap-3">
+                    <i class="bi bi-capsule-pill fs-2 text-danger"></i>
+                    <div>
+                      <span class="badge text-bg-danger mb-2">Alta prioridade</span>
+                      <h2 class="h4 mb-1">Medicamento atrasado</h2>
+                      <p class="text-muted mb-0">Losartana estava prevista para 09:00 e ainda não foi confirmada.</p>
+                    </div>
+                  </div>
+                  <div class="d-grid d-sm-flex gap-2">
+                    <a href="medicamentos-horarios.html" class="btn btn-primary">Confirmar dose</a>
+                    <button class="btn btn-outline-primary btnAcao">Lembrar cuidador</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 alerta-item" data-texto="consulta fisioterapia sr antonio consulta" data-tipo="Consulta" data-prioridade="Média">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                  <div class="d-flex gap-3">
+                    <i class="bi bi-calendar2-check fs-2 text-primary"></i>
+                    <div>
+                      <span class="badge text-bg-warning mb-2">Atenção</span>
+                      <h2 class="h4 mb-1">Consulta amanhã</h2>
+                      <p class="text-muted mb-0">Fisioterapia do Antônio às 10:30. Separe documentos e exames anteriores.</p>
+                    </div>
+                  </div>
+                  <button class="btn btn-outline-primary btnAcao">Ativar lembrete</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="alert alert-light border-0 shadow-sm rounded-4 mt-4 d-none" id="estadoVazio">
+          <h2 class="h5 mb-1">Nenhum alerta encontrado</h2>
+          <p class="text-muted mb-0">Tente limpar os filtros ou buscar outro termo.</p>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+
+});
+  </script>
+<script>
+    function mostrarToast(mensagem) {
+      const el = document.getElementById("appToast");
+      if (!el) return;
+      document.getElementById("toastMessage").textContent = mensagem;
+      bootstrap.Toast.getOrCreateInstance(el).show();
+    }
+  </script>
+
+  <script>
+    const itensAlerta = Array.from(document.querySelectorAll(".alerta-item"));
+    const buscaAlerta = document.getElementById("buscaAlerta");
+    const filtroTipo = document.getElementById("filtroTipo");
+    const filtroPrioridade = document.getElementById("filtroPrioridade");
+    const estadoVazio = document.getElementById("estadoVazio");
+
+    function filtrarAlertas() {
+      const termo = buscaAlerta.value.trim().toLowerCase();
+      const tipo = filtroTipo.value;
+      const prioridade = filtroPrioridade.value;
+      let visiveis = 0;
+
+      itensAlerta.forEach(function(item) {
+        const okTexto = !termo || item.dataset.texto.includes(termo);
+        const okTipo = !tipo || item.dataset.tipo === tipo;
+        const okPrioridade = !prioridade || item.dataset.prioridade === prioridade;
+        const mostrar = okTexto && okTipo && okPrioridade;
+        item.classList.toggle("d-none", !mostrar);
+        if (mostrar) visiveis++;
+      });
+
+      estadoVazio.classList.toggle("d-none", visiveis > 0);
+    }
+
+    buscaAlerta.addEventListener("input", filtrarAlertas);
+    filtroTipo.addEventListener("change", filtrarAlertas);
+    filtroPrioridade.addEventListener("change", filtrarAlertas);
+
+    document.getElementById("btnLimpar").addEventListener("click", function() {
+      buscaAlerta.value = "";
+      filtroTipo.value = "";
+      filtroPrioridade.value = "";
+      filtrarAlertas();
+      mostrarToast("Filtros limpos.");
+    });
+
+    document.querySelectorAll(".btnAcao").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        mostrarToast("Ação registrada com sucesso.");
+      });
+    });
+
+    document.getElementById("btnMarcarTodos").addEventListener("click", function() {
+      mostrarToast("Todos os alertas foram marcados como vistos.");
+    });
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

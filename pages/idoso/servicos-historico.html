@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Histórico de Serviços | Home Care 4.0</title>
+
+  <meta
+    name="description"
+    content="Histórico de serviços com tabelas diária, semanal e mensal, filtros personalizados, valores, status e ações."
+  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+              <div>
+                <p class="text-muted fs-5 mb-1">Serviços</p>
+                <h1 class="fw-bold mb-2">Histórico de serviços</h1>
+                <p class="text-muted fs-5 mb-0">
+                  Consulte serviços por visão diária, semanal ou mensal, com filtros personalizados.
+                </p>
+              </div>
+
+              <div class="d-flex flex-wrap gap-2 align-items-start">
+                <button type="button" class="btn btn-outline-primary btn-lg" id="exportHistoryBtn">
+                  Exportar resumo
+                </button>
+
+                <a href="servicos.html" class="btn btn-primary btn-lg">
+                  Buscar novo serviço
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">18</strong>
+                <span class="text-muted">Registros</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">12</strong>
+                <span class="text-muted">Concluídos</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">3</strong>
+                <span class="text-muted">Reagendados</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 text-center h-100">
+              <div class="card-body p-3">
+                <strong class="d-block fs-2">R$ 860</strong>
+                <span class="text-muted">Total filtrado</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Filtros personalizados</h2>
+                    <p class="text-muted mb-0">
+                      Refine o histórico por pessoa, profissional, serviço, status, período e valor.
+                    </p>
+                  </div>
+
+                  <button
+                    class="btn btn-outline-secondary align-self-start"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#advancedFilters"
+                    aria-expanded="true"
+                    aria-controls="advancedFilters"
+                  >
+                    Mostrar/ocultar filtros
+                  </button>
+                </div>
+
+                <div class="collapse show" id="advancedFilters">
+                  <div class="row g-3 align-items-end">
+                    <div class="col-12 col-lg-4">
+                      <label for="historySearch" class="form-label fs-5">Busca</label>
+                      <input
+                        type="search"
+                        class="form-control form-control-lg history-filter"
+                        id="historySearch"
+                        placeholder="Ex: fisioterapia, Ana Paula, Antônio..."
+                      />
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-2">
+                      <label for="personFilter" class="form-label fs-5">Pessoa</label>
+                      <select class="form-select form-select-lg history-filter" id="personFilter">
+                        <option value="todos">Todos</option>
+                        <option value="antonio">Antônio</option>
+                        <option value="maria">Maria</option>
+                        <option value="eu">Eu</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-2">
+                      <label for="professionalFilter" class="form-label fs-5">Profissional</label>
+                      <select class="form-select form-select-lg history-filter" id="professionalFilter">
+                        <option value="todos">Todos</option>
+                        <option value="ana">Ana Paula</option>
+                        <option value="carlos">Carlos Souza</option>
+                        <option value="renata">Renata Oliveira</option>
+                        <option value="marina">Marina Lima</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-2">
+                      <label for="serviceTypeFilter" class="form-label fs-5">Serviço</label>
+                      <select class="form-select form-select-lg history-filter" id="serviceTypeFilter">
+                        <option value="todos">Todos</option>
+                        <option value="fisioterapia">Fisioterapia</option>
+                        <option value="enfermagem">Enfermagem</option>
+                        <option value="psicologia">Psicologia</option>
+                        <option value="cuidador">Cuidador</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-2">
+                      <label for="statusFilter" class="form-label fs-5">Status</label>
+                      <select class="form-select form-select-lg history-filter" id="statusFilter">
+                        <option value="todos">Todos</option>
+                        <option value="concluido">Concluído</option>
+                        <option value="cancelado">Cancelado</option>
+                        <option value="reagendado">Reagendado</option>
+                        <option value="avaliado">Avaliado</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-3">
+                      <label for="startDateFilter" class="form-label fs-5">Data inicial</label>
+                      <input type="date" class="form-control form-control-lg history-filter" id="startDateFilter" />
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-3">
+                      <label for="endDateFilter" class="form-label fs-5">Data final</label>
+                      <input type="date" class="form-control form-control-lg history-filter" id="endDateFilter" />
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-2">
+                      <label for="minValueFilter" class="form-label fs-5">Valor mín.</label>
+                      <input
+                        type="number"
+                        class="form-control form-control-lg history-filter"
+                        id="minValueFilter"
+                        placeholder="0"
+                        min="0"
+                      />
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-2">
+                      <label for="maxValueFilter" class="form-label fs-5">Valor máx.</label>
+                      <input
+                        type="number"
+                        class="form-control form-control-lg history-filter"
+                        id="maxValueFilter"
+                        placeholder="500"
+                        min="0"
+                      />
+                    </div>
+
+                    <div class="col-12 col-lg-2">
+                      <button type="button" class="btn btn-outline-secondary btn-lg w-100" id="clearFiltersBtn">
+                        Limpar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <ul class="nav nav-pills gap-2" id="historyTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active history-view-tab" type="button" data-view="diario">
+                  Diário
+                </button>
+              </li>
+
+              <li class="nav-item" role="presentation">
+                <button class="nav-link history-view-tab" type="button" data-view="semanal">
+                  Semanal
+                </button>
+              </li>
+
+              <li class="nav-item" role="presentation">
+                <button class="nav-link history-view-tab" type="button" data-view="mensal">
+                  Mensal
+                </button>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="row g-4">
+
+          <div class="col-12 col-xl-9">
+
+            <article class="card border-0 shadow-sm rounded-4 history-table-view" data-table-view="diario">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Tabela diária</h2>
+                    <p class="text-muted mb-0">
+                      Registros detalhados por atendimento.
+                    </p>
+                  </div>
+
+                  <span class="badge text-bg-primary align-self-start fs-6" id="dailyCountBadge">
+                    0 registros
+                  </span>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table align-middle">
+                    <thead>
+                      <tr>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Serviço</th>
+                        <th>Profissional</th>
+                        <th>Pessoa</th>
+                        <th>Status</th>
+                        <th>Valor</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+
+                    <tbody id="dailyTableBody">
+                      <tr
+                        class="history-row"
+                        data-date="2026-04-20"
+                        data-person="antonio"
+                        data-professional="ana"
+                        data-service="fisioterapia"
+                        data-status="concluido avaliado"
+                        data-value="200"
+                        data-search="fisioterapia domiciliar ana paula antonio concluido avaliado"
+                      >
+                        <td>20/04/2026</td>
+                        <td>15:00</td>
+                        <td>Fisioterapia domiciliar</td>
+                        <td>Ana Paula</td>
+                        <td>Antônio</td>
+                        <td>
+                          <span class="badge text-bg-success">Concluído</span>
+                          <span class="badge text-bg-primary">Avaliado</span>
+                        </td>
+                        <td>R$ 200,00</td>
+                        <td>
+                          <div class="d-flex flex-wrap gap-1">
+                            <a href="historico.html" class="btn btn-outline-primary btn-sm">Detalhes</a>
+                            <a href="servicos-agendar.html" class="btn btn-primary btn-sm">Repetir</a>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <tr
+                        class="history-row"
+                        data-date="2026-04-18"
+                        data-person="maria"
+                        data-professional="carlos"
+                        data-service="enfermagem"
+                        data-status="concluido"
+                        data-value="150"
+                        data-search="curativo em casa carlos souza maria concluido enfermagem"
+                      >
+                        <td>18/04/2026</td>
+                        <td>18:00</td>
+                        <td>Curativo em casa</td>
+                        <td>Carlos Souza</td>
+                        <td>Maria</td>
+                        <td><span class="badge text-bg-success">Concluído</span></td>
+                        <td>R$ 150,00</td>
+                        <td>
+                          <div class="d-flex flex-wrap gap-1">
+                            <a href="historico.html" class="btn btn-outline-primary btn-sm">Detalhes</a>
+                            <a href="servicos-avaliacoes.html" class="btn btn-primary btn-sm">Avaliar</a>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <tr
+                        class="history-row"
+                        data-date="2026-04-15"
+                        data-person="eu"
+                        data-professional="renata"
+                        data-service="psicologia"
+                        data-status="reagendado"
+                        data-value="0"
+                        data-search="consulta psicologica online renata eu reagendado"
+                      >
+                        <td>15/04/2026</td>
+                        <td>09:00</td>
+                        <td>Consulta psicológica online</td>
+                        <td>Renata Oliveira</td>
+                        <td>Eu</td>
+                        <td><span class="badge text-bg-warning">Reagendado</span></td>
+                        <td>R$ 0,00</td>
+                        <td>
+                          <div class="d-flex flex-wrap gap-1">
+                            <a href="servicos-atendimentos.html" class="btn btn-primary btn-sm">Novo horário</a>
+                            <a href="mensagens-conversa.html" class="btn btn-outline-primary btn-sm">Mensagem</a>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <tr
+                        class="history-row"
+                        data-date="2026-04-10"
+                        data-person="maria"
+                        data-professional="marina"
+                        data-service="cuidador"
+                        data-status="cancelado"
+                        data-value="0"
+                        data-search="cuidadora por periodo marina lima maria cancelado"
+                      >
+                        <td>10/04/2026</td>
+                        <td>13:00</td>
+                        <td>Cuidadora por período</td>
+                        <td>Marina Lima</td>
+                        <td>Maria</td>
+                        <td><span class="badge text-bg-secondary">Cancelado</span></td>
+                        <td>R$ 0,00</td>
+                        <td>
+                          <div class="d-flex flex-wrap gap-1">
+                            <a href="servicos.html" class="btn btn-primary btn-sm">Buscar outro</a>
+                            <a href="servicos-solicitacoes.html" class="btn btn-outline-secondary btn-sm">Solicitações</a>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="alert alert-light border rounded-4 mt-4 d-none" id="dailyEmptyState">
+                  Nenhum registro encontrado na visão diária.
+                </div>
+              </div>
+            </article>
+
+            <article class="card border-0 shadow-sm rounded-4 history-table-view d-none" data-table-view="semanal">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Tabela semanal</h2>
+                    <p class="text-muted mb-0">
+                      Agrupamento por semana, quantidade, status e valor.
+                    </p>
+                  </div>
+
+                  <span class="badge text-bg-primary align-self-start fs-6" id="weeklyCountBadge">
+                    0 grupos
+                  </span>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table align-middle">
+                    <thead>
+                      <tr>
+                        <th>Semana</th>
+                        <th>Período</th>
+                        <th>Serviços</th>
+                        <th>Concluídos</th>
+                        <th>Cancelados</th>
+                        <th>Reagendados</th>
+                        <th>Total</th>
+                        <th>Ação</th>
+                      </tr>
+                    </thead>
+
+                    <tbody id="weeklyTableBody">
+                      <tr
+                        class="history-row"
+                        data-date="2026-04-20"
+                        data-person="antonio"
+                        data-professional="ana"
+                        data-service="fisioterapia"
+                        data-status="concluido avaliado"
+                        data-value="350"
+                        data-search="semana 20 abril fisioterapia enfermagem ana carlos antonio maria concluido"
+                      >
+                        <td>Semana 20/04</td>
+                        <td>20/04 a 26/04</td>
+                        <td>2</td>
+                        <td>2</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>R$ 350,00</td>
+                        <td><a href="servicos-atendimentos.html" class="btn btn-outline-primary btn-sm">Ver semana</a></td>
+                      </tr>
+
+                      <tr
+                        class="history-row"
+                        data-date="2026-04-13"
+                        data-person="eu"
+                        data-professional="renata"
+                        data-service="psicologia"
+                        data-status="reagendado"
+                        data-value="0"
+                        data-search="semana 13 abril psicologia renata eu reagendado"
+                      >
+                        <td>Semana 13/04</td>
+                        <td>13/04 a 19/04</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>R$ 0,00</td>
+                        <td><a href="mensagens-conversa.html" class="btn btn-outline-primary btn-sm">Ver conversa</a></td>
+                      </tr>
+
+                      <tr
+                        class="history-row"
+                        data-date="2026-04-06"
+                        data-person="maria"
+                        data-professional="marina"
+                        data-service="cuidador"
+                        data-status="cancelado"
+                        data-value="0"
+                        data-search="semana 6 abril cuidador marina maria cancelado"
+                      >
+                        <td>Semana 06/04</td>
+                        <td>06/04 a 12/04</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>R$ 0,00</td>
+                        <td><a href="servicos.html" class="btn btn-outline-primary btn-sm">Buscar novo</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="alert alert-light border rounded-4 mt-4 d-none" id="weeklyEmptyState">
+                  Nenhum registro encontrado na visão semanal.
+                </div>
+              </div>
+            </article>
+
+            <article class="card border-0 shadow-sm rounded-4 history-table-view d-none" data-table-view="mensal">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Tabela mensal</h2>
+                    <p class="text-muted mb-0">
+                      Visão consolidada por mês, tipo de serviço e valores.
+                    </p>
+                  </div>
+
+                  <span class="badge text-bg-primary align-self-start fs-6" id="monthlyCountBadge">
+                    0 meses
+                  </span>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table align-middle">
+                    <thead>
+                      <tr>
+                        <th>Mês</th>
+                        <th>Serviço mais usado</th>
+                        <th>Total de serviços</th>
+                        <th>Concluídos</th>
+                        <th>Cancelados</th>
+                        <th>Valor total</th>
+                        <th>Profissional recorrente</th>
+                        <th>Ação</th>
+                      </tr>
+                    </thead>
+
+                    <tbody id="monthlyTableBody">
+                      <tr
+                        class="history-row"
+                        data-date="2026-04-01"
+                        data-person="antonio"
+                        data-professional="ana"
+                        data-service="fisioterapia"
+                        data-status="concluido avaliado"
+                        data-value="860"
+                        data-search="abril fisioterapia ana paula antonio servico recorrente mensal"
+                      >
+                        <td>Abril/2026</td>
+                        <td>Fisioterapia</td>
+                        <td>18</td>
+                        <td>12</td>
+                        <td>2</td>
+                        <td>R$ 860,00</td>
+                        <td>Ana Paula</td>
+                        <td><a href="servicos-avaliacoes.html" class="btn btn-outline-primary btn-sm">Ver avaliações</a></td>
+                      </tr>
+
+                      <tr
+                        class="history-row"
+                        data-date="2026-03-01"
+                        data-person="maria"
+                        data-professional="carlos"
+                        data-service="enfermagem"
+                        data-status="concluido"
+                        data-value="620"
+                        data-search="marco enfermagem carlos maria curativos mensal"
+                      >
+                        <td>Março/2026</td>
+                        <td>Enfermagem</td>
+                        <td>10</td>
+                        <td>8</td>
+                        <td>1</td>
+                        <td>R$ 620,00</td>
+                        <td>Carlos Souza</td>
+                        <td><a href="servicos-atendimentos.html" class="btn btn-outline-primary btn-sm">Ver atendimentos</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="alert alert-light border rounded-4 mt-4 d-none" id="monthlyEmptyState">
+                  Nenhum registro encontrado na visão mensal.
+                </div>
+              </div>
+            </article>
+
+          </div>
+
+          <aside class="col-12 col-xl-3">
+            <div class="vstack gap-4">
+
+              <article class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Resumo filtrado</h2>
+
+                  <div class="vstack gap-3">
+                    <div class="p-3 rounded-4 bg-light">
+                      <strong class="d-block fs-4" id="sideTotalRecords">0</strong>
+                      <span class="text-muted">Registros visíveis</span>
+                    </div>
+
+                    <div class="p-3 rounded-4 bg-light">
+                      <strong class="d-block fs-4" id="sideTotalValue">R$ 0,00</strong>
+                      <span class="text-muted">Valor somado</span>
+                    </div>
+
+                    <div class="p-3 rounded-4 bg-light">
+                      <strong class="d-block" id="sideMainService">-</strong>
+                      <span class="text-muted">Serviço em destaque</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Ações rápidas</h2>
+
+                  <div class="d-grid gap-2">
+                    <a href="servicos.html" class="btn btn-primary btn-lg">
+                      Buscar serviço
+                    </a>
+
+                    <a href="servicos-atendimentos.html" class="btn btn-outline-primary btn-lg">
+                      Atendimentos
+                    </a>
+
+                    <a href="servicos-avaliacoes.html" class="btn btn-outline-primary btn-lg">
+                      Avaliações
+                    </a>
+
+                    <a href="dashboard.html" class="btn btn-light border btn-lg">
+                      Início
+                    </a>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+          </aside>
+
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+
+const viewTabs = document.querySelectorAll(".history-view-tab");
+    const tableViews = document.querySelectorAll(".history-table-view");
+    const filterFields = document.querySelectorAll(".history-filter");
+
+    const historySearch = document.getElementById("historySearch");
+    const personFilter = document.getElementById("personFilter");
+    const professionalFilter = document.getElementById("professionalFilter");
+    const serviceTypeFilter = document.getElementById("serviceTypeFilter");
+    const statusFilter = document.getElementById("statusFilter");
+    const startDateFilter = document.getElementById("startDateFilter");
+    const endDateFilter = document.getElementById("endDateFilter");
+    const minValueFilter = document.getElementById("minValueFilter");
+    const maxValueFilter = document.getElementById("maxValueFilter");
+
+    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+    const exportHistoryBtn = document.getElementById("exportHistoryBtn");
+
+    const dailyCountBadge = document.getElementById("dailyCountBadge");
+    const weeklyCountBadge = document.getElementById("weeklyCountBadge");
+    const monthlyCountBadge = document.getElementById("monthlyCountBadge");
+
+    const dailyEmptyState = document.getElementById("dailyEmptyState");
+    const weeklyEmptyState = document.getElementById("weeklyEmptyState");
+    const monthlyEmptyState = document.getElementById("monthlyEmptyState");
+
+    const sideTotalRecords = document.getElementById("sideTotalRecords");
+    const sideTotalValue = document.getElementById("sideTotalValue");
+    const sideMainService = document.getElementById("sideMainService");
+
+    let activeView = "diario";
+
+    function formatCurrency(value) {
+      return value.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function getActiveRows() {
+      const activeTable = document.querySelector('[data-table-view="' + activeView + '"]');
+      return activeTable.querySelectorAll(".history-row");
+    }
+
+    function matchesFilters(row) {
+      const searchTerm = historySearch.value.trim().toLowerCase();
+      const person = personFilter.value;
+      const professional = professionalFilter.value;
+      const service = serviceTypeFilter.value;
+      const status = statusFilter.value;
+      const startDate = startDateFilter.value;
+      const endDate = endDateFilter.value;
+      const minValue = minValueFilter.value === "" ? null : Number(minValueFilter.value);
+      const maxValue = maxValueFilter.value === "" ? null : Number(maxValueFilter.value);
+
+      const rowDate = row.dataset.date;
+      const rowValue = Number(row.dataset.value || 0);
+
+      const matchSearch = searchTerm === "" || row.dataset.search.includes(searchTerm);
+      const matchPerson = person === "todos" || row.dataset.person === person;
+      const matchProfessional = professional === "todos" || row.dataset.professional === professional;
+      const matchService = service === "todos" || row.dataset.service === service;
+      const matchStatus = status === "todos" || row.dataset.status.includes(status);
+      const matchStart = startDate === "" || rowDate >= startDate;
+      const matchEnd = endDate === "" || rowDate <= endDate;
+      const matchMin = minValue === null || rowValue >= minValue;
+      const matchMax = maxValue === null || rowValue <= maxValue;
+
+      return (
+        matchSearch &&
+        matchPerson &&
+        matchProfessional &&
+        matchService &&
+        matchStatus &&
+        matchStart &&
+        matchEnd &&
+        matchMin &&
+        matchMax
+      );
+    }
+
+    function updateSideSummary(visibleRows) {
+      let totalValue = 0;
+      const serviceCount = {};
+
+      visibleRows.forEach(function (row) {
+        totalValue += Number(row.dataset.value || 0);
+
+        const service = row.dataset.service || "outros";
+        serviceCount[service] = (serviceCount[service] || 0) + 1;
+      });
+
+      let mainService = "-";
+      let maxCount = 0;
+
+      Object.keys(serviceCount).forEach(function (service) {
+        if (serviceCount[service] > maxCount) {
+          maxCount = serviceCount[service];
+          mainService = service;
+        }
+      });
+
+      const labels = {
+        fisioterapia: "Fisioterapia",
+        enfermagem: "Enfermagem",
+        psicologia: "Psicologia",
+        cuidador: "Cuidador"
+      };
+
+      sideTotalRecords.textContent = visibleRows.length;
+      sideTotalValue.textContent = formatCurrency(totalValue);
+      sideMainService.textContent = labels[mainService] || mainService;
+    }
+
+    function applyFilters() {
+      const rows = getActiveRows();
+      const visibleRows = [];
+
+      rows.forEach(function (row) {
+        const shouldShow = matchesFilters(row);
+        row.classList.toggle("d-none", !shouldShow);
+
+        if (shouldShow) {
+          visibleRows.push(row);
+        }
+      });
+
+      dailyEmptyState.classList.add("d-none");
+      weeklyEmptyState.classList.add("d-none");
+      monthlyEmptyState.classList.add("d-none");
+
+      if (activeView === "diario") {
+        dailyCountBadge.textContent = visibleRows.length + " registro(s)";
+        dailyEmptyState.classList.toggle("d-none", visibleRows.length > 0);
+      }
+
+      if (activeView === "semanal") {
+        weeklyCountBadge.textContent = visibleRows.length + " grupo(s)";
+        weeklyEmptyState.classList.toggle("d-none", visibleRows.length > 0);
+      }
+
+      if (activeView === "mensal") {
+        monthlyCountBadge.textContent = visibleRows.length + " mês(es)";
+        monthlyEmptyState.classList.toggle("d-none", visibleRows.length > 0);
+      }
+
+      updateSideSummary(visibleRows);
+    }
+
+    viewTabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        activeView = tab.dataset.view;
+
+        viewTabs.forEach(function (item) {
+          item.classList.remove("active");
+        });
+
+        tab.classList.add("active");
+
+        tableViews.forEach(function (view) {
+          view.classList.toggle("d-none", view.dataset.tableView !== activeView);
+        });
+
+        applyFilters();
+      });
+    });
+
+    filterFields.forEach(function (field) {
+      field.addEventListener("input", applyFilters);
+      field.addEventListener("change", applyFilters);
+    });
+
+    clearFiltersBtn.addEventListener("click", function () {
+      historySearch.value = "";
+      personFilter.value = "todos";
+      professionalFilter.value = "todos";
+      serviceTypeFilter.value = "todos";
+      statusFilter.value = "todos";
+      startDateFilter.value = "";
+      endDateFilter.value = "";
+      minValueFilter.value = "";
+      maxValueFilter.value = "";
+
+      applyFilters();
+    });
+
+    exportHistoryBtn.addEventListener("click", function () {
+      exportHistoryBtn.textContent = "Resumo exportado";
+      exportHistoryBtn.classList.remove("btn-outline-primary");
+      exportHistoryBtn.classList.add("btn-success");
+    });
+
+    applyFilters();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

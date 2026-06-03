@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Carteira de Vacinas | Home Care 4.0</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080;">
+          <div id="appToast" class="toast border-0 shadow">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+          </div>
+        </div>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+              <div class="col-12 col-lg-8">
+                <p class="text-muted fs-5 mb-1">Carteira de vacinas</p>
+                <h1 class="fw-bold mb-3">Registro completo das vacinas</h1>
+                <p class="text-muted fs-5 mb-0">
+                  Veja as doses aplicadas, próximas doses e comprovantes em um só lugar.
+                </p>
+              </div>
+
+              <div class="col-12 col-lg-4">
+                <div class="d-grid gap-2">
+                  <a href="vacinas-adicionar.html" class="btn btn-primary btn-lg">Adicionar vacina</a>
+                  <button type="button" class="btn btn-outline-primary btn-lg" id="btnImprimir">
+                    Imprimir carteira
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4">
+            <div class="row g-3 align-items-end">
+              <div class="col-12 col-lg-4">
+                <label for="pessoa" class="form-label">Pessoa acompanhada</label>
+                <select id="pessoa" class="form-select form-select-lg">
+                  <option value="">Todas</option>
+                  <option value="Maria">Maria</option>
+                  <option value="Antônio">Antônio</option>
+                  <option value="Eu">Eu</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-lg-4">
+                <label for="status" class="form-label">Status</label>
+                <select id="status" class="form-select form-select-lg">
+                  <option value="">Todos</option>
+                  <option value="Em dia">Em dia</option>
+                  <option value="Pendente">Pendente</option>
+                  <option value="Próxima dose">Próxima dose</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-lg-4">
+                <label for="busca" class="form-label">Buscar vacina</label>
+                <input id="busca" type="search" class="form-control form-control-lg" placeholder="Ex.: Influenza, COVID-19">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4 mb-4">
+          <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Total registrado</p>
+                <h2 class="fw-bold mb-0">6 vacinas</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Em dia</p>
+                <h2 class="fw-bold mb-0">4 vacinas</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Atenção</p>
+                <h2 class="fw-bold mb-0">2 pendências</h2>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4" id="listaVacinas">
+          <div class="col-12 vacina-item" data-pessoa="Maria" data-status="Pendente" data-nome="influenza gripe">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                  <div>
+                    <span class="badge text-bg-warning mb-2">Pendente</span>
+                    <h2 class="h4 mb-1">Influenza</h2>
+                    <p class="text-muted mb-0">Maria • Reforço recomendado em 28/06/2025</p>
+                  </div>
+                  <div class="d-grid d-sm-flex gap-2">
+                    <a href="vacinas-adicionar.html" class="btn btn-primary">Agendar</a>
+                    <button class="btn btn-outline-primary btnDetalhes" type="button">Ver detalhes</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 vacina-item" data-pessoa="Maria" data-status="Em dia" data-nome="covid covid-19">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                  <div>
+                    <span class="badge text-bg-success mb-2">Em dia</span>
+                    <h2 class="h4 mb-1">COVID-19</h2>
+                    <p class="text-muted mb-0">Maria • Aplicada em 15/04/2025 • UBS Central</p>
+                  </div>
+                  <div class="d-grid d-sm-flex gap-2">
+                    <button class="btn btn-outline-primary btnDetalhes" type="button">Ver detalhes</button>
+                    <button class="btn btn-outline-secondary btnComprovante" type="button">Comprovante</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 vacina-item" data-pessoa="Antônio" data-status="Próxima dose" data-nome="hepatite b">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                  <div>
+                    <span class="badge text-bg-primary mb-2">Próxima dose</span>
+                    <h2 class="h4 mb-1">Hepatite B</h2>
+                    <p class="text-muted mb-0">Antônio • Próxima dose em 02/07/2025 às 09:00</p>
+                  </div>
+                  <div class="d-grid d-sm-flex gap-2">
+                    <button class="btn btn-outline-primary btnLembrete" type="button">Criar lembrete</button>
+                    <button class="btn btn-outline-secondary btnDetalhes" type="button">Ver detalhes</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 vacina-item" data-pessoa="Eu" data-status="Em dia" data-nome="dupla adulto dt tetano">
+            <article class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                  <div>
+                    <span class="badge text-bg-success mb-2">Em dia</span>
+                    <h2 class="h4 mb-1">Dupla adulto — dT</h2>
+                    <p class="text-muted mb-0">Eu • Aplicada em 08/03/2025 • Próximo reforço em 2035</p>
+                  </div>
+                  <div class="d-grid d-sm-flex gap-2">
+                    <button class="btn btn-outline-primary btnDetalhes" type="button">Ver detalhes</button>
+                    <button class="btn btn-outline-secondary btnComprovante" type="button">Comprovante</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="alert alert-light border-0 shadow-sm rounded-4 mt-4 d-none" id="estadoVazio">
+          <h2 class="h5 mb-1">Nenhuma vacina encontrada</h2>
+          <p class="text-muted mb-0">Tente alterar os filtros ou buscar por outro nome.</p>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <footer class="app-footer bg-white border-top">
+    <div class="container py-3">
+      <p class="mb-0 text-muted">Home Care 4.0 — Plataforma de centralização de cuidados e serviços.</p>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="modalDetalhes" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header">
+          <h2 class="modal-title h5">Detalhes da vacina</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="text-muted">
+            Dados da aplicação, lote, local, profissional responsável e próxima dose podem ser consultados aqui.
+          </p>
+
+          <div class="p-3 rounded-4 bg-light">
+            <strong>Orientação:</strong>
+            mantenha o comprovante salvo e leve a carteira em consultas futuras.
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+          <button type="button" class="btn btn-primary" id="btnSalvarModal">Entendi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const busca = document.getElementById("busca");
+    const pessoa = document.getElementById("pessoa");
+    const status = document.getElementById("status");
+    const itens = Array.from(document.querySelectorAll(".vacina-item"));
+    const estadoVazio = document.getElementById("estadoVazio");
+
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
+    }
+
+    function filtrarVacinas() {
+      const termo = busca.value.trim().toLowerCase();
+      const pessoaSelecionada = pessoa.value;
+      const statusSelecionado = status.value;
+      let visiveis = 0;
+
+      itens.forEach(function(item) {
+        const bateBusca = !termo || item.dataset.nome.includes(termo);
+        const batePessoa = !pessoaSelecionada || item.dataset.pessoa === pessoaSelecionada;
+        const bateStatus = !statusSelecionado || item.dataset.status === statusSelecionado;
+
+        const mostrar = bateBusca && batePessoa && bateStatus;
+        item.classList.toggle("d-none", !mostrar);
+
+        if (mostrar) visiveis++;
+      });
+
+      estadoVazio.classList.toggle("d-none", visiveis > 0);
+    }
+
+    busca.addEventListener("input", filtrarVacinas);
+    pessoa.addEventListener("change", filtrarVacinas);
+    status.addEventListener("change", filtrarVacinas);
+
+    document.getElementById("btnImprimir").addEventListener("click", function() {
+      window.print();
+    });
+
+    document.querySelectorAll(".btnDetalhes").forEach(function(botao) {
+      botao.addEventListener("click", function() {
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("modalDetalhes")).show();
+      });
+    });
+
+    document.querySelectorAll(".btnComprovante").forEach(function(botao) {
+      botao.addEventListener("click", function() {
+        mostrarToast("Comprovante preparado para visualização.");
+      });
+    });
+
+    document.querySelectorAll(".btnLembrete").forEach(function(botao) {
+      botao.addEventListener("click", function() {
+        mostrarToast("Lembrete criado para a próxima dose.");
+      });
+    });
+
+    document.getElementById("btnSalvarModal").addEventListener("click", function() {
+      bootstrap.Modal.getOrCreateInstance(document.getElementById("modalDetalhes")).hide();
+      mostrarToast("Informação confirmada.");
+    });
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

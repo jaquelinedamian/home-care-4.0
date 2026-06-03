@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Agendar Atendimento | Home Care 4.0</title>
+
+  <meta
+    name="description"
+    content="Agende atendimento com profissional verificado para você ou para uma pessoa acompanhada."
+  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body data-profile-page="idoso" class="hc-idoso-module">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <section class="row mb-3">
+          <div class="col-12">
+            <a href="servicos-profissional-detalhes.html" class="btn btn-light border">
+              Voltar ao profissional
+            </a>
+          </div>
+        </section>
+
+        <section class="row mb-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4 p-lg-5">
+                <div class="row align-items-center g-4">
+                  <div class="col-12 col-lg-8">
+                    <p class="text-muted fs-5 mb-1">Agendamento</p>
+                    <h1 class="fw-bold mb-3">Agendar atendimento</h1>
+                    <p class="text-muted fs-5 mb-0">
+                      Confirme quem será atendido, escolha o tipo de atendimento, data, horário e endereço.
+                    </p>
+                  </div>
+
+                  <div class="col-12 col-lg-4">
+                    <div class="p-3 rounded-4 bg-light">
+                      <strong class="d-block fs-5">Ana Paula Martins</strong>
+                      <span class="text-muted d-block">Fisioterapeuta • CREFITO ativo</span>
+                      <span class="badge text-bg-success mt-2">Profissional verificado</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4">
+
+          <div class="col-12 col-xl-8">
+            <form class="card border-0 shadow-sm rounded-4" id="appointmentForm">
+              <div class="card-body p-4">
+
+                <section class="mb-5">
+                  <span class="badge text-bg-primary fs-6 mb-3">1</span>
+                  <h2 class="h4 fw-bold mb-2">Quem será atendido?</h2>
+                  <p class="text-muted fs-5 mb-3">
+                    Escolha se o atendimento é para você ou para uma pessoa que você acompanha.
+                  </p>
+
+                  <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                      <input class="btn-check" type="radio" name="person" id="personMe" value="Eu mesmo" checked />
+                      <label class="btn btn-outline-primary btn-lg w-100 text-start p-3 rounded-4" for="personMe">
+                        <strong class="d-block">Eu mesmo</strong>
+                        <span>Atendimento para mim</span>
+                      </label>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <input class="btn-check" type="radio" name="person" id="personAntonio" value="Antônio Damian" />
+                      <label class="btn btn-outline-primary btn-lg w-100 text-start p-3 rounded-4" for="personAntonio">
+                        <strong class="d-block">Antônio Damian</strong>
+                        <span>Pai • 82 anos</span>
+                      </label>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <input class="btn-check" type="radio" name="person" id="personMaria" value="Maria Helena" />
+                      <label class="btn btn-outline-primary btn-lg w-100 text-start p-3 rounded-4" for="personMaria">
+                        <strong class="d-block">Maria Helena</strong>
+                        <span>Mãe • 76 anos</span>
+                      </label>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="mb-5">
+                  <span class="badge text-bg-primary fs-6 mb-3">2</span>
+                  <h2 class="h4 fw-bold mb-2">Tipo de atendimento</h2>
+                  <p class="text-muted fs-5 mb-3">
+                    Escolha como o atendimento será realizado.
+                  </p>
+
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <input class="btn-check" type="radio" name="serviceType" id="homeCare" value="Atendimento em casa" checked />
+                      <label class="btn btn-outline-primary btn-lg w-100 text-start p-3 rounded-4" for="homeCare">
+                        <strong class="d-block">Atendimento em casa</strong>
+                        <span>A profissional vai até o endereço</span>
+                      </label>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                      <input class="btn-check" type="radio" name="serviceType" id="onlineCare" value="Atendimento online" />
+                      <label class="btn btn-outline-primary btn-lg w-100 text-start p-3 rounded-4" for="onlineCare">
+                        <strong class="d-block">Atendimento online</strong>
+                        <span>Orientação por chamada de vídeo</span>
+                      </label>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="mb-5">
+                  <span class="badge text-bg-primary fs-6 mb-3">3</span>
+                  <h2 class="h4 fw-bold mb-2">Escolha a data</h2>
+                  <p class="text-muted fs-5 mb-3">
+                    Selecione uma das datas disponíveis.
+                  </p>
+
+                  <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                      <input class="btn-check" type="radio" name="date" id="dateToday" value="Hoje" checked />
+                      <label class="btn btn-outline-primary btn-lg w-100 text-start p-3 rounded-4" for="dateToday">
+                        <strong class="d-block">Hoje</strong>
+                        <span>25/04/2026</span>
+                      </label>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <input class="btn-check" type="radio" name="date" id="dateTomorrow" value="Amanhã" />
+                      <label class="btn btn-outline-primary btn-lg w-100 text-start p-3 rounded-4" for="dateTomorrow">
+                        <strong class="d-block">Amanhã</strong>
+                        <span>26/04/2026</span>
+                      </label>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <input class="btn-check" type="radio" name="date" id="dateFriday" value="Sexta-feira" />
+                      <label class="btn btn-outline-primary btn-lg w-100 text-start p-3 rounded-4" for="dateFriday">
+                        <strong class="d-block">Sexta-feira</strong>
+                        <span>01/05/2026</span>
+                      </label>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="mb-5">
+                  <span class="badge text-bg-primary fs-6 mb-3">4</span>
+                  <h2 class="h4 fw-bold mb-2">Escolha o horário</h2>
+                  <p class="text-muted fs-5 mb-3">
+                    Horários disponíveis para a data selecionada.
+                  </p>
+
+                  <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                      <input class="btn-check" type="radio" name="time" id="time0900" value="09:00" />
+                      <label class="btn btn-outline-primary btn-lg w-100 rounded-4" for="time0900">
+                        09:00
+                      </label>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                      <input class="btn-check" type="radio" name="time" id="time1030" value="10:30" />
+                      <label class="btn btn-outline-primary btn-lg w-100 rounded-4" for="time1030">
+                        10:30
+                      </label>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                      <input class="btn-check" type="radio" name="time" id="time1500" value="15:00" checked />
+                      <label class="btn btn-outline-primary btn-lg w-100 rounded-4" for="time1500">
+                        15:00
+                      </label>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                      <input class="btn-check" type="radio" name="time" id="time1730" value="17:30" />
+                      <label class="btn btn-outline-primary btn-lg w-100 rounded-4" for="time1730">
+                        17:30
+                      </label>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="mb-5" id="addressSection">
+                  <span class="badge text-bg-primary fs-6 mb-3">5</span>
+                  <h2 class="h4 fw-bold mb-2">Endereço do atendimento</h2>
+                  <p class="text-muted fs-5 mb-3">
+                    Escolha onde o atendimento será realizado.
+                  </p>
+
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <input class="btn-check" type="radio" name="address" id="addressMain" value="Endereço principal" checked />
+                      <label class="btn btn-outline-primary btn-lg w-100 text-start p-3 rounded-4" for="addressMain">
+                        <strong class="d-block">Endereço principal</strong>
+                        <span>Rua das Flores, 120 — São Paulo, SP</span>
+                      </label>
+                    </div>
+
+                    <div class="col-12">
+                      <input class="btn-check" type="radio" name="address" id="addressOther" value="Outro endereço" />
+                      <label class="btn btn-outline-primary btn-lg w-100 text-start p-3 rounded-4" for="addressOther">
+                        <strong class="d-block">Outro endereço</strong>
+                        <span>Informar novo local para atendimento</span>
+                      </label>
+                    </div>
+
+                    <div class="col-12 d-none" id="newAddressBox">
+                      <label for="newAddress" class="form-label fs-5">Novo endereço</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-lg"
+                        id="newAddress"
+                        placeholder="Digite rua, número, bairro e cidade"
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                <section>
+                  <span class="badge text-bg-primary fs-6 mb-3">6</span>
+                  <h2 class="h4 fw-bold mb-2">Observações importantes</h2>
+                  <p class="text-muted fs-5 mb-3">
+                    Informe algo que ajude a profissional a se preparar.
+                  </p>
+
+                  <label for="notes" class="form-label fs-5">Mensagem para a profissional</label>
+                  <textarea
+                    class="form-control form-control-lg"
+                    id="notes"
+                    rows="4"
+                    placeholder="Ex: Meu pai tem dificuldade para levantar, usa bengala e sente dor ao caminhar."
+                  ></textarea>
+                </section>
+
+              </div>
+            </form>
+          </div>
+
+          <aside class="col-12 col-xl-4">
+            <div class="vstack gap-4">
+
+              <article class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Resumo do agendamento</h2>
+
+                  <div class="vstack gap-3">
+                    <div class="p-3 rounded-4 bg-light">
+                      <strong class="d-block">Profissional</strong>
+                      <span class="text-muted">Ana Paula Martins</span>
+                    </div>
+
+                    <div class="p-3 rounded-4 bg-light">
+                      <strong class="d-block">Atendimento para</strong>
+                      <span class="text-muted" id="summaryPerson">Eu mesmo</span>
+                    </div>
+
+                    <div class="p-3 rounded-4 bg-light">
+                      <strong class="d-block">Tipo</strong>
+                      <span class="text-muted" id="summaryType">Atendimento em casa</span>
+                    </div>
+
+                    <div class="p-3 rounded-4 bg-light">
+                      <strong class="d-block">Data e horário</strong>
+                      <span class="text-muted" id="summaryDateTime">Hoje às 15:00</span>
+                    </div>
+
+                    <div class="p-3 rounded-4 bg-light" id="summaryAddressBox">
+                      <strong class="d-block">Endereço</strong>
+                      <span class="text-muted" id="summaryAddress">Endereço principal</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Valor estimado</h2>
+
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Atendimento</span>
+                    <strong>R$ 180,00</strong>
+                  </div>
+
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Taxa de deslocamento</span>
+                    <strong>R$ 20,00</strong>
+                  </div>
+
+                  <hr />
+
+                  <div class="d-flex justify-content-between fs-5">
+                    <strong>Total</strong>
+                    <strong>R$ 200,00</strong>
+                  </div>
+
+                  <p class="text-muted mt-3 mb-0">
+                    O valor pode ser ajustado conforme distância, duração e tipo de atendimento.
+                  </p>
+                </div>
+              </article>
+
+              <article class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Segurança</h2>
+
+                  <ul class="list-unstyled mb-0">
+                    <li class="mb-2">Profissional com conselho ativo</li>
+                    <li class="mb-2">Perfil verificado pela plataforma</li>
+                    <li class="mb-2">Agendamento registrado no histórico</li>
+                    <li class="mb-0">Você poderá cancelar ou reagendar</li>
+                  </ul>
+                </div>
+              </article>
+
+              <button type="button" class="btn btn-primary btn-lg w-100" id="confirmAppointmentBtn">
+                Confirmar agendamento
+              </button>
+
+              <div class="alert alert-success rounded-4 d-none" id="appointmentSuccess" role="status">
+                Agendamento confirmado. Você será redirecionado para a confirmação.
+              </div>
+
+            </div>
+          </aside>
+
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="d-lg-none fixed-bottom bg-white border-top p-3" style="z-index: 1050;">
+    <button type="button" class="btn btn-primary btn-lg w-100" id="confirmAppointmentMobileBtn">
+      Confirmar agendamento
+    </button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+
+const summaryPerson = document.getElementById("summaryPerson");
+    const summaryType = document.getElementById("summaryType");
+    const summaryDateTime = document.getElementById("summaryDateTime");
+    const summaryAddress = document.getElementById("summaryAddress");
+    const summaryAddressBox = document.getElementById("summaryAddressBox");
+    const addressSection = document.getElementById("addressSection");
+    const newAddressBox = document.getElementById("newAddressBox");
+    const newAddressInput = document.getElementById("newAddress");
+    const confirmAppointmentBtn = document.getElementById("confirmAppointmentBtn");
+    const confirmAppointmentMobileBtn = document.getElementById("confirmAppointmentMobileBtn");
+    const appointmentSuccess = document.getElementById("appointmentSuccess");
+
+    function getCheckedValue(name) {
+      const checked = document.querySelector('input[name="' + name + '"]:checked');
+      return checked ? checked.value : "";
+    }
+
+    function updateSummary() {
+      const person = getCheckedValue("person");
+      const type = getCheckedValue("serviceType");
+      const date = getCheckedValue("date");
+      const time = getCheckedValue("time");
+      const address = getCheckedValue("address");
+
+      summaryPerson.textContent = person;
+      summaryType.textContent = type;
+      summaryDateTime.textContent = date + " às " + time;
+
+      if (type === "Atendimento online") {
+        addressSection.classList.add("d-none");
+        summaryAddressBox.classList.add("d-none");
+      } else {
+        addressSection.classList.remove("d-none");
+        summaryAddressBox.classList.remove("d-none");
+
+        if (address === "Outro endereço" && newAddressInput.value.trim() !== "") {
+          summaryAddress.textContent = newAddressInput.value.trim();
+        } else {
+          summaryAddress.textContent = address;
+        }
+      }
+
+      if (address === "Outro endereço") {
+        newAddressBox.classList.remove("d-none");
+      } else {
+        newAddressBox.classList.add("d-none");
+      }
+    }
+
+    function confirmAppointment() {
+      confirmAppointmentBtn.textContent = "Agendamento confirmado";
+      confirmAppointmentBtn.classList.remove("btn-primary");
+      confirmAppointmentBtn.classList.add("btn-success");
+
+      confirmAppointmentMobileBtn.textContent = "Agendamento confirmado";
+      confirmAppointmentMobileBtn.classList.remove("btn-primary");
+      confirmAppointmentMobileBtn.classList.add("btn-success");
+
+      appointmentSuccess.classList.remove("d-none");
+
+      setTimeout(function () {
+        window.location.href = "feedback-sucesso.html";
+      }, 900);
+    }
+
+    document.querySelectorAll("input").forEach(function (input) {
+      input.addEventListener("change", updateSummary);
+      input.addEventListener("input", updateSummary);
+    });
+
+    newAddressInput.addEventListener("input", updateSummary);
+    confirmAppointmentBtn.addEventListener("click", confirmAppointment);
+    confirmAppointmentMobileBtn.addEventListener("click", confirmAppointment);
+
+    updateSummary();
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

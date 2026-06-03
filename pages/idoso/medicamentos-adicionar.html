@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Adicionar Medicamento | Home Care 4.0</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+  <link rel="stylesheet" href="../../css/pages/medicamentos.css" />
+</head>
+
+<body class="hc-medication-page hc-idoso-module" data-profile-page="idoso">
+  <script>
+    try {
+      localStorage.setItem("homeCareActiveProfile", "idoso");
+      localStorage.setItem("homecare-active-profile", "idoso");
+    } catch (error) {}
+  </script>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+
+        <div class="toast-container position-fixed top-0 end-0 p-3 hc-toast-container">
+          <div id="appToast" class="toast align-items-center border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+          <div>
+            <span class="badge text-bg-primary mb-2">Novo cadastro</span>
+            <h1 class="h3 mb-1">Adicionar medicamento</h1>
+            <p class="text-muted mb-0">
+              Preencha as informações do medicamento e configure os lembretes de dose.
+            </p>
+          </div>
+
+          <div class="d-flex gap-2">
+            <a href="medicamentos.html" class="btn btn-outline-secondary">Cancelar</a>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong>Etapa <span id="etapaAtualTexto">1</span> de 4</strong>
+              <span class="text-muted" id="tituloEtapa">Identificação</span>
+            </div>
+
+            <div class="progress hc-progress-sm">
+              <div
+                id="barraProgresso"
+                class="progress-bar hc-progress-quarter"
+                role="progressbar"
+                aria-label="Progresso do cadastro"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="25"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-xl-8">
+            <form id="formAdicionarMedicamento" novalidate>
+
+              <section class="card border-0 shadow-sm rounded-4 etapa-formulario" data-etapa="1">
+                <div class="card-body p-4">
+                  <h2 class="h5 mb-1">1. Identificação do medicamento</h2>
+                  <p class="text-muted mb-4">
+                    Informe o nome, a dose e para quem esse medicamento será acompanhado.
+                  </p>
+
+                  <div class="row g-3">
+                    <div class="col-md-7">
+                      <label for="nomeMedicamento" class="form-label">Nome do medicamento</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="nomeMedicamento"
+                        placeholder="Ex.: Losartana"
+                        required
+                      />
+                      <div class="invalid-feedback">Informe o nome do medicamento.</div>
+                    </div>
+
+                    <div class="col-md-5">
+                      <label for="dosagemMedicamento" class="form-label">Dosagem</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="dosagemMedicamento"
+                        placeholder="Ex.: 50mg"
+                        required
+                      />
+                      <div class="invalid-feedback">Informe a dosagem.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="formaMedicamento" class="form-label">Forma de uso</label>
+                      <select class="form-select" id="formaMedicamento" required>
+                        <option value="">Selecione</option>
+                        <option>Comprimido</option>
+                        <option>Cápsula</option>
+                        <option>Gotas</option>
+                        <option>Xarope</option>
+                        <option>Injeção</option>
+                        <option>Pomada</option>
+                        <option>Outro</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione a forma de uso.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="pessoaCuidada" class="form-label">Pessoa acompanhada</label>
+                      <select class="form-select" id="pessoaCuidada" required>
+                        <option value="">Selecione</option>
+                        <option>Maria</option>
+                        <option>Antônio</option>
+                        <option>Eu</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione a pessoa acompanhada.</div>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="finalidadeMedicamento" class="form-label">Para que serve?</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="finalidadeMedicamento"
+                        placeholder="Ex.: controle da pressão arterial"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="card border-0 shadow-sm rounded-4 etapa-formulario d-none" data-etapa="2">
+                <div class="card-body p-4">
+                  <h2 class="h5 mb-1">2. Como tomar</h2>
+                  <p class="text-muted mb-4">
+                    Registre as orientações principais para evitar dúvidas na hora da dose.
+                  </p>
+
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="tipoTratamento" class="form-label">Tipo de tratamento</label>
+                      <select class="form-select" id="tipoTratamento" required>
+                        <option value="">Selecione</option>
+                        <option>Uso contínuo</option>
+                        <option>Tratamento temporário</option>
+                        <option>Uso eventual</option>
+                        <option>Suplementação</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione o tipo de tratamento.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="momentoUso" class="form-label">Momento de uso</label>
+                      <select class="form-select" id="momentoUso" required>
+                        <option value="">Selecione</option>
+                        <option>Em jejum</option>
+                        <option>Antes da refeição</option>
+                        <option>Após a refeição</option>
+                        <option>Antes de dormir</option>
+                        <option>Conforme orientação médica</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione o momento de uso.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="dataInicio" class="form-label">Data de início</label>
+                      <input type="date" class="form-control" id="dataInicio" required />
+                      <div class="invalid-feedback">Informe a data de início.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="dataFim" class="form-label">Data de término</label>
+                      <input type="date" class="form-control" id="dataFim" />
+                    </div>
+
+                    <div class="col-12">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="usoContinuo" />
+                        <label class="form-check-label" for="usoContinuo">
+                          Medicamento de uso contínuo, sem data final prevista
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="orientacoes" class="form-label">Orientações importantes</label>
+                      <textarea
+                        class="form-control"
+                        id="orientacoes"
+                        rows="4"
+                        placeholder="Ex.: tomar com bastante água, não partir o comprimido, observar tontura..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="card border-0 shadow-sm rounded-4 etapa-formulario d-none" data-etapa="3">
+                <div class="card-body p-4">
+                  <h2 class="h5 mb-1">3. Horários e lembretes</h2>
+                  <p class="text-muted mb-4">
+                    Defina a frequência, os horários e como o sistema deve avisar.
+                  </p>
+
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="frequencia" class="form-label">Frequência</label>
+                      <select class="form-select" id="frequencia" required>
+                        <option value="">Selecione</option>
+                        <option value="1x ao dia">1x ao dia</option>
+                        <option value="2x ao dia">2x ao dia</option>
+                        <option value="3x ao dia">3x ao dia</option>
+                        <option value="A cada 8 horas">A cada 8 horas</option>
+                        <option value="A cada 12 horas">A cada 12 horas</option>
+                        <option value="Personalizado">Personalizado</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione a frequência.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="tipoAlerta" class="form-label">Tipo de lembrete</label>
+                      <select class="form-select" id="tipoAlerta" required>
+                        <option value="">Selecione</option>
+                        <option>Notificação no aplicativo</option>
+                        <option>Som na caixa inteligente</option>
+                        <option>LED na caixa inteligente</option>
+                        <option>Vibração na caixa inteligente</option>
+                        <option>Todos os alertas</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione o tipo de lembrete.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="antecedencia" class="form-label">Antecedência do aviso</label>
+                      <select class="form-select" id="antecedencia" required>
+                        <option value="">Selecione</option>
+                        <option>Na hora exata</option>
+                        <option>5 minutos antes</option>
+                        <option>10 minutos antes</option>
+                        <option>15 minutos antes</option>
+                        <option>30 minutos antes</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione a antecedência.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="responsavel" class="form-label">Quem será avisado em caso de atraso?</label>
+                      <select class="form-select" id="responsavel" required>
+                        <option value="">Selecione</option>
+                        <option>Somente a pessoa acompanhada</option>
+                        <option>Cuidador principal</option>
+                        <option>Familiar responsável</option>
+                        <option>Todos os responsáveis</option>
+                      </select>
+                      <div class="invalid-feedback">Selecione o responsável.</div>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="border rounded-4 p-3 bg-light">
+                        <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
+                          <div>
+                            <strong>Horários das doses</strong>
+                            <p class="text-muted small mb-0">Adicione um ou mais horários para o lembrete.</p>
+                          </div>
+
+                          <button class="btn btn-outline-primary" type="button" id="btnAdicionarHorario">
+                            + Adicionar horário
+                          </button>
+                        </div>
+
+                        <div id="listaHorarios" class="row g-3"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="card border-0 shadow-sm rounded-4 etapa-formulario d-none" data-etapa="4">
+                <div class="card-body p-4">
+                  <h2 class="h5 mb-1">4. Estoque e revisão</h2>
+                  <p class="text-muted mb-4">
+                    Finalize com o controle de estoque e confira se está tudo certo antes de salvar.
+                  </p>
+
+                  <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                      <label for="estoqueAtual" class="form-label">Quantidade atual em estoque</label>
+                      <input
+                        type="number"
+                        min="0"
+                        class="form-control"
+                        id="estoqueAtual"
+                        placeholder="Ex.: 30"
+                        required
+                      />
+                      <div class="invalid-feedback">Informe a quantidade atual.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="estoqueMinimo" class="form-label">Avisar quando restar</label>
+                      <input
+                        type="number"
+                        min="0"
+                        class="form-control"
+                        id="estoqueMinimo"
+                        placeholder="Ex.: 5"
+                        required
+                      />
+                      <div class="invalid-feedback">Informe o estoque mínimo.</div>
+                    </div>
+                  </div>
+
+                  <div class="border rounded-4 p-3 bg-light">
+                    <h3 class="h6 mb-3">Revisão do cadastro</h3>
+                    <div id="resumoFinal" class="row g-3"></div>
+                  </div>
+                </div>
+              </section>
+
+              <div class="d-flex flex-column flex-sm-row justify-content-between gap-2 mt-4">
+                <button class="btn btn-outline-secondary" type="button" id="btnVoltar" disabled>
+                  Voltar
+                </button>
+
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                  <button class="btn btn-outline-primary" type="button" id="btnSalvarRascunho">
+                    Salvar rascunho
+                  </button>
+
+                  <button class="btn btn-primary" type="button" id="btnProximo">
+                    Próxima etapa
+                  </button>
+
+                  <button class="btn btn-success d-none" type="submit" id="btnSalvar">
+                    Salvar medicamento
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <aside class="col-xl-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Resumo do cadastro</h2>
+
+                <div class="d-grid gap-3">
+                  <div>
+                    <small class="text-muted">Medicamento</small>
+                    <p class="mb-0 fw-semibold" id="resumoMedicamento">Ainda não informado</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Pessoa acompanhada</small>
+                    <p class="mb-0 fw-semibold" id="resumoPessoa">Ainda não selecionada</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Como tomar</small>
+                    <p class="mb-0 fw-semibold" id="resumoComoTomar">Ainda não definido</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Horários</small>
+                    <p class="mb-0 fw-semibold" id="resumoHorarios">Nenhum horário adicionado</p>
+                  </div>
+
+                  <div>
+                    <small class="text-muted">Lembrete</small>
+                    <p class="mb-0 fw-semibold" id="resumoLembrete">Ainda não configurado</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">O que será criado</h2>
+
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item px-0">Agenda de doses</li>
+                  <li class="list-group-item px-0">Lembretes automáticos</li>
+                  <li class="list-group-item px-0">Registro no histórico</li>
+                  <li class="list-group-item px-0">Alerta de estoque baixo</li>
+                </ul>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+
+  <div class="modal fade" id="modalSucesso" tabindex="-1" aria-labelledby="modalSucessoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="modalSucessoLabel">Medicamento salvo</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="alert alert-success border-0 rounded-4">
+            <strong>Cadastro concluído com sucesso.</strong><br />
+            O medicamento foi adicionado à agenda e os lembretes foram configurados.
+          </div>
+
+          <div id="resultadoCadastro" class="row g-3"></div>
+        </div>
+
+        <div class="modal-footer">
+          <a href="medicamentos.html" class="btn btn-primary">Ir para medicamentos</a>
+          <a href="medicamentos-horarios.html" class="btn btn-outline-primary">Ver horários</a>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Continuar editando</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    let etapaAtual = 1;
+    let contadorHorarios = 0;
+
+    const titulosEtapas = {
+      1: "Identificação",
+      2: "Como tomar",
+      3: "Horários e lembretes",
+      4: "Estoque e revisão"
+    };
+
+    const form = document.getElementById("formAdicionarMedicamento");
+    const modalSucesso = new bootstrap.Modal(document.getElementById("modalSucesso"));
+    const toast = new bootstrap.Toast(document.getElementById("appToast"));
+
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      toast.show();
+    }
+
+    function valor(id) {
+      const campo = document.getElementById(id);
+      return campo ? campo.value.trim() : "";
+    }
+
+    function definirDataHoje() {
+      const hoje = new Date().toISOString().split("T")[0];
+      document.getElementById("dataInicio").value = hoje;
+    }
+
+    function obterHorarios() {
+      return Array.from(document.querySelectorAll(".horario-dose"))
+        .map(function (input) {
+          return input.value;
+        })
+        .filter(Boolean)
+        .sort();
+    }
+
+    function adicionarHorario(horario = "") {
+      contadorHorarios += 1;
+
+      const container = document.getElementById("listaHorarios");
+      const coluna = document.createElement("div");
+      coluna.className = "col-md-6 horario-item";
+      coluna.dataset.horarioId = contadorHorarios;
+
+      coluna.innerHTML = `
+        <div class="input-group">
+          <span class="input-group-text">Dose</span>
+          <input
+            type="time"
+            class="form-control horario-dose"
+            value="${horario}"
+            required
+            aria-label="Horário da dose"
+          />
+          <button
+            class="btn btn-outline-danger"
+            type="button"
+            data-remover-horario="${contadorHorarios}"
+          >
+            Remover
+          </button>
+        </div>
+      `;
+
+      container.appendChild(coluna);
+      atualizarResumo();
+    }
+
+    function atualizarEtapa() {
+      document.querySelectorAll(".etapa-formulario").forEach(function (secao) {
+        secao.classList.toggle("d-none", Number(secao.dataset.etapa) !== etapaAtual);
+      });
+
+      const progresso = etapaAtual * 25;
+
+      document.getElementById("etapaAtualTexto").textContent = etapaAtual;
+      document.getElementById("tituloEtapa").textContent = titulosEtapas[etapaAtual];
+      document.getElementById("barraProgresso").style.width = progresso + "%";
+      document.getElementById("barraProgresso").setAttribute("aria-valuenow", progresso);
+
+      document.getElementById("btnVoltar").disabled = etapaAtual === 1;
+      document.getElementById("btnProximo").classList.toggle("d-none", etapaAtual === 4);
+      document.getElementById("btnSalvar").classList.toggle("d-none", etapaAtual !== 4);
+
+      if (etapaAtual === 4) {
+        renderizarResumoFinal();
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function validarEtapa() {
+      const secao = document.querySelector(`.etapa-formulario[data-etapa="${etapaAtual}"]`);
+      const camposObrigatorios = secao.querySelectorAll("[required]");
+      let valido = true;
+
+      camposObrigatorios.forEach(function (campo) {
+        if (!campo.value) {
+          campo.classList.add("is-invalid");
+          valido = false;
+        } else {
+          campo.classList.remove("is-invalid");
+        }
+      });
+
+      if (etapaAtual === 3 && obterHorarios().length === 0) {
+        valido = false;
+        mostrarToast("Adicione pelo menos um horário.");
+      }
+
+      if (!valido) {
+        mostrarToast("Preencha os campos obrigatórios antes de continuar.");
+      }
+
+      return valido;
+    }
+
+    function atualizarResumo() {
+      const nome = valor("nomeMedicamento");
+      const dose = valor("dosagemMedicamento");
+      const pessoa = valor("pessoaCuidada");
+      const momento = valor("momentoUso");
+      const tipo = valor("tipoTratamento");
+      const horarios = obterHorarios();
+      const alerta = valor("tipoAlerta");
+      const antecedencia = valor("antecedencia");
+
+      document.getElementById("resumoMedicamento").textContent =
+        nome ? `${nome}${dose ? " " + dose : ""}` : "Ainda não informado";
+
+      document.getElementById("resumoPessoa").textContent =
+        pessoa || "Ainda não selecionada";
+
+      document.getElementById("resumoComoTomar").textContent =
+        tipo || momento ? `${tipo || "Tipo não definido"} • ${momento || "Momento não definido"}` : "Ainda não definido";
+
+      document.getElementById("resumoHorarios").textContent =
+        horarios.length ? horarios.join(", ") : "Nenhum horário adicionado";
+
+      document.getElementById("resumoLembrete").textContent =
+        alerta ? `${alerta}${antecedencia ? " • " + antecedencia : ""}` : "Ainda não configurado";
+
+      if (etapaAtual === 4) {
+        renderizarResumoFinal();
+      }
+    }
+
+    function renderizarResumoFinal() {
+      const usoContinuo = document.getElementById("usoContinuo").checked;
+      const horarios = obterHorarios();
+
+      const cards = [
+        {
+          titulo: "Medicamento",
+          valor: `${valor("nomeMedicamento") || "-"} ${valor("dosagemMedicamento") || ""}`,
+          detalhe: valor("formaMedicamento") || "-"
+        },
+        {
+          titulo: "Pessoa acompanhada",
+          valor: valor("pessoaCuidada") || "-",
+          detalhe: valor("finalidadeMedicamento") || "Sem finalidade informada"
+        },
+        {
+          titulo: "Tratamento",
+          valor: valor("tipoTratamento") || "-",
+          detalhe: valor("momentoUso") || "-"
+        },
+        {
+          titulo: "Período",
+          valor: `${valor("dataInicio") || "-"} até ${usoContinuo ? "uso contínuo" : (valor("dataFim") || "-")}`,
+          detalhe: usoContinuo ? "Sem data final" : "Com data final"
+        },
+        {
+          titulo: "Horários",
+          valor: horarios.length ? horarios.join(", ") : "-",
+          detalhe: valor("frequencia") || "-"
+        },
+        {
+          titulo: "Lembrete",
+          valor: valor("tipoAlerta") || "-",
+          detalhe: `${valor("antecedencia") || "-"} • ${valor("responsavel") || "-"}`
+        },
+        {
+          titulo: "Estoque",
+          valor: `${valor("estoqueAtual") || "0"} unidade(s)`,
+          detalhe: `Avisar quando restar ${valor("estoqueMinimo") || "0"}`
+        },
+        {
+          titulo: "Orientações",
+          valor: valor("orientacoes") || "Sem orientação cadastrada",
+          detalhe: "Será exibida nos detalhes da dose"
+        }
+      ];
+
+      document.getElementById("resumoFinal").innerHTML = cards.map(function (card) {
+        return `
+          <div class="col-md-6">
+            <div class="card border-0 bg-white rounded-4 h-100">
+              <div class="card-body">
+                <small class="text-muted">${card.titulo}</small>
+                <h4 class="h6 mb-1">${card.valor}</h4>
+                <p class="text-muted small mb-0">${card.detalhe}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderizarResultadoCadastro() {
+      const horarios = obterHorarios();
+
+      const resultados = [
+        {
+          titulo: "Medicamento cadastrado",
+          texto: `${valor("nomeMedicamento")} ${valor("dosagemMedicamento")} para ${valor("pessoaCuidada")}.`
+        },
+        {
+          titulo: "Horários configurados",
+          texto: horarios.length ? horarios.join(", ") : "Nenhum horário informado."
+        },
+        {
+          titulo: "Lembretes ativados",
+          texto: `${valor("tipoAlerta")} • ${valor("antecedencia")}.`
+        },
+        {
+          titulo: "Estoque monitorado",
+          texto: `Aviso quando restarem ${valor("estoqueMinimo")} unidade(s).`
+        }
+      ];
+
+      document.getElementById("resultadoCadastro").innerHTML = resultados.map(function (item) {
+        return `
+          <div class="col-md-6">
+            <div class="card border-0 bg-light rounded-4 h-100">
+              <div class="card-body">
+                <h3 class="h6">${item.titulo}</h3>
+                <p class="text-muted mb-0">${item.texto}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    document.getElementById("btnProximo").addEventListener("click", function () {
+      if (!validarEtapa()) return;
+      etapaAtual += 1;
+      atualizarEtapa();
+    });
+
+    document.getElementById("btnVoltar").addEventListener("click", function () {
+      if (etapaAtual > 1) {
+        etapaAtual -= 1;
+        atualizarEtapa();
+      }
+    });
+
+    document.getElementById("btnAdicionarHorario").addEventListener("click", function () {
+      adicionarHorario();
+      mostrarToast("Horário adicionado.");
+    });
+
+    document.getElementById("listaHorarios").addEventListener("click", function (event) {
+      const botao = event.target.closest("[data-remover-horario]");
+      if (!botao) return;
+
+      const id = botao.dataset.removerHorario;
+      const item = document.querySelector(`[data-horario-id="${id}"]`);
+
+      if (item) {
+        item.remove();
+        atualizarResumo();
+        mostrarToast("Horário removido.");
+      }
+    });
+
+    document.getElementById("frequencia").addEventListener("change", function () {
+      const container = document.getElementById("listaHorarios");
+      const frequencia = this.value;
+
+      container.innerHTML = "";
+      contadorHorarios = 0;
+
+      if (frequencia === "1x ao dia") {
+        adicionarHorario("08:00");
+      } else if (frequencia === "2x ao dia") {
+        adicionarHorario("08:00");
+        adicionarHorario("20:00");
+      } else if (frequencia === "3x ao dia") {
+        adicionarHorario("08:00");
+        adicionarHorario("14:00");
+        adicionarHorario("20:00");
+      } else if (frequencia === "A cada 8 horas") {
+        adicionarHorario("06:00");
+        adicionarHorario("14:00");
+        adicionarHorario("22:00");
+      } else if (frequencia === "A cada 12 horas") {
+        adicionarHorario("08:00");
+        adicionarHorario("20:00");
+      } else {
+        adicionarHorario("");
+      }
+
+      atualizarResumo();
+    });
+
+    document.getElementById("usoContinuo").addEventListener("change", function () {
+      const dataFim = document.getElementById("dataFim");
+
+      if (this.checked) {
+        dataFim.value = "";
+        dataFim.disabled = true;
+      } else {
+        dataFim.disabled = false;
+      }
+
+      atualizarResumo();
+    });
+
+    document.getElementById("btnSalvarRascunho").addEventListener("click", function () {
+      const dados = {
+        nomeMedicamento: valor("nomeMedicamento"),
+        dosagemMedicamento: valor("dosagemMedicamento"),
+        formaMedicamento: valor("formaMedicamento"),
+        pessoaCuidada: valor("pessoaCuidada"),
+        finalidadeMedicamento: valor("finalidadeMedicamento"),
+        tipoTratamento: valor("tipoTratamento"),
+        momentoUso: valor("momentoUso"),
+        dataInicio: valor("dataInicio"),
+        dataFim: valor("dataFim"),
+        usoContinuo: document.getElementById("usoContinuo").checked,
+        orientacoes: valor("orientacoes"),
+        frequencia: valor("frequencia"),
+        tipoAlerta: valor("tipoAlerta"),
+        antecedencia: valor("antecedencia"),
+        responsavel: valor("responsavel"),
+        horarios: obterHorarios(),
+        estoqueAtual: valor("estoqueAtual"),
+        estoqueMinimo: valor("estoqueMinimo")
+      };
+
+      localStorage.setItem("rascunhoAdicionarMedicamento", JSON.stringify(dados));
+      mostrarToast("Rascunho salvo neste navegador.");
+    });
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      if (!validarEtapa()) return;
+
+      renderizarResultadoCadastro();
+      modalSucesso.show();
+      mostrarToast("Medicamento salvo com sucesso.");
+    });
+
+    document.body.addEventListener("input", function (event) {
+      if (
+        event.target.matches("input") ||
+        event.target.matches("select") ||
+        event.target.matches("textarea")
+      ) {
+        event.target.classList.remove("is-invalid");
+        atualizarResumo();
+      }
+    });
+
+    document.body.addEventListener("change", function (event) {
+      if (
+        event.target.matches("input") ||
+        event.target.matches("select") ||
+        event.target.matches("textarea")
+      ) {
+        event.target.classList.remove("is-invalid");
+        atualizarResumo();
+      }
+    });
+
+    definirDataHoje();
+    adicionarHorario("08:00");
+    atualizarResumo();
+    atualizarEtapa();
+  </script>
+  <script src="../../js/pages/medicamentos-profile.js"></script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>
