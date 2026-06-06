@@ -3,15 +3,200 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agendar Exame | Home Care 4.0</title>
+  <meta name="description" content="Agendamento de exames com escolha do tipo de exame, data, período, locais disponíveis no mapa e preparo." />
 
-  <title>Agendar Exame | Home Care+</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
   <link rel="stylesheet" href="../../css/global.css" />
   <link rel="stylesheet" href="../../css/header.css" />
   <link rel="stylesheet" href="../../css/profile-switcher.css" />
   <link rel="stylesheet" href="../../css/sidebar.css" />
   <link rel="stylesheet" href="../../css/main.css" />
+
+  <style>
+    :root {
+      --hc-blue: #0d6efd;
+      --hc-navy: #001b4b;
+      --hc-soft: #f5f8ff;
+      --hc-border: rgba(0, 27, 75, .13);
+      --hc-muted: #667085;
+    }
+
+    .exam-stepper {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: .75rem;
+    }
+
+    .exam-step-button {
+      border: 1px solid var(--hc-border);
+      background: #fff;
+      border-radius: 1.2rem;
+      padding: 1rem;
+      text-align: left;
+      min-height: 88px;
+      color: var(--hc-navy);
+    }
+
+    .exam-step-button.active {
+      border-color: rgba(13, 110, 253, .55);
+      background: rgba(13, 110, 253, .08);
+      box-shadow: 0 .6rem 1.5rem rgba(13, 110, 253, .12);
+    }
+
+    .exam-step-button.done .step-number {
+      background: #198754;
+    }
+
+    .step-number {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--hc-blue);
+      color: #fff;
+      font-weight: 800;
+      margin-right: .5rem;
+    }
+
+    .exam-option-card,
+    .period-card,
+    .place-card {
+      border: 1px solid var(--hc-border);
+      border-radius: 1.35rem;
+      background: #fff;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .exam-option-card:hover,
+    .exam-option-card.selected,
+    .period-card:hover,
+    .period-card.selected,
+    .place-card:hover,
+    .place-card.selected {
+      transform: translateY(-2px);
+      border-color: rgba(13, 110, 253, .55);
+      box-shadow: 0 .8rem 2rem rgba(13, 110, 253, .12);
+    }
+
+    .exam-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 1rem;
+      background: rgba(13, 110, 253, .12);
+      color: var(--hc-blue);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.55rem;
+      flex: 0 0 auto;
+    }
+
+    .map-shell {
+      min-height: 650px;
+      border: 1px solid var(--hc-border);
+      border-radius: 1.5rem;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .places-list {
+      height: 650px;
+      overflow-y: auto;
+      border-right: 1px solid var(--hc-border);
+    }
+
+    #examPlacesMap {
+      min-height: 650px;
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+    }
+
+    .place-type-badge {
+      border-radius: 999px;
+      padding: .35rem .7rem;
+      font-weight: 700;
+      font-size: .78rem;
+      background: rgba(13, 110, 253, .09);
+      color: var(--hc-blue);
+    }
+
+    .homecare-badge { background: #e6f7ee; color: #087f3e; }
+    .hospital-badge { background: #fff0f0; color: #b42318; }
+    .ubs-badge { background: #fff8db; color: #854d0e; }
+    .lab-badge { background: #eef4ff; color: #175cd3; }
+
+    .exam-pin {
+      width: 42px;
+      height: 42px;
+      border-radius: 50% 50% 50% 8px;
+      transform: rotate(-45deg);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      border: 4px solid #fff;
+      box-shadow: 0 .4rem 1rem rgba(0,0,0,.25);
+    }
+
+    .exam-pin i { transform: rotate(45deg); font-size: 1rem; }
+    .pin-laboratorio { background: #0d6efd; }
+    .pin-ubs { background: #f59f00; }
+    .pin-hospital { background: #dc3545; }
+    .pin-homecare { background: #198754; }
+
+    .user-marker {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(13, 110, 253, .22);
+      display: grid;
+      place-items: center;
+    }
+
+    .user-marker::after {
+      content: "";
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #0d6efd;
+      border: 3px solid #fff;
+    }
+
+    .leaflet-popup-content-wrapper { border-radius: 1.1rem; }
+    .leaflet-popup-content { margin: 0; width: 310px !important; }
+    .popup-place { padding: 1rem; }
+
+    .prepare-card {
+      border: 1px solid var(--hc-border);
+      border-radius: 1.3rem;
+      background: var(--hc-soft);
+    }
+
+    .summary-label {
+      margin-bottom: .15rem;
+      color: var(--hc-muted);
+      font-size: .9rem;
+    }
+
+    @media (max-width: 1199.98px) {
+      .exam-stepper { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+      .places-list { height: auto; max-height: 520px; border-right: 0; border-bottom: 1px solid var(--hc-border); }
+      #examPlacesMap { min-height: 520px; }
+    }
+
+    @media (max-width: 767.98px) {
+      .exam-stepper { grid-template-columns: 1fr; }
+      .map-shell { min-height: auto; }
+      #examPlacesMap { min-height: 440px; }
+    }
+  </style>
 </head>
 
 <body data-profile-page="idoso" class="hc-idoso-module">
@@ -21,6 +206,7 @@
       localStorage.setItem("homecare-active-profile", "idoso");
     } catch (error) {}
   </script>
+
   <div id="appHeader"></div>
   <div id="appProfileSwitcher"></div>
 
@@ -28,9 +214,8 @@
     <div id="appSidebar"></div>
 
     <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
-      <div class="container py-4">
-
-        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+      <div class="container py-4 px-3 px-lg-4">
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080;">
           <div id="appToast" class="toast align-items-center border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
             <div class="d-flex">
               <div class="toast-body" id="toastMessage">Ação realizada.</div>
@@ -39,164 +224,218 @@
           </div>
         </div>
 
-        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
-          <div>
-            <span class="badge text-bg-primary mb-2">Novo agendamento</span>
-            <h1 class="h3 mb-1">Agendar exame</h1>
-            <p class="text-muted mb-0">
-              Cadastre o exame, escolha local, data, responsável e orientações de preparo.
-            </p>
-          </div>
-
-          <div class="d-flex gap-2">
-            <a href="exames.html" class="btn btn-outline-secondary">Cancelar</a>
-          </div>
-        </div>
-
         <section class="card border-0 shadow-sm rounded-4 mb-4">
-          <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <strong>Etapa <span id="etapaAtualTexto">1</span> de 4</strong>
-              <span class="text-muted" id="tituloEtapa">Dados do exame</span>
-            </div>
+          <div class="card-body p-4 p-lg-5">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-lg-center">
+              <div>
+                <nav aria-label="breadcrumb" class="mb-2">
+                  <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="exames.html">Exames</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Agendar</li>
+                  </ol>
+                </nav>
+                <span class="badge text-bg-primary fs-6 mb-2">Agendamento guiado</span>
+                <h1 class="fw-bold mb-2">Agendar exame</h1>
+                <p class="text-muted fs-5 mb-0">Escolha o exame, data, período do dia e veja laboratórios, UBS, hospitais ou coleta Home Care disponíveis no mapa.</p>
+              </div>
 
-            <div class="progress" style="height: 12px;">
-              <div
-                id="barraProgresso"
-                class="progress-bar"
-                role="progressbar"
-                style="width: 25%;"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                aria-valuenow="25"
-              ></div>
+              <div class="d-flex gap-2 flex-wrap">
+                <a href="exames.html" class="btn btn-outline-primary btn-lg">Meus exames</a>
+                <a href="agenda.html" class="btn btn-outline-secondary btn-lg">Ver agenda</a>
+              </div>
             </div>
           </div>
         </section>
 
-        <div class="row g-4">
-          <div class="col-xl-8">
-            <form id="formAgendarExame" novalidate>
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-3 p-lg-4">
+            <div class="exam-stepper" aria-label="Etapas do agendamento de exame">
+              <button class="exam-step-button active" type="button" data-go-step="1"><span class="step-number">1</span><strong>Tipo de exame</strong><small class="d-block text-muted mt-1">Categoria e procedimento</small></button>
+              <button class="exam-step-button" type="button" data-go-step="2"><span class="step-number">2</span><strong>Data e horário</strong><small class="d-block text-muted mt-1">Manhã, tarde ou noite</small></button>
+              <button class="exam-step-button" type="button" data-go-step="3"><span class="step-number">3</span><strong>Locais no mapa</strong><small class="d-block text-muted mt-1">UBS, laboratório, hospital ou Home Care</small></button>
+              <button class="exam-step-button" type="button" data-go-step="4"><span class="step-number">4</span><strong>Confirmar</strong><small class="d-block text-muted mt-1">Resumo e preparo</small></button>
+            </div>
+          </div>
+        </section>
 
-              <section class="card border-0 shadow-sm rounded-4 etapa-formulario" data-etapa="1">
-                <div class="card-body p-4">
-                  <h2 class="h5 mb-1">1. Dados do exame</h2>
-                  <p class="text-muted mb-4">Informe quem fará o exame e qual procedimento precisa ser agendado.</p>
+        <form id="examForm" novalidate>
+          <div class="row g-4">
+            <div class="col-12 col-xl-12">
+              <section class="exam-step-content" data-step="1">
+                <div class="card border-0 shadow-sm rounded-4">
+                  <div class="card-body p-4 p-lg-5">
+                    <h2 class="h3 fw-bold mb-2">1. Tipo de exame</h2>
+                    <p class="text-muted fs-5 mb-4">Selecione o procedimento. O sistema vai mostrar apenas locais que realizam esse exame.</p>
 
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label for="pessoaCuidada" class="form-label">Pessoa acompanhada</label>
-                      <select id="pessoaCuidada" class="form-select" required>
-                        <option value="">Selecione</option>
-                        <option>Maria</option>
-                        <option>Antônio</option>
-                        <option>Eu</option>
-                      </select>
-                      <div class="invalid-feedback">Selecione a pessoa acompanhada.</div>
-                    </div>
+                    <div class="row g-3 mb-4" id="examOptions"></div>
 
-                    <div class="col-md-6">
-                      <label for="categoriaExame" class="form-label">Categoria</label>
-                      <select id="categoriaExame" class="form-select" required>
-                        <option value="">Selecione</option>
-                        <option value="Laboratorial">Laboratorial</option>
-                        <option value="Imagem">Imagem</option>
-                        <option value="Cardiológico">Cardiológico</option>
-                        <option value="Ginecológico">Ginecológico</option>
-                        <option value="Rotina preventiva">Rotina preventiva</option>
-                      </select>
-                      <div class="invalid-feedback">Selecione a categoria.</div>
-                    </div>
-
-                    <div class="col-md-8">
-                      <label for="nomeExame" class="form-label">Exame</label>
-                      <select id="nomeExame" class="form-select" required>
-                        <option value="">Selecione uma categoria primeiro</option>
-                      </select>
-                      <div class="invalid-feedback">Selecione o exame.</div>
-                    </div>
-
-                    <div class="col-md-4">
-                      <label for="prioridade" class="form-label">Prioridade</label>
-                      <select id="prioridade" class="form-select" required>
-                        <option value="">Selecione</option>
-                        <option>Baixa</option>
-                        <option>Média</option>
-                        <option>Alta</option>
-                        <option>Urgente</option>
-                      </select>
-                      <div class="invalid-feedback">Selecione a prioridade.</div>
-                    </div>
-
-                    <div class="col-12">
-                      <label for="observacaoClinica" class="form-label">Observação clínica ou motivo</label>
-                      <textarea id="observacaoClinica" class="form-control" rows="3" placeholder="Ex.: controle de diabetes, check-up, solicitação médica, acompanhamento de sintomas..."></textarea>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label for="examPriority" class="form-label fs-5">Prioridade</label>
+                        <select id="examPriority" class="form-select form-select-lg" required>
+                          <option value="Rotina">Rotina</option>
+                          <option value="Preferencial">Preferencial</option>
+                          <option value="Urgente, mas sem emergência">Urgente, mas sem emergência</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="examReason" class="form-label fs-5">Motivo</label>
+                        <select id="examReason" class="form-select form-select-lg" required>
+                          <option value="Check-up e acompanhamento">Check-up e acompanhamento</option>
+                          <option value="Pedido médico">Pedido médico</option>
+                          <option value="Controle de doença crônica">Controle de doença crônica</option>
+                          <option value="Sintomas recentes">Sintomas recentes</option>
+                        </select>
+                      </div>
+                      <div class="col-12">
+                        <label for="clinicalNote" class="form-label fs-5">Observação clínica</label>
+                        <textarea id="clinicalNote" class="form-control form-control-lg" rows="3" placeholder="Ex.: controle de diabetes, tontura recente, pedido médico, levar exame anterior..."></textarea>
+                      </div>
                     </div>
                   </div>
                 </div>
               </section>
 
-              <section class="card border-0 shadow-sm rounded-4 etapa-formulario d-none" data-etapa="2">
-                <div class="card-body p-4">
-                  <h2 class="h5 mb-1">2. Local e modalidade</h2>
-                  <p class="text-muted mb-4">Escolha onde o exame será realizado e quem acompanhará.</p>
+              <section class="exam-step-content d-none" data-step="2">
+                <div class="card border-0 shadow-sm rounded-4">
+                  <div class="card-body p-4 p-lg-5">
+                    <h2 class="h3 fw-bold mb-2">2. Data e horário</h2>
+                    <p class="text-muted fs-5 mb-4">Escolha o dia e o período. No próximo passo, os locais aparecerão com os horários disponíveis.</p>
 
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label for="modalidade" class="form-label">Modalidade</label>
-                      <select id="modalidade" class="form-select" required>
-                        <option value="">Selecione</option>
-                        <option>Presencial no laboratório</option>
-                        <option>Coleta domiciliar</option>
-                        <option>Clínica de imagem</option>
-                        <option>Hospital/centro diagnóstico</option>
-                      </select>
-                      <div class="invalid-feedback">Selecione a modalidade.</div>
+                    <div class="row g-4">
+                      <div class="col-md-6">
+                        <label for="examDate" class="form-label fs-5">Data</label>
+                        <input type="date" id="examDate" class="form-control form-control-lg" value="2026-06-08" required />
+                      </div>
+                      <div class="col-md-6">
+                        <label for="reminder" class="form-label fs-5">Lembrete de preparo</label>
+                        <select id="reminder" class="form-select form-select-lg" required>
+                          <option value="Todos os lembretes">Todos os lembretes</option>
+                          <option value="1 dia antes">1 dia antes</option>
+                          <option value="12 horas antes">12 horas antes</option>
+                          <option value="3 horas antes">3 horas antes</option>
+                          <option value="1 hora antes">1 hora antes</option>
+                        </select>
+                      </div>
                     </div>
 
-                    <div class="col-md-6">
-                      <label for="localExame" class="form-label">Local</label>
-                      <select id="localExame" class="form-select" required>
-                        <option value="">Selecione</option>
-                        <option>Laboratório Vida Plena</option>
-                        <option>Laboratório Central</option>
-                        <option>Centro de Imagem Saúde</option>
-                        <option>Clínica Mulher+</option>
-                        <option>Atendimento domiciliar Home Care+</option>
-                      </select>
-                      <div class="invalid-feedback">Selecione o local.</div>
+                    <h3 class="h5 fw-bold mt-4 mb-3">Período desejado</h3>
+                    <div class="row g-3" id="periodOptions">
+                      <div class="col-md-4">
+                        <article class="period-card selected p-4 h-100" data-period="Manhã" tabindex="0" role="button">
+                          <div class="exam-icon mb-3"><i class="bi bi-sunrise"></i></div>
+                          <h4 class="h5 fw-bold">Manhã</h4>
+                          <p class="text-muted mb-0">Entre 07:00 e 11:59</p>
+                        </article>
+                      </div>
+                      <div class="col-md-4">
+                        <article class="period-card p-4 h-100" data-period="Tarde" tabindex="0" role="button">
+                          <div class="exam-icon mb-3"><i class="bi bi-sun"></i></div>
+                          <h4 class="h5 fw-bold">Tarde</h4>
+                          <p class="text-muted mb-0">Entre 12:00 e 17:59</p>
+                        </article>
+                      </div>
+                      <div class="col-md-4">
+                        <article class="period-card p-4 h-100" data-period="Noite" tabindex="0" role="button">
+                          <div class="exam-icon mb-3"><i class="bi bi-moon-stars"></i></div>
+                          <h4 class="h5 fw-bold">Noite</h4>
+                          <p class="text-muted mb-0">Após 18:00</p>
+                        </article>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="exam-step-content d-none" data-step="3">
+                <div class="card border-0 shadow-sm rounded-4">
+                  <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                      <div>
+                        <h2 class="h3 fw-bold mb-2">3. Locais disponíveis</h2>
+                        <p class="text-muted fs-5 mb-0">Escolha onde realizar o exame. O mapa mostra laboratórios, UBS, hospitais e coleta Home Care.</p>
+                      </div>
+                      <button class="btn btn-outline-secondary rounded-4 align-self-start" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters" aria-expanded="false" aria-controls="advancedFilters">
+                        <i class="bi bi-funnel me-1"></i>Filtros
+                      </button>
                     </div>
 
-                    <div class="col-md-6">
-                      <label for="responsavel" class="form-label">Responsável pelo acompanhamento</label>
-                      <select id="responsavel" class="form-select" required>
-                        <option value="">Selecione</option>
-                        <option>Paciente</option>
-                        <option>Cuidador principal</option>
-                        <option>Familiar responsável</option>
-                        <option>Profissional de saúde</option>
-                      </select>
-                      <div class="invalid-feedback">Selecione o responsável.</div>
+                    <div class="row g-3 mb-3">
+                      <div class="col-md-4">
+                        <label for="modalityFilter" class="form-label">Tipo de local</label>
+                        <select id="modalityFilter" class="form-select">
+                          <option value="todos">Todos</option>
+                          <option value="Home Care">Exame Home Care</option>
+                          <option value="Laboratório">Laboratório</option>
+                          <option value="UBS">UBS</option>
+                          <option value="Hospital">Hospital</option>
+                        </select>
+                      </div>
+                      <div class="col-md-4">
+                        <label for="locationSearch" class="form-label">Buscar local</label>
+                        <input id="locationSearch" class="form-control" type="search" placeholder="Nome, bairro, serviço..." />
+                      </div>
+                      <div class="col-md-4">
+                        <label for="addressInput" class="form-label">Endereço de referência</label>
+                        <input id="addressInput" class="form-control" type="text" value="São Caetano do Sul, SP" />
+                      </div>
                     </div>
 
-                    <div class="col-md-6">
-                      <label for="transporte" class="form-label">Transporte/rota</label>
-                      <select id="transporte" class="form-select">
-                        <option>Não precisa</option>
-                        <option>Precisa de carro por aplicativo</option>
-                        <option>Precisa de acompanhante</option>
-                        <option>Precisa de transporte adaptado</option>
-                      </select>
-                    </div>
-
-                    <div class="col-12">
-                      <div class="border rounded-4 p-4 bg-light">
-                        <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
-                          <div>
-                            <strong>Prévia do local</strong>
-                            <p class="text-muted mb-0" id="mapaTexto">Selecione um local para ver a prévia do deslocamento.</p>
+                    <div class="collapse mb-3" id="advancedFilters">
+                      <div class="card card-body rounded-4 border-0 bg-light">
+                        <div class="row g-3">
+                          <div class="col-md-3">
+                            <label for="distanceFilter" class="form-label">Distância</label>
+                            <select id="distanceFilter" class="form-select">
+                              <option value="999">Qualquer</option>
+                              <option value="2">Até 2 km</option>
+                              <option value="5" selected>Até 5 km</option>
+                              <option value="10">Até 10 km</option>
+                            </select>
                           </div>
-                          <button type="button" class="btn btn-outline-primary" id="btnSimularRota">Simular rota</button>
+                          <div class="col-md-3">
+                            <label for="priceFilter" class="form-label">Preço</label>
+                            <select id="priceFilter" class="form-select">
+                              <option value="9999">Qualquer</option>
+                              <option value="80">Até R$ 80</option>
+                              <option value="150" selected>Até R$ 150</option>
+                              <option value="300">Até R$ 300</option>
+                            </select>
+                          </div>
+                          <div class="col-md-3">
+                            <label for="sortFilter" class="form-label">Ordenar</label>
+                            <select id="sortFilter" class="form-select">
+                              <option value="recommended">Recomendados</option>
+                              <option value="distance">Menor distância</option>
+                              <option value="price">Menor preço</option>
+                              <option value="rating">Melhor avaliação</option>
+                            </select>
+                          </div>
+                          <div class="col-md-3 d-grid align-items-end">
+                            <button type="button" class="btn btn-outline-primary" id="clearFilters">Limpar filtros</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="map-shell">
+                      <div class="row g-0 h-100">
+                        <div class="col-xl-5">
+                          <div class="places-list p-3 p-lg-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                              <strong id="resultCount">0 locais</strong>
+                              <small class="text-muted" id="selectedExamLabel">Exame selecionado</small>
+                            </div>
+                            <div id="placesList" class="vstack gap-3"></div>
+                            <div id="emptyPlaces" class="text-center bg-light rounded-4 p-4 d-none">
+                              <h3 class="h5 fw-bold">Nenhum local encontrado</h3>
+                              <p class="text-muted mb-3">Tente outro período, ampliar a distância ou selecionar Home Care.</p>
+                              <button type="button" class="btn btn-primary" id="emptyClearFilters">Limpar filtros</button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xl-7">
+                          <div id="examPlacesMap"></div>
                         </div>
                       </div>
                     </div>
@@ -204,331 +443,473 @@
                 </div>
               </section>
 
-              <section class="card border-0 shadow-sm rounded-4 etapa-formulario d-none" data-etapa="3">
-                <div class="card-body p-4">
-                  <h2 class="h5 mb-1">3. Data, horário e preparo</h2>
-                  <p class="text-muted mb-4">Defina o melhor horário e confira orientações antes do exame.</p>
+              <section class="exam-step-content d-none" data-step="4">
+                <div class="card border-0 shadow-sm rounded-4">
+                  <div class="card-body p-4 p-lg-5">
+                    <h2 class="h3 fw-bold mb-2">4. Confirmação e preparo</h2>
+                    <p class="text-muted fs-5 mb-4">Revise o agendamento e confira as orientações de preparo antes de confirmar.</p>
 
-                  <div class="row g-3">
-                    <div class="col-md-4">
-                      <label for="dataExame" class="form-label">Data</label>
-                      <input type="date" id="dataExame" class="form-control" required>
-                      <div class="invalid-feedback">Informe a data.</div>
-                    </div>
+                    <div id="finalSummary" class="row g-3 mb-4"></div>
 
-                    <div class="col-md-4">
-                      <label for="horarioExame" class="form-label">Horário</label>
-                      <select id="horarioExame" class="form-select" required>
-                        <option value="">Selecione</option>
-                        <option>07:30</option>
-                        <option>08:00</option>
-                        <option>09:00</option>
-                        <option>10:30</option>
-                        <option>14:00</option>
-                        <option>16:00</option>
-                      </select>
-                      <div class="invalid-feedback">Selecione o horário.</div>
-                    </div>
-
-                    <div class="col-md-4">
-                      <label for="antecedenciaLembrete" class="form-label">Lembrete</label>
-                      <select id="antecedenciaLembrete" class="form-select" required>
-                        <option value="">Selecione</option>
-                        <option>1 dia antes</option>
-                        <option>12 horas antes</option>
-                        <option>3 horas antes</option>
-                        <option>1 hora antes</option>
-                        <option>Todos os lembretes</option>
-                      </select>
-                      <div class="invalid-feedback">Selecione o lembrete.</div>
-                    </div>
-
-                    <div class="col-12">
-                      <div class="alert alert-info border-0 rounded-4 mb-0" id="preparoAutomatico">
-                        Selecione o exame para gerar orientações de preparo.
+                    <div class="prepare-card p-4 mb-4">
+                      <div class="d-flex gap-3 align-items-start">
+                        <div class="exam-icon"><i class="bi bi-clipboard2-pulse"></i></div>
+                        <div>
+                          <h3 class="h5 fw-bold mb-2">Preparo para o exame</h3>
+                          <p class="mb-2" id="prepareText">Selecione um exame para gerar o preparo.</p>
+                          <ul class="mb-0 text-muted" id="prepareList"></ul>
+                        </div>
                       </div>
                     </div>
 
-                    <div class="col-12">
-                      <label for="observacaoPreparo" class="form-label">Observações adicionais de preparo</label>
-                      <textarea id="observacaoPreparo" class="form-control" rows="3" placeholder="Ex.: levar exames anteriores, documento, pedido médico, carteirinha..."></textarea>
+                    <div class="alert alert-warning border-0 rounded-4 fs-5 mb-0">
+                      <strong>Importante:</strong> em um sistema real, a confirmação final deve validar disponibilidade diretamente com o laboratório, UBS, hospital ou equipe Home Care.
                     </div>
                   </div>
                 </div>
               </section>
 
-              <section class="card border-0 shadow-sm rounded-4 etapa-formulario d-none" data-etapa="4">
-                <div class="card-body p-4">
-                  <h2 class="h5 mb-1">4. Revisão e confirmação</h2>
-                  <p class="text-muted mb-4">Confira os dados antes de salvar o agendamento.</p>
-
-                  <div id="resumoFinal" class="row g-3"></div>
-
-                  <div class="alert alert-warning border-0 rounded-4 mt-4 mb-0">
-                    <strong>Atenção:</strong> em um sistema real, este agendamento deve confirmar disponibilidade com o laboratório/clínica antes de finalizar.
-                  </div>
-                </div>
-              </section>
-
-              <div class="d-flex flex-column flex-sm-row justify-content-between gap-2 mt-4">
-                <button type="button" class="btn btn-outline-secondary" id="btnVoltar" disabled>Voltar</button>
-
-                <div class="d-flex flex-column flex-sm-row gap-2">
-                  <button type="button" class="btn btn-outline-primary" id="btnSalvarRascunho">Salvar rascunho</button>
-                  <button type="button" class="btn btn-primary" id="btnProximo">Próxima etapa</button>
-                  <button type="submit" class="btn btn-success d-none" id="btnSalvar">Confirmar agendamento</button>
+              <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-4">
+                <button type="button" class="btn btn-outline-secondary btn-lg" id="prevBtn" disabled>Voltar</button>
+                <div class="d-flex flex-column flex-md-row gap-2">
+                  <button type="button" class="btn btn-outline-primary btn-lg" id="saveDraftBtn">Salvar rascunho</button>
+                  <button type="button" class="btn btn-primary btn-lg" id="nextBtn">Próxima etapa</button>
+                  <button type="submit" class="btn btn-success btn-lg d-none" id="confirmBtn">Confirmar exame</button>
                 </div>
               </div>
-            </form>
+            </div>
+
+
           </div>
-
-          <aside class="col-xl-4">
-            <section class="card border-0 shadow-sm rounded-4 mb-4">
-              <div class="card-body p-4">
-                <h2 class="h5 mb-3">Resumo do agendamento</h2>
-
-                <div class="d-grid gap-3">
-                  <div>
-                    <small class="text-muted">Pessoa acompanhada</small>
-                    <p class="fw-semibold mb-0" id="resumoPessoa">Ainda não selecionada</p>
-                  </div>
-
-                  <div>
-                    <small class="text-muted">Exame</small>
-                    <p class="fw-semibold mb-0" id="resumoExame">Ainda não selecionado</p>
-                  </div>
-
-                  <div>
-                    <small class="text-muted">Local</small>
-                    <p class="fw-semibold mb-0" id="resumoLocal">Ainda não definido</p>
-                  </div>
-
-                  <div>
-                    <small class="text-muted">Data e horário</small>
-                    <p class="fw-semibold mb-0" id="resumoDataHora">Ainda não definido</p>
-                  </div>
-
-                  <div>
-                    <small class="text-muted">Preparo</small>
-                    <p class="fw-semibold mb-0" id="resumoPreparo">Aguardando exame</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section class="card border-0 shadow-sm rounded-4">
-              <div class="card-body p-4">
-                <h2 class="h5 mb-3">Após confirmar</h2>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item px-0">Cria item na agenda</li>
-                  <li class="list-group-item px-0">Gera lembretes de preparo</li>
-                  <li class="list-group-item px-0">Registra no histórico</li>
-                  <li class="list-group-item px-0">Disponibiliza área de resultado</li>
-                </ul>
-              </div>
-            </section>
-          </aside>
-        </div>
+        </form>
       </div>
     </main>
   </div>
 
   <div id="appFooter"></div>
 
-  <div class="modal fade" id="modalSucesso" tabindex="-1" aria-labelledby="modalSucessoLabel" aria-hidden="true">
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content rounded-4">
-        <div class="modal-header">
-          <h2 class="modal-title h5" id="modalSucessoLabel">Exame agendado</h2>
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-0">
+          <h2 class="modal-title h4 fw-bold" id="successModalLabel">Exame agendado</h2>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
-
-        <div class="modal-body">
-          <div class="alert alert-success border-0 rounded-4">
-            <strong>Agendamento criado com sucesso.</strong><br>
-            O exame foi adicionado à agenda e os lembretes foram configurados.
-          </div>
-
-          <div id="resultadoAgendamento" class="row g-3"></div>
-        </div>
-
-        <div class="modal-footer">
-          <a href="exames.html" class="btn btn-primary">Ir para exames</a>
-          <a href="exames-preparo.html" class="btn btn-outline-primary">Ver preparo</a>
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Continuar nesta página</button>
+        <div class="modal-body fs-5" id="successText">O exame foi adicionado à agenda.</div>
+        <div class="modal-footer border-0">
+          <a href="exames.html" class="btn btn-primary btn-lg">Ir para exames</a>
+          <a href="exames-preparo.html" class="btn btn-outline-primary btn-lg">Ver preparo</a>
+          <a href="agenda.html" class="btn btn-outline-secondary btn-lg">Ver agenda</a>
         </div>
       </div>
     </div>
   </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-
-
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    let etapaAtual = 1;
-
-    const titulosEtapas = {
-      1: "Dados do exame",
-      2: "Local e modalidade",
-      3: "Data, horário e preparo",
-      4: "Revisão e confirmação"
+    const state = {
+      step: 1,
+      examId: "hemograma",
+      period: "Manhã",
+      placeId: null,
+      userLocation: [-23.6229, -46.5548],
+      routeLine: null
     };
 
-    const examesPorCategoria = {
-      "Laboratorial": ["Hemograma completo", "Colesterol total e frações", "TSH", "Creatinina sérica", "Hemoglobina glicada", "Genotipagem HPV por PCR"],
-      "Imagem": ["Mamografia", "USG de mamas", "Ultrassom abdominal", "Raio-X", "Densitometria óssea"],
-      "Cardiológico": ["Eletrocardiograma", "Ecocardiograma", "Holter 24h", "MAPA"],
-      "Ginecológico": ["USG transvaginal", "Papanicolau", "Mamografia", "Genotipagem HPV por PCR"],
-      "Rotina preventiva": ["Check-up completo", "Hemograma completo", "Colesterol total e frações", "Glicemia", "TSH"]
-    };
+    const examCatalog = [
+      {
+        id: "hemograma",
+        name: "Hemograma completo",
+        category: "Laboratorial",
+        icon: "bi-droplet-half",
+        homeCare: true,
+        shortPrepare: "Jejum pode ser solicitado",
+        prepare: "Pode exigir jejum conforme orientação do local. Para coleta domiciliar, deixe documentos e pedido médico separados.",
+        checklist: ["Levar documento com foto", "Levar pedido médico, se houver", "Informar medicamentos em uso", "Confirmar se o local exige jejum"]
+      },
+      {
+        id: "glicemia",
+        name: "Glicemia",
+        category: "Laboratorial",
+        icon: "bi-activity",
+        homeCare: true,
+        shortPrepare: "Pode exigir jejum",
+        prepare: "Pode exigir jejum conforme solicitação médica ou protocolo do laboratório.",
+        checklist: ["Confirmar tempo de jejum", "Evitar alterar medicação sem orientação", "Levar exames anteriores"]
+      },
+      {
+        id: "colesterol",
+        name: "Colesterol total e frações",
+        category: "Laboratorial",
+        icon: "bi-capsule-pill",
+        homeCare: true,
+        shortPrepare: "Evitar álcool no dia anterior",
+        prepare: "Jejum pode ser necessário conforme orientação médica. Evite álcool no dia anterior.",
+        checklist: ["Confirmar necessidade de jejum", "Evitar álcool", "Levar pedido médico"]
+      },
+      {
+        id: "urina",
+        name: "Urina tipo 1",
+        category: "Laboratorial",
+        icon: "bi-cup-straw",
+        homeCare: true,
+        shortPrepare: "Coleta orientada",
+        prepare: "Seguir orientação de higiene e coleta. O frasco deve ser adequado e identificado.",
+        checklist: ["Usar frasco adequado", "Seguir higiene orientada", "Entregar no prazo informado"]
+      },
+      {
+        id: "eletrocardiograma",
+        name: "Eletrocardiograma",
+        category: "Cardiológico",
+        icon: "bi-heart-pulse",
+        homeCare: true,
+        shortPrepare: "Roupa confortável",
+        prepare: "Use roupa confortável e evite cremes ou óleos no tórax antes do exame.",
+        checklist: ["Evitar creme no tórax", "Usar roupa confortável", "Levar exames cardíacos anteriores"]
+      },
+      {
+        id: "raiox",
+        name: "Raio-X",
+        category: "Imagem",
+        icon: "bi-universal-access",
+        homeCare: false,
+        shortPrepare: "Remover metais",
+        prepare: "Remova objetos metálicos e informe suspeita de gravidez, quando aplicável.",
+        checklist: ["Remover objetos metálicos", "Levar pedido médico", "Chegar com antecedência"]
+      },
+      {
+        id: "ultrassom",
+        name: "Ultrassom abdominal",
+        category: "Imagem",
+        icon: "bi-soundwave",
+        homeCare: false,
+        shortPrepare: "Pode exigir jejum",
+        prepare: "Pode exigir jejum e preparo intestinal. Confirme com o local antes do exame.",
+        checklist: ["Confirmar jejum", "Levar exames anteriores", "Seguir preparo intestinal se solicitado"]
+      },
+      {
+        id: "mamografia",
+        name: "Mamografia",
+        category: "Imagem",
+        icon: "bi-gender-female",
+        homeCare: false,
+        shortPrepare: "Não usar desodorante",
+        prepare: "Não use desodorante, talco, perfume ou creme nas axilas e mamas no dia do exame.",
+        checklist: ["Não usar desodorante", "Levar exames anteriores", "Usar roupa de duas peças se possível"]
+      }
+    ];
 
-    const preparos = {
-      "Hemograma completo": "Jejum pode ser solicitado conforme laboratório. Levar documento e pedido médico.",
-      "Colesterol total e frações": "Jejum pode ser necessário conforme orientação médica. Evitar álcool no dia anterior.",
-      "TSH": "Informar medicamentos em uso. Seguir orientação sobre hormônios tireoidianos.",
-      "Creatinina sérica": "Manter hidratação habitual. Levar exames anteriores, se houver.",
-      "Hemoglobina glicada": "Não exige jejum na maioria dos casos.",
-      "Genotipagem HPV por PCR": "Evitar relações sexuais, duchas ou medicamentos vaginais conforme orientação do laboratório.",
-      "Mamografia": "Não usar desodorante, creme, perfume ou talco na região das mamas e axilas.",
-      "USG de mamas": "Levar exames anteriores de mama, se houver.",
-      "USG transvaginal": "Chegar com antecedência. Seguir orientação da clínica sobre bexiga.",
-      "Ultrassom abdominal": "Pode exigir jejum e preparo intestinal. Confirmar com o local.",
-      "Raio-X": "Remover objetos metálicos. Informar suspeita de gravidez.",
-      "Densitometria óssea": "Evitar cálcio no dia do exame, se orientado.",
-      "Eletrocardiograma": "Usar roupa confortável e evitar creme no tórax.",
-      "Ecocardiograma": "Sem preparo especial na maioria dos casos.",
-      "Holter 24h": "Evitar banho durante o uso do aparelho. Usar roupa confortável.",
-      "MAPA": "Usar roupa larga e manter rotina habitual durante monitoramento.",
-      "Papanicolau": "Evitar relações sexuais, duchas e cremes vaginais antes do exame.",
-      "Check-up completo": "Pode incluir jejum e documentos. Conferir exames solicitados.",
-      "Glicemia": "Pode exigir jejum conforme solicitação médica."
-    };
+    const places = [
+      { id: 1, name: "Laboratório Vida Plena", type: "Laboratório", rating: 4.8, distance: 1.2, price: 65, address: "Rua Amazonas, 340", lat: -23.6210, lng: -46.5521, exams: ["hemograma", "glicemia", "colesterol", "urina"], periods: { "Manhã": ["07:30", "08:00", "09:00"], "Tarde": ["14:00", "16:00"], "Noite": [] }, badge: "lab-badge", pin: "pin-laboratorio", icon: "bi-building" },
+      { id: 2, name: "Coleta Domiciliar Home Care 4.0", type: "Home Care", rating: 4.9, distance: 0.0, price: 95, address: "Atendimento no endereço informado", lat: -23.6222, lng: -46.5542, exams: ["hemograma", "glicemia", "colesterol", "urina", "eletrocardiograma"], periods: { "Manhã": ["08:00", "09:30", "10:30"], "Tarde": ["13:30", "15:00", "17:00"], "Noite": ["18:30"] }, badge: "homecare-badge", pin: "pin-homecare", icon: "bi-house-heart" },
+      { id: 3, name: "UBS Centro", type: "UBS", rating: 4.4, distance: 1.6, price: 0, address: "Av. Goiás, 820", lat: -23.6193, lng: -46.5585, exams: ["hemograma", "glicemia", "urina", "eletrocardiograma"], periods: { "Manhã": ["07:00", "08:30", "10:00"], "Tarde": ["13:00", "15:30"], "Noite": [] }, badge: "ubs-badge", pin: "pin-ubs", icon: "bi-hospital" },
+      { id: 4, name: "Hospital São Lucas", type: "Hospital", rating: 4.7, distance: 2.4, price: 140, address: "Rua Alegre, 600", lat: -23.6282, lng: -46.5494, exams: ["hemograma", "glicemia", "colesterol", "urina", "eletrocardiograma", "raiox", "ultrassom"], periods: { "Manhã": ["08:00", "10:30"], "Tarde": ["14:00", "16:00"], "Noite": ["19:00", "20:30"] }, badge: "hospital-badge", pin: "pin-hospital", icon: "bi-hospital-fill" },
+      { id: 5, name: "Centro Diagnóstico Imagem+", type: "Laboratório", rating: 4.8, distance: 2.9, price: 180, address: "Rua Oswaldo Cruz, 95", lat: -23.6161, lng: -46.5477, exams: ["raiox", "ultrassom", "mamografia"], periods: { "Manhã": ["08:30", "11:00"], "Tarde": ["13:30", "15:30", "17:00"], "Noite": [] }, badge: "lab-badge", pin: "pin-laboratorio", icon: "bi-building" },
+      { id: 6, name: "Hospital Municipal de Referência", type: "Hospital", rating: 4.5, distance: 3.6, price: 80, address: "Av. Presidente Kennedy, 1120", lat: -23.6310, lng: -46.5610, exams: ["hemograma", "glicemia", "eletrocardiograma", "raiox", "ultrassom"], periods: { "Manhã": ["07:30", "09:30"], "Tarde": ["14:30", "16:30"], "Noite": ["18:00"] }, badge: "hospital-badge", pin: "pin-hospital", icon: "bi-hospital-fill" },
+      { id: 7, name: "Laboratório Central Saúde", type: "Laboratório", rating: 4.6, distance: 4.1, price: 55, address: "Rua Manoel Coelho, 450", lat: -23.6118, lng: -46.5587, exams: ["hemograma", "glicemia", "colesterol", "urina"], periods: { "Manhã": ["07:00", "08:00", "09:00", "10:00"], "Tarde": ["13:00", "14:00"], "Noite": [] }, badge: "lab-badge", pin: "pin-laboratorio", icon: "bi-building" },
+      { id: 8, name: "Equipe Home Care Noturna", type: "Home Care", rating: 4.7, distance: 0.0, price: 130, address: "Coleta no endereço informado", lat: -23.6244, lng: -46.5569, exams: ["hemograma", "glicemia", "urina", "eletrocardiograma"], periods: { "Manhã": [], "Tarde": ["17:00"], "Noite": ["18:00", "19:30", "21:00"] }, badge: "homecare-badge", pin: "pin-homecare", icon: "bi-house-heart" },
+      { id: 9, name: "UBS Bairro Santa Paula", type: "UBS", rating: 4.3, distance: 4.8, price: 0, address: "Rua Maranhão, 200", lat: -23.6069, lng: -46.5504, exams: ["hemograma", "glicemia", "urina"], periods: { "Manhã": ["07:30", "09:30"], "Tarde": ["13:30"], "Noite": [] }, badge: "ubs-badge", pin: "pin-ubs", icon: "bi-hospital" }
+    ];
 
-    const form = document.getElementById("formAgendarExame");
-    const modalSucesso = new bootstrap.Modal(document.getElementById("modalSucesso"));
+    const stepButtons = document.querySelectorAll("[data-go-step]");
+    const stepContents = document.querySelectorAll(".exam-step-content");
     const toast = new bootstrap.Toast(document.getElementById("appToast"));
+    const successModal = new bootstrap.Modal(document.getElementById("successModal"));
 
-    function mostrarToast(mensagem) {
-      document.getElementById("toastMessage").textContent = mensagem;
+    const examOptions = document.getElementById("examOptions");
+    const placesList = document.getElementById("placesList");
+    const resultCount = document.getElementById("resultCount");
+    const emptyPlaces = document.getElementById("emptyPlaces");
+    const modalityFilter = document.getElementById("modalityFilter");
+    const distanceFilter = document.getElementById("distanceFilter");
+    const priceFilter = document.getElementById("priceFilter");
+    const sortFilter = document.getElementById("sortFilter");
+    const locationSearch = document.getElementById("locationSearch");
+    const addressInput = document.getElementById("addressInput");
+    const examDate = document.getElementById("examDate");
+
+    let map;
+    let userMarker;
+    let markers = new Map();
+
+    function showToast(message) {
+      document.getElementById("toastMessage").textContent = message;
       toast.show();
     }
 
-    function valor(id) {
-      const el = document.getElementById(id);
-      return el ? el.value.trim() : "";
+    function formatDate(date) {
+      if (!date) return "Data não definida";
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
     }
 
-    function formatarData(data) {
-      if (!data) return "";
-      return data.split("-").reverse().join("/");
+    function currency(value) {
+      if (Number(value) === 0) return "SUS / gratuito";
+      return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
     }
 
-    function atualizarEtapa() {
-      document.querySelectorAll(".etapa-formulario").forEach(function(secao) {
-        secao.classList.toggle("d-none", Number(secao.dataset.etapa) !== etapaAtual);
+    function normalize(text) {
+      return String(text || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function selectedExam() {
+      return examCatalog.find(exam => exam.id === state.examId) || examCatalog[0];
+    }
+
+    function selectedPlace() {
+      return places.find(place => place.id === state.placeId) || null;
+    }
+
+    function renderExamOptions() {
+      examOptions.innerHTML = examCatalog.map(function(exam) {
+        return `
+          <div class="col-md-6">
+            <article class="exam-option-card h-100 p-4 ${state.examId === exam.id ? 'selected' : ''}" tabindex="0" role="button" data-exam-id="${exam.id}">
+              <div class="d-flex gap-3 align-items-start">
+                <div class="exam-icon"><i class="bi ${exam.icon}"></i></div>
+                <div>
+                  <div class="d-flex flex-wrap gap-2 mb-2">
+                    <span class="badge text-bg-light border">${exam.category}</span>
+                    ${exam.homeCare ? '<span class="badge text-bg-success">Home Care disponível</span>' : ''}
+                  </div>
+                  <h3 class="h5 fw-bold mb-1">${exam.name}</h3>
+                  <p class="text-muted mb-0">${exam.shortPrepare}</p>
+                </div>
+              </div>
+            </article>
+          </div>`;
+      }).join("");
+    }
+
+    function setStep(step) {
+      state.step = Math.max(1, Math.min(4, step));
+      stepContents.forEach(content => content.classList.toggle("d-none", Number(content.dataset.step) !== state.step));
+      stepButtons.forEach(button => {
+        const value = Number(button.dataset.goStep);
+        button.classList.toggle("active", value === state.step);
+        button.classList.toggle("done", value < state.step);
       });
 
-      const progresso = etapaAtual * 25;
+      document.getElementById("prevBtn").disabled = state.step === 1;
+      document.getElementById("nextBtn").classList.toggle("d-none", state.step === 4);
+      document.getElementById("confirmBtn").classList.toggle("d-none", state.step !== 4);
 
-      document.getElementById("etapaAtualTexto").textContent = etapaAtual;
-      document.getElementById("tituloEtapa").textContent = titulosEtapas[etapaAtual];
-      document.getElementById("barraProgresso").style.width = progresso + "%";
-      document.getElementById("barraProgresso").setAttribute("aria-valuenow", progresso);
+      if (state.step === 3) {
+        setTimeout(function() {
+          initMap();
+          renderPlaces();
+          map.invalidateSize();
+        }, 150);
+      }
 
-      document.getElementById("btnVoltar").disabled = etapaAtual === 1;
-      document.getElementById("btnProximo").classList.toggle("d-none", etapaAtual === 4);
-      document.getElementById("btnSalvar").classList.toggle("d-none", etapaAtual !== 4);
-
-      if (etapaAtual === 4) renderizarResumoFinal();
-
+      if (state.step === 4) renderFinalSummary();
+      updateSummary();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function validarEtapa() {
-      const secao = document.querySelector(`.etapa-formulario[data-etapa="${etapaAtual}"]`);
-      const campos = secao.querySelectorAll("[required]");
-      let valido = true;
-
-      campos.forEach(function(campo) {
-        if (!campo.value) {
-          campo.classList.add("is-invalid");
-          valido = false;
-        } else {
-          campo.classList.remove("is-invalid");
-        }
-      });
-
-      if (!valido) mostrarToast("Preencha os campos obrigatórios antes de continuar.");
-      return valido;
-    }
-
-    function atualizarExames() {
-      const categoria = valor("categoriaExame");
-      const select = document.getElementById("nomeExame");
-
-      select.innerHTML = `<option value="">Selecione</option>`;
-
-      if (!categoria || !examesPorCategoria[categoria]) {
-        select.innerHTML = `<option value="">Selecione uma categoria primeiro</option>`;
-        atualizarResumo();
-        return;
+    function validateCurrentStep() {
+      if (state.step === 1 && !state.examId) {
+        showToast("Selecione um tipo de exame.");
+        return false;
       }
 
-      examesPorCategoria[categoria].forEach(function(exame) {
-        const option = document.createElement("option");
-        option.value = exame;
-        option.textContent = exame;
-        select.appendChild(option);
+      if (state.step === 2 && !examDate.value) {
+        showToast("Informe a data do exame.");
+        return false;
+      }
+
+      if (state.step === 3 && !state.placeId) {
+        showToast("Selecione um local no mapa ou na lista.");
+        return false;
+      }
+
+      return true;
+    }
+
+    function periodSlots(place) {
+      return place.periods[state.period] || [];
+    }
+
+    function getFilteredPlaces() {
+      const exam = selectedExam();
+      const modality = modalityFilter.value;
+      const maxDistance = Number(distanceFilter.value);
+      const maxPrice = Number(priceFilter.value);
+      const term = normalize(locationSearch.value);
+
+      let results = places.filter(function(place) {
+        const matchExam = place.exams.includes(exam.id);
+        const matchPeriod = periodSlots(place).length > 0;
+        const matchModality = modality === "todos" || place.type === modality;
+        const matchDistance = place.distance <= maxDistance || place.type === "Home Care";
+        const matchPrice = place.price <= maxPrice;
+        const matchTerm = !term || normalize([place.name, place.type, place.address].join(" ")).includes(term);
+        return matchExam && matchPeriod && matchModality && matchDistance && matchPrice && matchTerm;
       });
 
-      atualizarResumo();
+      const sortType = sortFilter.value;
+      results.sort(function(a, b) {
+        if (sortType === "distance") return a.distance - b.distance;
+        if (sortType === "price") return a.price - b.price;
+        if (sortType === "rating") return b.rating - a.rating;
+        return (b.rating * 10 - b.distance) - (a.rating * 10 - a.distance);
+      });
+
+      return results;
     }
 
-    function atualizarPreparo() {
-      const exame = valor("nomeExame");
-      const texto = preparos[exame] || "Selecione o exame para gerar orientações de preparo.";
-      document.getElementById("preparoAutomatico").innerHTML = `<strong>Preparo sugerido:</strong> ${texto}`;
-      atualizarResumo();
+    function placeCard(place) {
+      const slots = periodSlots(place);
+      return `
+        <article class="place-card p-3 ${state.placeId === place.id ? 'selected' : ''}" tabindex="0" role="button" data-place-id="${place.id}">
+          <div class="d-flex justify-content-between gap-2 align-items-start mb-2">
+            <div>
+              <span class="place-type-badge ${place.badge}">${place.type}</span>
+              <h3 class="h5 fw-bold mt-2 mb-1">${place.name}</h3>
+            </div>
+            <i class="bi bi-chevron-right text-muted fs-5"></i>
+          </div>
+          <p class="text-muted mb-1"><i class="bi bi-geo-alt me-1"></i>${place.type === 'Home Care' ? 'No seu endereço' : place.distance.toFixed(1).replace('.', ',') + ' km'} • ${place.address}</p>
+          <p class="mb-1"><i class="bi bi-star-fill text-warning me-1"></i>${place.rating.toFixed(1).replace('.', ',')} • <strong>${currency(place.price)}</strong></p>
+          <p class="text-muted mb-2"><i class="bi bi-clock me-1"></i>${state.period}: ${slots.join(', ')}</p>
+          <div class="d-flex flex-wrap gap-2">
+            ${slots.map(slot => `<button class="btn btn-sm ${slot === slots[0] && state.placeId === place.id ? 'btn-primary' : 'btn-outline-primary'}" type="button" data-slot="${slot}" data-place-id="${place.id}">${slot}</button>`).join('')}
+          </div>
+        </article>`;
     }
 
-    function atualizarResumo() {
-      const pessoa = valor("pessoaCuidada");
-      const exame = valor("nomeExame");
-      const local = valor("localExame");
-      const data = valor("dataExame");
-      const horario = valor("horarioExame");
-      const preparo = preparos[exame];
+    function renderPlaces() {
+      const results = getFilteredPlaces();
+      if (!results.some(place => place.id === state.placeId)) {
+        state.placeId = results[0]?.id || null;
+      }
 
-      document.getElementById("resumoPessoa").textContent = pessoa || "Ainda não selecionada";
-      document.getElementById("resumoExame").textContent = exame || "Ainda não selecionado";
-      document.getElementById("resumoLocal").textContent = local || "Ainda não definido";
-      document.getElementById("resumoDataHora").textContent = data && horario ? `${formatarData(data)} às ${horario}` : "Ainda não definido";
-      document.getElementById("resumoPreparo").textContent = preparo || "Aguardando exame";
-
-      if (etapaAtual === 4) renderizarResumoFinal();
+      resultCount.textContent = `${results.length} local${results.length === 1 ? '' : 'is'} disponível${results.length === 1 ? '' : 'eis'}`;
+      document.getElementById("selectedExamLabel").textContent = selectedExam().name;
+      placesList.innerHTML = results.map(placeCard).join("");
+      emptyPlaces.classList.toggle("d-none", results.length > 0);
+      renderMarkers(results);
+      updateSummary();
     }
 
-    function renderizarResumoFinal() {
-      const exame = valor("nomeExame");
+    function initMap() {
+      if (map) return;
+      map = L.map("examPlacesMap", { zoomControl: false }).setView(state.userLocation, 14);
+      L.control.zoom({ position: "bottomright" }).addTo(map);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(map);
+
+      userMarker = L.marker(state.userLocation, {
+        icon: L.divIcon({ className: "", html: '<div class="user-marker"></div>', iconSize: [42, 42], iconAnchor: [21, 21] }),
+        interactive: false
+      }).addTo(map);
+    }
+
+    function markerIcon(place) {
+      return L.divIcon({
+        className: "",
+        html: `<div class="exam-pin ${place.pin}"><i class="bi ${place.icon}"></i></div>`,
+        iconSize: [42, 42],
+        iconAnchor: [21, 42],
+        popupAnchor: [0, -38]
+      });
+    }
+
+    function popupContent(place) {
+      const slots = periodSlots(place);
+      return `
+        <div class="popup-place">
+          <span class="place-type-badge ${place.badge}">${place.type}</span>
+          <h3 class="h5 fw-bold mt-2 mb-1">${place.name}</h3>
+          <p class="text-muted mb-1">${place.address}</p>
+          <p class="mb-1"><i class="bi bi-star-fill text-warning me-1"></i>${place.rating.toFixed(1).replace('.', ',')} • ${place.type === 'Home Care' ? 'No seu endereço' : place.distance.toFixed(1).replace('.', ',') + ' km'}</p>
+          <p class="mb-2"><strong>${currency(place.price)}</strong></p>
+          <p class="text-muted mb-3">Horários: ${slots.join(', ')}</p>
+          <button type="button" class="btn btn-primary w-100" onclick="selectPlace(${place.id}, '${slots[0] || ''}')">Selecionar local</button>
+        </div>`;
+    }
+
+    function renderMarkers(results) {
+      if (!map) return;
+      markers.forEach(marker => map.removeLayer(marker));
+      markers.clear();
+
+      if (state.routeLine) {
+        map.removeLayer(state.routeLine);
+        state.routeLine = null;
+      }
+
+      results.forEach(function(place) {
+        const marker = L.marker([place.lat, place.lng], { icon: markerIcon(place), title: place.name })
+          .addTo(map)
+          .bindPopup(popupContent(place));
+
+        marker.on("click", function() { selectPlace(place.id); });
+        markers.set(place.id, marker);
+      });
+
+      const bounds = results.map(place => [place.lat, place.lng]);
+      bounds.push(state.userLocation);
+      if (bounds.length > 1) map.fitBounds(bounds, { padding: [60, 60], maxZoom: 14 });
+
+      if (state.placeId) selectPlace(state.placeId, null, true);
+    }
+
+    function selectPlace(id, slot, silent) {
+      const place = places.find(item => item.id === Number(id));
+      if (!place) return;
+      state.placeId = place.id;
+      const slots = periodSlots(place);
+      state.slot = slot || state.slot || slots[0] || "";
+
+      document.querySelectorAll(".place-card").forEach(card => {
+        card.classList.toggle("selected", Number(card.dataset.placeId) === place.id);
+      });
+
+      document.querySelectorAll("[data-slot]").forEach(button => {
+        button.classList.toggle("btn-primary", Number(button.dataset.placeId) === place.id && button.dataset.slot === state.slot);
+        button.classList.toggle("btn-outline-primary", !(Number(button.dataset.placeId) === place.id && button.dataset.slot === state.slot));
+      });
+
+      if (map) {
+        if (state.routeLine) map.removeLayer(state.routeLine);
+        state.routeLine = L.polyline([state.userLocation, [place.lat, place.lng]], {
+          color: "#0d6efd",
+          weight: 4,
+          opacity: .85,
+          dashArray: "8 8"
+        }).addTo(map);
+        map.setView([place.lat, place.lng], 15, { animate: true });
+        const marker = markers.get(place.id);
+        if (marker && !silent) marker.openPopup();
+      }
+
+      updateSummary();
+    }
+
+    window.selectPlace = selectPlace;
+
+    function renderFinalSummary() {
+      const exam = selectedExam();
+      const place = selectedPlace();
       const cards = [
-        ["Pessoa acompanhada", valor("pessoaCuidada") || "-"],
-        ["Exame", exame || "-"],
-        ["Categoria", valor("categoriaExame") || "-"],
-        ["Prioridade", valor("prioridade") || "-"],
-        ["Modalidade", valor("modalidade") || "-"],
-        ["Local", valor("localExame") || "-"],
-        ["Data e horário", `${formatarData(valor("dataExame")) || "-"} às ${valor("horarioExame") || "-"}`],
-        ["Responsável", valor("responsavel") || "-"],
-        ["Transporte", valor("transporte") || "-"],
-        ["Lembrete", valor("antecedenciaLembrete") || "-"],
-        ["Preparo", preparos[exame] || "-"],
-        ["Observação", valor("observacaoClinica") || "Sem observação clínica"]
+        ["Exame", exam.name],
+        ["Categoria", exam.category],
+        ["Data", formatDate(examDate.value)],
+        ["Período e horário", `${state.period}${state.slot ? ' • ' + state.slot : ''}`],
+        ["Local", place ? place.name : "Não selecionado"],
+        ["Tipo de atendimento", place ? place.type : "Não selecionado"],
+        ["Endereço", place ? place.address : addressInput.value],
+        ["Valor estimado", place ? currency(place.price) : "-"],
+        ["Prioridade", document.getElementById("examPriority").value],
+        ["Lembrete", document.getElementById("reminder").value]
       ];
 
-      document.getElementById("resumoFinal").innerHTML = cards.map(function(item) {
+      document.getElementById("finalSummary").innerHTML = cards.map(function(item) {
         return `
           <div class="col-md-6">
             <div class="card border-0 bg-light rounded-4 h-100">
@@ -537,116 +918,134 @@
                 <h3 class="h6 mb-0">${item[1]}</h3>
               </div>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join("");
+
+      document.getElementById("prepareText").textContent = exam.prepare;
+      document.getElementById("prepareList").innerHTML = exam.checklist.map(item => `<li>${item}</li>`).join("");
     }
 
-    function renderizarResultado() {
-      const exame = valor("nomeExame");
-      const cards = [
-        ["Agendamento", `${exame} para ${valor("pessoaCuidada")}`],
-        ["Quando", `${formatarData(valor("dataExame"))} às ${valor("horarioExame")}`],
-        ["Onde", valor("localExame")],
-        ["Responsável", valor("responsavel")],
-        ["Lembrete", valor("antecedenciaLembrete")],
-        ["Preparo", preparos[exame] || "Sem preparo cadastrado"]
-      ];
-
-      document.getElementById("resultadoAgendamento").innerHTML = cards.map(function(item) {
-        return `
-          <div class="col-md-6">
-            <div class="card border-0 bg-light rounded-4 h-100">
-              <div class="card-body">
-                <small class="text-muted">${item[0]}</small>
-                <h3 class="h6 mb-0">${item[1]}</h3>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("");
+    function updateSummary() {
+      const exam = selectedExam();
+      const place = selectedPlace();
+      document.getElementById("summaryExam").textContent = exam.name;
+      document.getElementById("summaryDatePeriod").textContent = `${formatDate(examDate.value)} • ${state.period}${state.slot ? ' • ' + state.slot : ''}`;
+      document.getElementById("summaryPlace").textContent = place ? place.name : "Selecione um local";
+      document.getElementById("summaryPlaceType").textContent = place ? `${place.type} • ${place.type === 'Home Care' ? 'no seu endereço' : place.distance.toFixed(1).replace('.', ',') + ' km'}` : "Aguardando local";
+      document.getElementById("summaryPrepare").textContent = exam.shortPrepare;
     }
 
-    function definirDataMinima() {
-      const hoje = new Date().toISOString().split("T")[0];
-      document.getElementById("dataExame").min = hoje;
+    function clearFilters() {
+      modalityFilter.value = "todos";
+      distanceFilter.value = "10";
+      priceFilter.value = "9999";
+      sortFilter.value = "recommended";
+      locationSearch.value = "";
+      renderPlaces();
     }
 
-    document.getElementById("categoriaExame").addEventListener("change", atualizarExames);
-    document.getElementById("nomeExame").addEventListener("change", atualizarPreparo);
-
-    document.getElementById("btnProximo").addEventListener("click", function() {
-      if (!validarEtapa()) return;
-      etapaAtual += 1;
-      atualizarEtapa();
+    examOptions.addEventListener("click", function(event) {
+      const card = event.target.closest("[data-exam-id]");
+      if (!card) return;
+      state.examId = card.dataset.examId;
+      state.placeId = null;
+      state.slot = "";
+      renderExamOptions();
+      renderPlaces();
+      updateSummary();
     });
 
-    document.getElementById("btnVoltar").addEventListener("click", function() {
-      if (etapaAtual > 1) {
-        etapaAtual -= 1;
-        atualizarEtapa();
-      }
-    });
-
-    document.getElementById("btnSalvarRascunho").addEventListener("click", function() {
-      const dados = {
-        pessoa: valor("pessoaCuidada"),
-        categoria: valor("categoriaExame"),
-        exame: valor("nomeExame"),
-        prioridade: valor("prioridade"),
-        modalidade: valor("modalidade"),
-        local: valor("localExame"),
-        data: valor("dataExame"),
-        horario: valor("horarioExame"),
-        responsavel: valor("responsavel")
-      };
-
-      localStorage.setItem("rascunhoAgendarExame", JSON.stringify(dados));
-      mostrarToast("Rascunho salvo neste navegador.");
-    });
-
-    document.getElementById("btnSimularRota").addEventListener("click", function() {
-      const local = valor("localExame");
-      const transporte = valor("transporte");
-
-      if (!local) {
-        mostrarToast("Selecione um local antes de simular a rota.");
-        return;
-      }
-
-      document.getElementById("mapaTexto").textContent =
-        `${local} • deslocamento estimado: 18 min • ${transporte || "sem transporte definido"}.`;
-
-      mostrarToast("Rota simulada.");
-    });
-
-    form.addEventListener("submit", function(event) {
+    examOptions.addEventListener("keydown", function(event) {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const card = event.target.closest("[data-exam-id]");
+      if (!card) return;
       event.preventDefault();
-      if (!validarEtapa()) return;
-
-      renderizarResultado();
-      modalSucesso.show();
-      mostrarToast("Exame agendado com sucesso.");
+      card.click();
     });
 
-    document.body.addEventListener("input", function(event) {
-      if (event.target.matches("input") || event.target.matches("select") || event.target.matches("textarea")) {
-        event.target.classList.remove("is-invalid");
-        atualizarResumo();
+    document.getElementById("periodOptions").addEventListener("click", function(event) {
+      const card = event.target.closest("[data-period]");
+      if (!card) return;
+      state.period = card.dataset.period;
+      state.placeId = null;
+      state.slot = "";
+      document.querySelectorAll("[data-period]").forEach(item => item.classList.remove("selected"));
+      card.classList.add("selected");
+      renderPlaces();
+      updateSummary();
+    });
+
+    placesList.addEventListener("click", function(event) {
+      const slotButton = event.target.closest("[data-slot]");
+      if (slotButton) {
+        selectPlace(slotButton.dataset.placeId, slotButton.dataset.slot);
+        return;
       }
+      const card = event.target.closest("[data-place-id]");
+      if (!card) return;
+      selectPlace(card.dataset.placeId);
     });
 
-    document.body.addEventListener("change", function(event) {
-      if (event.target.matches("input") || event.target.matches("select") || event.target.matches("textarea")) {
-        event.target.classList.remove("is-invalid");
-        atualizarResumo();
-      }
+    placesList.addEventListener("keydown", function(event) {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const card = event.target.closest("[data-place-id]");
+      if (!card) return;
+      event.preventDefault();
+      selectPlace(card.dataset.placeId);
     });
 
-    definirDataMinima();
-    atualizarEtapa();
-    atualizarResumo();
+    [modalityFilter, distanceFilter, priceFilter, sortFilter].forEach(el => el.addEventListener("change", renderPlaces));
+    locationSearch.addEventListener("input", renderPlaces);
+    examDate.addEventListener("change", updateSummary);
+    addressInput.addEventListener("input", updateSummary);
+    document.getElementById("clearFilters").addEventListener("click", clearFilters);
+    document.getElementById("emptyClearFilters").addEventListener("click", clearFilters);
+
+    stepButtons.forEach(button => button.addEventListener("click", function() {
+      const target = Number(button.dataset.goStep);
+      if (target > state.step && !validateCurrentStep()) return;
+      setStep(target);
+    }));
+
+    document.getElementById("prevBtn").addEventListener("click", () => setStep(state.step - 1));
+    document.getElementById("nextBtn").addEventListener("click", function() {
+      if (!validateCurrentStep()) return;
+      setStep(state.step + 1);
+    });
+
+    document.getElementById("saveDraftBtn").addEventListener("click", function() {
+      localStorage.setItem("rascunhoAgendarExame", JSON.stringify({
+        exam: selectedExam().name,
+        date: examDate.value,
+        period: state.period,
+        place: selectedPlace()?.name || "",
+        slot: state.slot || ""
+      }));
+      showToast("Rascunho salvo neste navegador.");
+    });
+
+    document.getElementById("examForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      if (!validateCurrentStep()) return;
+      const exam = selectedExam();
+      const place = selectedPlace();
+      document.getElementById("successText").innerHTML = `
+        <div class="alert alert-success border-0 rounded-4 mb-3"><strong>Agendamento criado com sucesso.</strong><br>O exame foi adicionado à agenda e os lembretes de preparo foram configurados.</div>
+        <p class="mb-1"><strong>${exam.name}</strong></p>
+        <p class="mb-1">${formatDate(examDate.value)} • ${state.period}${state.slot ? ' • ' + state.slot : ''}</p>
+        <p class="mb-1">${place.name} • ${place.type}</p>
+        <p class="mb-0 text-muted">Preparo: ${exam.shortPrepare}</p>`;
+      successModal.show();
+      showToast("Exame agendado com sucesso.");
+    });
+
+    const today = new Date().toISOString().split("T")[0];
+    examDate.min = today;
+    renderExamOptions();
+    setStep(1);
+    updateSummary();
   </script>
+
   <script src="../../js/app-shell.js?v=20260524"></script>
   <script src="../../js/profile-switcher.js?v=20260524d"></script>
   <script src="../../js/header.js"></script>

@@ -8,7 +8,7 @@
 
   <meta
     name="description"
-    content="Acompanhe resultados de exames, filtre por pessoa acompanhada, veja alertas importantes e compartilhe laudos com segurança na plataforma Home Care 4.0."
+    content="Acompanhe seus resultados de exames, veja alertas importantes e compartilhe laudos com segurança na plataforma Home Care 4.0."
   />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
@@ -17,6 +17,40 @@
   <link rel="stylesheet" href="../../css/profile-switcher.css" />
   <link rel="stylesheet" href="../../css/sidebar.css" />
   <link rel="stylesheet" href="../../css/main.css" />
+
+  <style>
+    .read-status-card {
+      border-left: 5px solid transparent;
+    }
+    .read-status-card.is-new {
+      border-left-color: var(--bs-primary);
+    }
+    .read-status-card.is-read {
+      border-left-color: var(--bs-success);
+    }
+    .read-info-box {
+      background: #f8f9fa;
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: 1rem;
+      padding: .85rem 1rem;
+    }
+    .read-history-item {
+      border: 1px solid rgba(0,0,0,.08);
+      background: #f8f9fa;
+      border-radius: 1rem;
+      padding: 1rem;
+    }
+    .metric-link-card {
+      color: inherit;
+      text-decoration: none;
+      display: block;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .metric-link-card:hover, .metric-link-card:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 .8rem 1.8rem rgba(13,110,253,.12);
+    }
+  </style>
 </head>
 
 <body data-profile-page="idoso" class="hc-idoso-module">
@@ -82,7 +116,7 @@
             <div class="col-lg">
               <h2 class="h5 mb-1">Existe 1 resultado que merece atenção</h2>
               <p class="mb-0">
-                O exame de <strong>glicemia em jejum</strong> de Maria foi marcado como alterado.
+                O exame de <strong>glicemia em jejum</strong> foi marcado como alterado.
                 Recomendamos compartilhar com o médico responsável.
               </p>
             </div>
@@ -118,22 +152,21 @@
               </div>
 
               <div class="col-md-3">
-                <label for="filtroPessoa" class="form-label">Pessoa acompanhada</label>
-                <select id="filtroPessoa" class="form-select form-select-lg">
-                  <option value="">Todas</option>
-                  <option>Maria</option>
-                  <option>Antônio</option>
-                  <option>Eu</option>
-                </select>
-              </div>
-
-              <div class="col-md-3">
                 <label for="filtroStatus" class="form-label">Situação</label>
                 <select id="filtroStatus" class="form-select form-select-lg">
                   <option value="">Todas</option>
                   <option value="normal">Dentro do esperado</option>
                   <option value="atencao">Precisa de atenção</option>
                   <option value="aguardando">Aguardando liberação</option>
+                </select>
+              </div>
+
+              <div class="col-md-3">
+                <label for="filtroLeitura" class="form-label">Leitura</label>
+                <select id="filtroLeitura" class="form-select form-select-lg">
+                  <option value="">Todos</option>
+                  <option value="novo">Novos para ver</option>
+                  <option value="visto">Já vistos</option>
                 </select>
               </div>
 
@@ -151,6 +184,8 @@
               <button class="btn btn-outline-primary filtro-rapido" type="button" data-status="normal">Normais</button>
               <button class="btn btn-outline-primary filtro-rapido" type="button" data-status="atencao">Atenção</button>
               <button class="btn btn-outline-primary filtro-rapido" type="button" data-status="aguardando">Aguardando</button>
+              <button class="btn btn-outline-success filtro-leitura" type="button" data-leitura="visto">Já vistos</button>
+              <button class="btn btn-outline-primary filtro-leitura" type="button" data-leitura="novo">Novos para ver</button>
             </div>
           </div>
         </section>
@@ -184,11 +219,20 @@
               </div>
             </div>
 
+
+
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-3">Últimos exames vistos</h2>
+                <div class="d-grid gap-3" id="historicoLeitura"></div>
+              </div>
+            </div>
+
             <div class="card border-0 shadow-sm rounded-4">
               <div class="card-body p-4">
                 <h2 class="h5 mb-2">Próximo passo</h2>
                 <p class="text-muted">
-                  Abra cada resultado, confirme que foi visto e compartilhe os exames alterados com o médico.
+                  Abra cada resultado, veja se já foi conferido e acompanhe a data e o horário da última visualização.
                 </p>
 
                 <div class="d-grid gap-2">
@@ -257,49 +301,49 @@ const resultados = [
       {
         id: 1,
         exame: "Hemograma completo",
-        pessoa: "Maria",
         data: "2026-04-20",
         laboratorio: "Laboratório Vida",
         medico: "Dra. Helena Costa",
         status: "normal",
         resumo: "Resultado dentro do esperado para os principais indicadores.",
         visto: true,
-        arquivo: "hemograma-dona-maria.pdf"
+        vistoEm: "2026-04-21T09:15:00",
+        arquivo: "hemograma.pdf"
       },
       {
         id: 2,
         exame: "Glicemia em jejum",
-        pessoa: "Maria",
         data: "2026-04-24",
         laboratorio: "Clínica São Lucas",
         medico: "Dr. Paulo Mendes",
         status: "atencao",
         resumo: "Valor acima da referência informada pelo laboratório.",
         visto: false,
-        arquivo: "glicemia-dona-maria.pdf"
+        vistoEm: "",
+        arquivo: "glicemia.pdf"
       },
       {
         id: 3,
         exame: "Raio-x de tórax",
-        pessoa: "Antônio",
         data: "2026-04-18",
         laboratorio: "Imagem Center",
         medico: "Dra. Camila Rocha",
         status: "normal",
         resumo: "Laudo liberado sem alerta destacado.",
         visto: false,
-        arquivo: "raiox-antonio.pdf"
+        vistoEm: "",
+        arquivo: "raiox-torax.pdf"
       },
       {
         id: 4,
         exame: "Exame de urina",
-        pessoa: "Eu",
         data: "2026-04-12",
         laboratorio: "Laboratório Central",
         medico: "Dr. Rafael Lima",
         status: "aguardando",
         resumo: "O laboratório ainda não liberou o laudo final.",
         visto: false,
+        vistoEm: "",
         arquivo: ""
       }
     ];
@@ -315,6 +359,21 @@ const resultados = [
 
     function formatarData(data) {
       return new Date(data + "T00:00:00").toLocaleDateString("pt-BR");
+    }
+
+    function formatarDataHora(valor) {
+      if (!valor) return "Ainda não visto";
+      return new Date(valor).toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function agoraISO() {
+      return new Date().toISOString();
     }
 
     function statusTexto(status) {
@@ -336,16 +395,16 @@ const resultados = [
 
     function resultadosFiltrados() {
       const busca = document.getElementById("buscaResultado").value.trim().toLowerCase();
-      const pessoa = document.getElementById("filtroPessoa").value;
       const status = document.getElementById("filtroStatus").value;
+      const leitura = document.getElementById("filtroLeitura").value;
       const ordenacao = document.getElementById("ordenacao").value;
 
       return resultados
         .filter(function (item) {
-          const combinaBusca = !busca || item.exame.toLowerCase().includes(busca) || item.laboratorio.toLowerCase().includes(busca);
-          const combinaPessoa = !pessoa || item.pessoa === pessoa;
+          const combinaBusca = !busca || item.exame.toLowerCase().includes(busca) || item.laboratorio.toLowerCase().includes(busca) || item.medico.toLowerCase().includes(busca);
           const combinaStatus = !status || item.status === status;
-          return combinaBusca && combinaPessoa && combinaStatus;
+          const combinaLeitura = !leitura || (leitura === "visto" && item.visto) || (leitura === "novo" && !item.visto);
+          return combinaBusca && combinaStatus && combinaLeitura;
         })
         .sort(function (a, b) {
           const dataA = new Date(a.data);
@@ -366,7 +425,7 @@ const resultados = [
 
       filtrados.forEach(function (item) {
         const card = document.createElement("article");
-        card.className = "card border-0 shadow-sm rounded-4";
+        card.className = "card border-0 shadow-sm rounded-4 read-status-card " + (item.visto ? "is-read" : "is-new");
 
         card.innerHTML = `
           <div class="card-body p-4">
@@ -374,11 +433,15 @@ const resultados = [
               <div>
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
                   <span class="badge ${statusClasse(item.status)}">${statusTexto(item.status)}</span>
-                  ${item.visto ? '<span class="badge text-bg-light border">Visto</span>' : '<span class="badge text-bg-primary">Novo</span>'}
+                  ${item.visto ? '<span class="badge text-bg-success">Já visto</span>' : '<span class="badge text-bg-primary">Novo para ver</span>'}
                 </div>
 
                 <h3 class="h5 mb-1">${item.exame}</h3>
-                <p class="text-muted mb-2">${item.pessoa} • ${formatarData(item.data)} • ${item.laboratorio}</p>
+                <p class="text-muted mb-2">${formatarData(item.data)} • ${item.laboratorio}</p>
+                <div class="read-info-box mb-2">
+                  <strong class="d-block">${item.visto ? 'Conferido em' : 'Ainda não conferido'}</strong>
+                  <span class="text-muted">${item.visto ? formatarDataHora(item.vistoEm) : 'Abra os detalhes e marque como visto depois de conferir.'}</span>
+                </div>
                 <p class="mb-0">${item.resumo}</p>
               </div>
 
@@ -404,39 +467,73 @@ const resultados = [
       const aguardando = resultados.filter(item => item.status === "aguardando").length;
       const novos = resultados.filter(item => !item.visto).length;
 
+      const vistos = resultados.filter(item => item.visto).length;
+
       resumoCards.innerHTML = `
-        <div class="border rounded-4 p-3 bg-light">
+        <button class="metric-link-card border rounded-4 p-3 bg-light text-start" type="button" data-summary-filter="todos">
           <div class="d-flex justify-content-between">
             <strong>Total de resultados</strong>
             <span>${total}</span>
           </div>
           <small class="text-muted">Laudos cadastrados no sistema</small>
-        </div>
+        </button>
 
-        <div class="border rounded-4 p-3 bg-light">
+        <button class="metric-link-card border rounded-4 p-3 bg-light text-start" type="button" data-summary-filter="atencao">
           <div class="d-flex justify-content-between">
             <strong>Precisam de atenção</strong>
             <span>${atencao}</span>
           </div>
           <small class="text-muted">Compartilhe com o médico</small>
-        </div>
+        </button>
 
-        <div class="border rounded-4 p-3 bg-light">
+        <button class="metric-link-card border rounded-4 p-3 bg-light text-start" type="button" data-summary-filter="aguardando">
           <div class="d-flex justify-content-between">
             <strong>Aguardando</strong>
             <span>${aguardando}</span>
           </div>
           <small class="text-muted">Ainda sem laudo final</small>
-        </div>
+        </button>
 
-        <div class="border rounded-4 p-3 bg-light">
+        <button class="metric-link-card border rounded-4 p-3 bg-light text-start" type="button" data-summary-filter="novo">
           <div class="d-flex justify-content-between">
             <strong>Novos para ver</strong>
             <span>${novos}</span>
           </div>
           <small class="text-muted">Resultados ainda não conferidos</small>
-        </div>
+        </button>
+
+        <button class="metric-link-card border rounded-4 p-3 bg-light text-start" type="button" data-summary-filter="visto">
+          <div class="d-flex justify-content-between">
+            <strong>Já vistos</strong>
+            <span>${vistos}</span>
+          </div>
+          <small class="text-muted">Com data e horário de conferência</small>
+        </button>
       `;
+    }
+
+    function renderizarHistoricoLeitura() {
+      const container = document.getElementById("historicoLeitura");
+      const vistos = resultados
+        .filter(item => item.visto && item.vistoEm)
+        .sort((a, b) => new Date(b.vistoEm) - new Date(a.vistoEm));
+
+      if (!vistos.length) {
+        container.innerHTML = `
+          <div class="read-history-item">
+            <strong class="d-block">Nenhum exame conferido ainda</strong>
+            <small class="text-muted">Quando você marcar um resultado como visto, ele aparecerá aqui.</small>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = vistos.slice(0, 4).map(function(item) {
+        return `
+          <button class="read-history-item text-start w-100" type="button" data-action="detalhes" data-id="${item.id}">
+            <strong class="d-block">${item.exame}</strong>
+            <small class="text-muted">Visto em ${formatarDataHora(item.vistoEm)}</small>
+          </button>`;
+      }).join("");
     }
 
     function atualizarProgresso() {
@@ -452,6 +549,7 @@ const resultados = [
     function renderizarTudo() {
       renderizarLista();
       renderizarResumo();
+      renderizarHistoricoLeitura();
       atualizarProgresso();
     }
 
@@ -462,14 +560,14 @@ const resultados = [
       resultadoAtualId = item.id;
 
       document.getElementById("modalDetalhesTitulo").textContent = item.exame;
-      document.getElementById("modalDetalhesSubtitulo").textContent = item.pessoa + " • " + formatarData(item.data);
+      document.getElementById("modalDetalhesSubtitulo").textContent = formatarData(item.data) + " • " + item.laboratorio;
 
       const detalhes = [
-        ["Pessoa acompanhada", item.pessoa],
         ["Data do resultado", formatarData(item.data)],
         ["Laboratório", item.laboratorio],
         ["Médico responsável", item.medico],
         ["Situação", statusTexto(item.status)],
+        ["Leitura", item.visto ? "Visto em " + formatarDataHora(item.vistoEm) : "Ainda não visto"],
         ["Resumo", item.resumo]
       ];
 
@@ -487,7 +585,7 @@ const resultados = [
       }).join("");
 
       document.getElementById("btnMarcarVisto").disabled = item.visto;
-      document.getElementById("btnMarcarVisto").textContent = item.visto ? "Resultado já visto" : "Marcar como visto";
+      document.getElementById("btnMarcarVisto").textContent = item.visto ? "Resultado já visto em " + formatarDataHora(item.vistoEm) : "Marcar como visto";
       document.getElementById("btnCompartilharModal").disabled = item.status === "aguardando";
 
       modalDetalhes.show();
@@ -498,9 +596,10 @@ const resultados = [
       if (!item) return;
 
       item.visto = true;
+      item.vistoEm = agoraISO();
       modalDetalhes.hide();
       renderizarTudo();
-      mostrarToast("Resultado marcado como visto.");
+      mostrarToast("Resultado marcado como visto em " + formatarDataHora(item.vistoEm) + ".");
     }
 
     function compartilhar(id) {
@@ -524,8 +623,8 @@ const resultados = [
 
     function limparFiltros() {
       document.getElementById("buscaResultado").value = "";
-      document.getElementById("filtroPessoa").value = "";
       document.getElementById("filtroStatus").value = "";
+      document.getElementById("filtroLeitura").value = "";
       document.getElementById("ordenacao").value = "recente";
 
       document.querySelectorAll(".filtro-rapido").forEach(function (btn) {
@@ -542,8 +641,8 @@ const resultados = [
     }
 
     document.getElementById("buscaResultado").addEventListener("input", renderizarTudo);
-    document.getElementById("filtroPessoa").addEventListener("change", renderizarTudo);
     document.getElementById("filtroStatus").addEventListener("change", renderizarTudo);
+    document.getElementById("filtroLeitura").addEventListener("change", renderizarTudo);
     document.getElementById("ordenacao").addEventListener("change", renderizarTudo);
     document.getElementById("btnLimpar").addEventListener("click", limparFiltros);
     document.getElementById("btnLimparVazio").addEventListener("click", limparFiltros);
@@ -559,8 +658,35 @@ const resultados = [
         button.classList.remove("btn-outline-primary");
 
         document.getElementById("filtroStatus").value = button.dataset.status;
+        document.getElementById("filtroLeitura").value = "";
         renderizarTudo();
       });
+    });
+
+
+
+    document.querySelectorAll(".filtro-leitura").forEach(function (button) {
+      button.addEventListener("click", function () {
+        document.getElementById("filtroStatus").value = "";
+        document.getElementById("filtroLeitura").value = button.dataset.leitura;
+        renderizarTudo();
+      });
+    });
+
+    resumoCards.addEventListener("click", function(event) {
+      const button = event.target.closest("[data-summary-filter]");
+      if (!button) return;
+      const filter = button.dataset.summaryFilter;
+      document.getElementById("filtroStatus").value = "";
+      document.getElementById("filtroLeitura").value = "";
+
+      if (filter === "atencao" || filter === "aguardando") {
+        document.getElementById("filtroStatus").value = filter;
+      }
+      if (filter === "novo" || filter === "visto") {
+        document.getElementById("filtroLeitura").value = filter;
+      }
+      renderizarTudo();
     });
 
     document.body.addEventListener("click", function (event) {
