@@ -13,6 +13,95 @@
   <link rel="stylesheet" href="../../css/sidebar.css" />
   <link rel="stylesheet" href="../../css/main.css" />
   <link rel="stylesheet" href="../../css/pages/medicamentos.css" />
+<style>
+    .hc-metric-filter {
+      width: 100%;
+      text-align: left;
+      border: 0;
+      background: #fff;
+      border-radius: 1rem;
+      min-height: 100%;
+      transition: transform .2s ease, box-shadow .2s ease, outline-color .2s ease;
+    }
+
+    .hc-metric-filter:hover,
+    .hc-metric-filter:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 1rem 2rem rgba(0, 27, 75, .10);
+      outline: 3px solid rgba(13, 110, 253, .18);
+    }
+
+    .hc-metric-filter.active {
+      outline: 3px solid rgba(13, 110, 253, .35);
+    }
+
+    .hc-week-calendar {
+      overflow-x: auto;
+      padding-bottom: .25rem;
+    }
+
+    .hc-week-table {
+      min-width: 920px;
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 1rem;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .hc-week-header,
+    .hc-week-row {
+      display: grid;
+      grid-template-columns: minmax(230px, 1.4fr) repeat(7, minmax(88px, 1fr));
+      align-items: stretch;
+    }
+
+    .hc-week-header {
+      background: #f8f9fa;
+      font-weight: 700;
+    }
+
+    .hc-week-cell {
+      padding: .85rem;
+      border-right: 1px solid rgba(0,0,0,.06);
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+
+    .hc-week-cell:last-child {
+      border-right: 0;
+    }
+
+    .hc-week-row:last-child .hc-week-cell {
+      border-bottom: 0;
+    }
+
+    .hc-week-dose-link {
+      display: flex;
+      min-height: 54px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      background: #f8f9fa;
+      border: 1px solid rgba(0,0,0,.05);
+      border-radius: .8rem;
+      padding: .45rem;
+      font-size: .88rem;
+      font-weight: 700;
+    }
+
+    .hc-week-dose-link:hover,
+    .hc-week-dose-link:focus {
+      color: var(--bs-primary);
+      background: rgba(13, 110, 253, .08);
+    }
+
+    .hc-week-dose-link.is-today {
+      border-color: rgba(13, 110, 253, .45);
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, .12);
+    }
+
+  </style>
 </head>
 
 <body class="hc-medication-page hc-idoso-module" data-profile-page="idoso">
@@ -78,7 +167,7 @@
                   <h2 class="h5 mb-1" data-med-alert-title>Existe uma dose atrasada</h2>
                   <p class="mb-0" data-med-alert-text>
                     <strong>Losartana 50mg</strong> estava prevista para <strong>08:00</strong>.
-                    Confirme se a pessoa acompanhada já tomou ou registre o motivo do atraso.
+                    Confirme se a dose foi tomada ou registre o motivo do atraso.
                   </p>
                 </div>
               </div>
@@ -109,7 +198,7 @@
         <div class="card border-0 shadow-sm rounded-4 mb-4">
           <div class="card-body p-4">
             <div class="row g-3 align-items-end">
-              <div class="col-md-4">
+              <div class="col-md-6">
                 <label for="buscaMedicamento" class="form-label">Buscar medicamento</label>
                 <input
                   type="search"
@@ -119,22 +208,13 @@
                 />
               </div>
 
-              <div class="col-md-3">
-                <label for="filtroPessoa" class="form-label" data-med-person-label>Pessoa acompanhada</label>
-                <select class="form-select" id="filtroPessoa">
-                  <option value="todos" data-med-all-people>Todas</option>
-                  <option value="Maria">Maria</option>
-                  <option value="Antônio">Antônio</option>
-                  <option value="Eu">Eu</option>
-                </select>
-              </div>
-
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <label for="filtroStatus" class="form-label">Status</label>
                 <select class="form-select" id="filtroStatus">
                   <option value="todos">Todos</option>
                   <option value="pendente">Pendente</option>
                   <option value="atrasado">Atrasado</option>
+                  <option value="atencao">Atenção</option>
                   <option value="tomado">Tomado</option>
                   <option value="nao-tomado">Não tomado</option>
                 </select>
@@ -149,43 +229,56 @@
           </div>
         </div>
 
-        <div class="row g-3 mb-4">
+        <div class="row g-3 mb-4" aria-label="Resumo clicável dos medicamentos">
           <div class="col-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
+            <button type="button" class="card shadow-sm h-100 hc-metric-filter active" data-metric-filter="todos" aria-label="Mostrar doses programadas hoje">
               <div class="card-body">
-                <p class="hc-metric-label">Programadas hoje</p>
+                <p class="hc-metric-label">Programadas</p>
                 <h2 class="h3 mb-0" id="metricTotal">0</h2>
               </div>
-            </div>
+            </button>
           </div>
 
           <div class="col-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
+            <button type="button" class="card shadow-sm h-100 hc-metric-filter" data-metric-filter="tomado" aria-label="Mostrar doses tomadas">
               <div class="card-body">
                 <p class="hc-metric-label">Tomadas</p>
                 <h2 class="h3 mb-0 text-success" id="metricTomadas">0</h2>
               </div>
-            </div>
+            </button>
           </div>
 
           <div class="col-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
+            <button type="button" class="card shadow-sm h-100 hc-metric-filter" data-metric-filter="pendente" aria-label="Mostrar doses pendentes">
               <div class="card-body">
                 <p class="hc-metric-label">Pendentes</p>
                 <h2 class="h3 mb-0 text-primary" id="metricPendentes">0</h2>
               </div>
-            </div>
+            </button>
           </div>
 
           <div class="col-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
+            <button type="button" class="card shadow-sm h-100 hc-metric-filter" data-metric-filter="atencao" aria-label="Mostrar doses que precisam de atenção">
               <div class="card-body">
                 <p class="hc-metric-label">Atenção</p>
                 <h2 class="h3 mb-0 text-danger" id="metricAtencao">0</h2>
               </div>
-            </div>
+            </button>
           </div>
         </div>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4" aria-labelledby="calendarioSemanalTitle">
+          <div class="card-body p-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+              <div>
+                <h2 class="h5 mb-1" id="calendarioSemanalTitle">Rotina semanal de medicamentos</h2>
+                <p class="text-muted mb-0">Medicamentos de uso diário aparecem repetidos no mesmo horário durante a semana.</p>
+              </div>
+              <a href="medicamentos-horarios.html" class="btn btn-outline-primary align-self-md-start">Editar horários</a>
+            </div>
+            <div id="calendarioSemanal" class="hc-week-calendar" aria-label="Calendário semanal de medicamentos"></div>
+          </div>
+        </section>
 
         <div class="row g-4">
           <div class="col-xl-8">
@@ -355,15 +448,6 @@
             </div>
 
             <div class="col-md-6">
-              <label for="editPessoa" class="form-label">Pessoa acompanhada</label>
-              <select class="form-select" id="editPessoa" required>
-                <option>Maria</option>
-                <option>Antônio</option>
-                <option>Eu</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
               <label for="editOrientacao" class="form-label">Orientação</label>
               <input type="text" class="form-control" id="editOrientacao" />
             </div>
@@ -392,22 +476,22 @@
         horario: "08:00",
         nome: "Losartana",
         dose: "50mg",
-        pessoa: "Maria",
         status: "atrasado",
         tipo: "Uso contínuo",
         orientacao: "Tomar com água pela manhã.",
-        estoque: 12
+        estoque: 12,
+        diaOffset: 0
       },
       {
         id: 2,
         horario: "10:00",
         nome: "Metformina",
         dose: "850mg",
-        pessoa: "Maria",
         status: "tomado",
         tipo: "Uso contínuo",
         orientacao: "Tomar após o café da manhã.",
         estoque: 28,
+        diaOffset: 0,
         confirmadoEm: "10:04"
       },
       {
@@ -415,33 +499,33 @@
         horario: "14:00",
         nome: "Vitamina D",
         dose: "1 cápsula",
-        pessoa: "Antônio",
         status: "pendente",
         tipo: "Suplementação",
         orientacao: "Tomar após refeição.",
-        estoque: 9
+        estoque: 9,
+        diaOffset: 1
       },
       {
         id: 4,
         horario: "18:00",
         nome: "Omeprazol",
         dose: "20mg",
-        pessoa: "Eu",
         status: "pendente",
         tipo: "Tratamento temporário",
         orientacao: "Tomar antes da refeição.",
-        estoque: 5
+        estoque: 5,
+        diaOffset: 2
       },
       {
         id: 5,
         horario: "22:00",
         nome: "Sinvastatina",
         dose: "20mg",
-        pessoa: "Maria",
         status: "pendente",
         tipo: "Uso contínuo",
         orientacao: "Tomar antes de dormir.",
-        estoque: 16
+        estoque: 16,
+        diaOffset: 0
       }
     ];
 
@@ -449,7 +533,7 @@
       {
         hora: "10:04",
         titulo: "Metformina confirmada",
-        descricao: "Dose confirmada para Maria."
+        descricao: "Dose confirmada com sucesso."
       },
       {
         hora: "08:30",
@@ -459,7 +543,7 @@
       {
         hora: "08:00",
         titulo: "Dose programada",
-        descricao: "Losartana prevista para Maria."
+        descricao: "Losartana prevista no horário da manhã."
       }
     ];
 
@@ -487,7 +571,6 @@
     const emptyState = document.getElementById("emptyState");
 
     const buscaMedicamento = document.getElementById("buscaMedicamento");
-    const filtroPessoa = document.getElementById("filtroPessoa");
     const filtroStatus = document.getElementById("filtroStatus");
 
     const modalDetalhes = new bootstrap.Modal(document.getElementById("modalDetalhes"));
@@ -506,7 +589,6 @@
 
     function filtrarDoses() {
       const termo = buscaMedicamento.value.trim().toLowerCase();
-      const pessoa = filtroPessoa.value;
       const status = filtroStatus.value;
 
       return doses.filter(function (dose) {
@@ -514,11 +596,88 @@
           dose.dose.toLowerCase().includes(termo) ||
           dose.tipo.toLowerCase().includes(termo);
 
-        const batePessoa = pessoa === "todos" || dose.pessoa === pessoa;
-        const bateStatus = status === "todos" || dose.status === status;
+        const bateStatus = status === "todos" || dose.status === status || (status === "atencao" && (dose.status === "atrasado" || dose.status === "nao-tomado"));
 
-        return bateTermo && batePessoa && bateStatus;
+        return bateTermo && bateStatus;
       });
+    }
+
+    function dataDose(dose) {
+      const data = new Date();
+      data.setHours(0, 0, 0, 0);
+      data.setDate(data.getDate() + (dose.diaOffset || 0));
+      return data;
+    }
+
+    function formatarDataCurta(data) {
+      return data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+    }
+
+    function formatarDiaSemana(data) {
+      return data.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "");
+    }
+
+    function inicioSemana(dataBase) {
+      const data = new Date(dataBase);
+      data.setHours(0, 0, 0, 0);
+      data.setDate(data.getDate() - data.getDay());
+      return data;
+    }
+
+    function renderizarCalendarioSemanal() {
+      const container = document.getElementById("calendarioSemanal");
+      const inicio = inicioSemana(new Date());
+      const hojeIso = new Date().toISOString().slice(0, 10);
+      const filtradas = filtrarDoses();
+
+      const dias = Array.from({ length: 7 }, function (_, index) {
+        const dia = new Date(inicio);
+        dia.setDate(inicio.getDate() + index);
+        return dia;
+      });
+
+      const cabecalho = `
+        <div class="hc-week-header">
+          <div class="hc-week-cell">Medicamento e horário</div>
+          ${dias.map(function (dia) {
+            return `
+              <div class="hc-week-cell text-center">
+                <span class="d-block text-capitalize">${formatarDiaSemana(dia)}</span>
+                <small class="text-muted">${formatarDataCurta(dia)}</small>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+
+      const linhas = filtradas.map(function (dose) {
+        return `
+          <div class="hc-week-row">
+            <div class="hc-week-cell">
+              <strong class="d-block">${dose.nome} ${dose.dose}</strong>
+              <span class="text-muted small">${dose.horario} • ${dose.tipo}</span>
+            </div>
+            ${dias.map(function (dia) {
+              const isoDia = dia.toISOString().slice(0, 10);
+              const status = isoDia === hojeIso ? formatarStatus(dose.status) : { label: "Programada", badge: "text-bg-light border" };
+              return `
+                <div class="hc-week-cell">
+                  <a href="medicamentos-confirmar-dose.html" class="hc-week-dose-link ${isoDia === hojeIso ? 'is-today' : ''}" data-action="detalhes" data-id="${dose.id}">
+                    <span>
+                      <span class="d-block">${dose.horario}</span>
+                      <span class="badge ${status.badge} mt-1">${status.label}</span>
+                    </span>
+                  </a>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }).join("");
+
+      container.innerHTML = filtradas.length
+        ? `<div class="hc-week-table">${cabecalho}${linhas}</div>`
+        : '<div class="alert alert-light border rounded-4 mb-0">Nenhum medicamento encontrado para os filtros selecionados.</div>';
     }
 
     function renderizarDoses() {
@@ -546,7 +705,7 @@
 
             <div class="col-md-5">
               <h3 class="h6 mb-1">${dose.nome} ${dose.dose}</h3>
-              <p class="text-muted mb-0">${dose.pessoa} • ${dose.tipo}</p>
+              <p class="text-muted mb-0">${dose.tipo}</p>
             </div>
 
             <div class="col-md-2">
@@ -583,6 +742,7 @@
       renderizarTratamentos();
       renderizarTimeline();
       atualizarAlertaPrincipal();
+      renderizarCalendarioSemanal();
     }
 
     function renderizarTratamentos() {
@@ -601,7 +761,7 @@
               <div class="d-flex justify-content-between gap-3 mb-2">
                 <div>
                   <h3 class="h6 mb-1">${dose.nome} ${dose.dose}</h3>
-                  <p class="text-muted mb-0">${dose.pessoa}</p>
+                  <p class="text-muted mb-0">Tratamento cadastrado</p>
                 </div>
                 <span class="badge ${status.badge} align-self-start">${status.label}</span>
               </div>
@@ -710,7 +870,7 @@
                 <h2 class="h5 mb-1" data-med-alert-title>Existe uma dose atrasada</h2>
                 <p class="mb-0" data-med-alert-text>
                   <strong>${dose.nome} ${dose.dose}</strong> estava prevista para <strong>${dose.horario}</strong>.
-                  Confirme se a pessoa acompanhada já tomou ou registre o motivo do atraso.
+                  Confirme se a dose foi tomada ou registre o motivo do atraso.
                 </p>
               </div>
             </div>
@@ -746,15 +906,6 @@
               <div class="card-body">
                 <small class="text-muted">Medicamento</small>
                 <h3 class="h5 mb-0">${dose.nome} ${dose.dose}</h3>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="card border-0 bg-light rounded-4">
-              <div class="card-body">
-                <small class="text-muted">Pessoa acompanhada</small>
-                <h3 class="h5 mb-0">${dose.pessoa}</h3>
               </div>
             </div>
           </div>
@@ -822,8 +973,7 @@
         Você está prestes a <strong>${textoAcao}</strong>:
         <br>
         <strong>${dose.horario} • ${dose.nome} ${dose.dose}</strong>
-        <br>
-        <span class="text-muted">${dose.pessoa}</span>
+
       `;
 
       document.getElementById("btnSalvarRegistro").className =
@@ -856,7 +1006,7 @@
         timeline.unshift({
           hora,
           titulo: dose.nome + " confirmada",
-          descricao: (observacao || "Dose registrada como tomada.") + " • " + dose.pessoa
+          descricao: observacao || "Dose registrada como tomada."
         });
 
         mostrarToast("Dose confirmada com sucesso.");
@@ -868,7 +1018,7 @@
         timeline.unshift({
           hora,
           titulo: dose.nome + " não tomada",
-          descricao: (observacao || "Dose registrada como não tomada.") + " • " + dose.pessoa
+          descricao: observacao || "Dose registrada como não tomada."
         });
 
         mostrarToast("Registro de não tomada salvo.");
@@ -886,7 +1036,6 @@
       document.getElementById("editNome").value = dose.nome;
       document.getElementById("editDose").value = dose.dose;
       document.getElementById("editHorario").value = dose.horario;
-      document.getElementById("editPessoa").value = dose.pessoa;
       document.getElementById("editOrientacao").value = dose.orientacao;
 
       modalEditar.show();
@@ -901,10 +1050,9 @@
       const nome = document.getElementById("editNome").value.trim();
       const dosagem = document.getElementById("editDose").value.trim();
       const horario = document.getElementById("editHorario").value;
-      const pessoa = document.getElementById("editPessoa").value;
       const orientacao = document.getElementById("editOrientacao").value.trim();
 
-      if (!nome || !dosagem || !horario || !pessoa) {
+      if (!nome || !dosagem || !horario) {
         mostrarToast("Preencha os campos obrigatórios.");
         return;
       }
@@ -912,7 +1060,6 @@
       dose.nome = nome;
       dose.dose = dosagem;
       dose.horario = horario;
-      dose.pessoa = pessoa;
       dose.orientacao = orientacao || "Sem orientação cadastrada.";
 
       timeline.unshift({
@@ -964,12 +1111,10 @@
     });
 
     buscaMedicamento.addEventListener("input", renderizarDoses);
-    filtroPessoa.addEventListener("change", renderizarDoses);
     filtroStatus.addEventListener("change", renderizarDoses);
 
     document.getElementById("btnLimparFiltros").addEventListener("click", function () {
       buscaMedicamento.value = "";
-      filtroPessoa.value = "todos";
       filtroStatus.value = "todos";
 
       document.querySelectorAll(".quick-filter").forEach(btn => btn.classList.remove("active"));
@@ -991,6 +1136,22 @@
     document.getElementById("btnSalvarRegistro").addEventListener("click", salvarRegistroDose);
     document.getElementById("btnSalvarEdicao").addEventListener("click", salvarEdicao);
     document.getElementById("btnRemoverMedicamento").addEventListener("click", removerMedicamento);
+
+
+    document.querySelectorAll("[data-metric-filter]").forEach(function (card) {
+      card.addEventListener("click", function () {
+        document.querySelectorAll("[data-metric-filter]").forEach(btn => btn.classList.remove("active"));
+        card.classList.add("active");
+        filtroStatus.value = card.dataset.metricFilter;
+
+        document.querySelectorAll(".quick-filter").forEach(btn => btn.classList.remove("active"));
+        const quick = document.querySelector(`.quick-filter[data-status="${filtroStatus.value}"]`);
+        if (quick) quick.classList.add("active");
+
+        renderizarDoses();
+        document.getElementById("listaDoses").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
 
     renderizarDoses();
   </script>

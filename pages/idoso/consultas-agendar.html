@@ -4,59 +4,158 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agendar consulta | Home Care 4.0</title>
-  <meta name="description" content="Agendamento guiado de consultas na plataforma Home Care 4.0, com escolha de pessoa acompanhada, especialidade, profissional, data, local e confirmação." />
+  <meta name="description" content="Agendamento de consulta para o perfil idoso com data, horário, local, mapa interativo e profissionais disponíveis próximos." />
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
   <link rel="stylesheet" href="../../css/global.css" />
   <link rel="stylesheet" href="../../css/header.css" />
   <link rel="stylesheet" href="../../css/profile-switcher.css" />
   <link rel="stylesheet" href="../../css/sidebar.css" />
   <link rel="stylesheet" href="../../css/main.css" />
   <link rel="stylesheet" href="../../css/pages/consultas.css" />
+
+  <style>
+    :root {
+      --hc-blue: #0d6efd;
+      --hc-navy: #001b4b;
+      --hc-soft: #f5f7fb;
+      --hc-border: rgba(0, 27, 75, .12);
+      --hc-text: #111827;
+      --hc-muted: #667085;
+    }
+
+    body.hc-map-booking-page { background: #eef2f7; }
+
+    .booking-step { display: none; }
+    .booking-step.active { display: block; }
+
+    .step-item {
+      border: 1px solid var(--hc-border);
+      border-radius: 1rem;
+      background: #fff;
+      color: var(--hc-muted);
+      min-height: 58px;
+    }
+    .step-item.active { border-color: var(--hc-blue); color: var(--hc-navy); box-shadow: 0 .5rem 1.2rem rgba(13, 110, 253, .12); }
+    .step-item.done { background: rgba(13,110,253,.08); color: var(--hc-blue); }
+    .step-pill { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 999px; background: rgba(13,110,253,.12); color: var(--hc-blue); font-weight: 800; }
+
+    .selection-card { cursor: pointer; border-radius: 1.25rem !important; transition: .2s ease; }
+    .selection-card:hover, .selection-card.selected { border-color: rgba(13,110,253,.55) !important; box-shadow: 0 .9rem 2rem rgba(13,110,253,.12); transform: translateY(-2px); }
+
+    .map-booking-shell {
+      min-height: 760px;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, .06);
+      border-radius: 2rem;
+      overflow: hidden;
+      box-shadow: 0 1rem 3rem rgba(0, 27, 75, .08);
+    }
+
+    .professionals-panel {
+      width: 440px;
+      flex: 0 0 440px;
+      background: #fff;
+      border-right: 1px solid var(--hc-border);
+      overflow-y: auto;
+      max-height: 760px;
+    }
+
+    .map-panel { position: relative; flex: 1 1 auto; min-height: 760px; background: #e9eef6; }
+    #professionalsMap { width: 100%; height: 100%; min-height: 760px; z-index: 1; }
+
+    .map-search-area, .floating-bottom-filters, .map-type-toggle { position: absolute; z-index: 600; }
+    .map-search-area { top: 1.5rem; left: 50%; transform: translateX(-50%); }
+    .map-type-toggle { top: 1.5rem; right: 1.5rem; background: #fff; border: 1px solid var(--hc-border); border-radius: 1rem; padding: .35rem; box-shadow: 0 .7rem 1.5rem rgba(0,27,75,.12); }
+    .floating-bottom-filters { left: 2rem; right: 2rem; bottom: 1.5rem; background: rgba(255,255,255,.94); backdrop-filter: blur(12px); border: 1px solid var(--hc-border); border-radius: 1.2rem; box-shadow: 0 .8rem 2rem rgba(0,27,75,.12); padding: .75rem; overflow-x: auto; }
+
+    .professional-card { border: 1px solid var(--hc-border); border-radius: 1.4rem; background: #fff; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; cursor: pointer; }
+    .professional-card:hover, .professional-card.selected { transform: translateY(-2px); border-color: rgba(13,110,253,.45); box-shadow: 0 .8rem 2rem rgba(13,110,253,.13); }
+    .professional-photo { width: 68px; height: 68px; border-radius: 50%; object-fit: cover; background: #e9ecef; border: 3px solid #fff; box-shadow: 0 .3rem .9rem rgba(0,0,0,.12); flex: 0 0 auto; }
+    .available-badge { background: #e1f8ea; color: #087f3e; border-radius: .8rem; padding: .45rem .75rem; font-weight: 700; font-size: .82rem; white-space: nowrap; }
+    .distance-line, .meta-line { color: var(--hc-muted); font-size: .94rem; }
+    .rating-star { color: #ffab00; }
+
+    .filter-chip { border: 1px solid var(--hc-border); background: #fff; border-radius: .9rem; padding: .75rem 1rem; white-space: nowrap; font-weight: 600; color: var(--hc-text); }
+    .filter-chip.active { color: var(--hc-blue); border-color: rgba(13,110,253,.35); background: rgba(13,110,253,.08); }
+
+    .map-pin-custom { width: 42px; height: 42px; border-radius: 50% 50% 50% 8px; transform: rotate(-45deg); display: grid; place-items: center; color: #fff; border: 4px solid #fff; box-shadow: 0 .4rem 1rem rgba(0,0,0,.25); }
+    .map-pin-custom i { transform: rotate(45deg); font-size: 1rem; }
+    .pin-geriatra { background: #0d6efd; }
+    .pin-enfermagem { background: #18a058; }
+    .pin-fisioterapia { background: #11a683; }
+    .pin-psicologia { background: #6d5dfc; }
+    .pin-nutricao { background: #f59f00; }
+    .pin-cuidador { background: #e03131; }
+
+    .user-location-marker { width: 42px; height: 42px; border-radius: 50%; background: rgba(13,110,253,.22); display: grid; place-items: center; border: 0; }
+    .user-location-marker::after { content: ""; width: 18px; height: 18px; border-radius: 50%; background: #0d6efd; border: 3px solid #fff; box-shadow: 0 .2rem .7rem rgba(13,110,253,.4); }
+
+    .leaflet-popup-content-wrapper { border-radius: 1.2rem; box-shadow: 0 1rem 3rem rgba(0,27,75,.20); }
+    .leaflet-popup-content { margin: 0; width: 330px !important; }
+    .leaflet-popup-tip { box-shadow: none; }
+    .popup-card { padding: 1rem; }
+
+    .suggestions-box { position: absolute; left: 0; right: 0; top: calc(100% + .5rem); background: #fff; border: 1px solid var(--hc-border); border-radius: 1rem; box-shadow: 0 .8rem 2rem rgba(0,27,75,.15); z-index: 700; overflow: hidden; max-height: 280px; overflow-y: auto; }
+    .suggestion-item { width: 100%; border: 0; background: #fff; padding: .9rem 1rem; text-align: left; border-bottom: 1px solid rgba(0,0,0,.05); }
+    .suggestion-item:hover { background: #f8f9fa; }
+    .search-wrapper { position: relative; }
+    .empty-state-card { border: 1px dashed var(--hc-border); border-radius: 1.2rem; padding: 2rem; background: #f8f9fa; text-align: center; }
+
+    @media (max-width: 1199.98px) {
+      .map-booking-shell { display: block !important; }
+      .professionals-panel { width: 100%; max-height: none; border-right: 0; }
+      .map-panel, #professionalsMap { min-height: 640px; }
+    }
+    @media (max-width: 767.98px) {
+      .map-panel, #professionalsMap { min-height: 560px; }
+      .floating-bottom-filters { left: .75rem; right: .75rem; bottom: .75rem; }
+      .map-type-toggle { display: none; }
+      .map-search-area { top: .75rem; width: calc(100% - 1.5rem); }
+      .professionals-panel .p-4 { padding: 1rem !important; }
+    }
+  </style>
 </head>
 
-<body class="hc-consultations-page hc-idoso-module" data-profile-page="idoso">
+<body class="hc-consultations-page hc-idoso-module hc-map-booking-page" data-profile-page="idoso">
   <script>
     try {
       localStorage.setItem("homeCareActiveProfile", "idoso");
       localStorage.setItem("homecare-active-profile", "idoso");
     } catch (error) {}
   </script>
+
   <div id="appHeader"></div>
   <div id="appProfileSwitcher"></div>
 
   <div class="app-layout">
-
     <div id="appSidebar"></div>
 
     <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
-      <div class="container py-4">
-        <section class="row mb-4">
-          <div class="col-12">
-            <div class="card border-0 shadow-sm rounded-4">
-              <div class="card-body p-4 p-lg-5">
-                <div class="row align-items-center g-4">
-                  <div class="col-12 col-lg-8">
-                    <nav aria-label="breadcrumb" class="mb-3">
-                      <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="consultas.html">Consultas</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Agendar</li>
-                      </ol>
-                    </nav>
-                    <span class="badge text-bg-primary fs-6 mb-3">Agendamento guiado</span>
-                    <h1 class="fw-bold mb-3" data-consultas-schedule-title>Agendar consulta</h1>
-                    <p class="hc-profile-note mb-0" data-consultas-schedule-description>Escolha com calma quem será atendido, o tipo de cuidado, o profissional, o melhor horário e confirme tudo antes de salvar.</p>
-                  </div>
-                  <div class="col-12 col-lg-4">
-                    <div class="p-3 rounded-4 bg-light">
-                      <strong class="d-block fs-5 mb-2">Progresso</strong>
-                      <div class="progress mb-2" role="progressbar" aria-label="Progresso do agendamento" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar hc-progress-20" id="progressBar"></div>
-                      </div>
-                      <p class="mb-0 text-muted" id="progressText">Etapa 1 de 5</p>
-                    </div>
-                  </div>
+      <div class="container py-4 px-3 px-lg-4">
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-lg-center">
+              <div>
+                <nav aria-label="breadcrumb" class="mb-2">
+                  <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="consultas.html">Consultas</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Agendar</li>
+                  </ol>
+                </nav>
+                <span class="badge text-bg-primary fs-6 mb-2">Agendamento guiado com mapa</span>
+                <h1 class="fw-bold mb-2">Agendar consulta</h1>
+                <p class="text-muted fs-5 mb-0">Informe o tipo de consulta, data, horário e local. Depois escolha um profissional disponível no mapa.</p>
+              </div>
+              <div class="p-3 rounded-4 bg-light" style="min-width: 260px;">
+                <strong class="d-block fs-5 mb-2">Progresso</strong>
+                <div class="progress mb-2" role="progressbar" aria-label="Progresso do agendamento" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar" id="progressBar" style="width:25%"></div>
                 </div>
+                <p class="mb-0 text-muted" id="progressText">Etapa 1 de 4</p>
               </div>
             </div>
           </div>
@@ -65,399 +164,504 @@
         <section class="card border-0 shadow-sm rounded-4 mb-4">
           <div class="card-body p-3 p-lg-4">
             <div class="d-flex gap-3 desktop-stepper flex-wrap" id="stepper" aria-label="Etapas do agendamento">
-              <button class="btn text-start step-item active" type="button" data-go-step="1"><span class="step-pill me-2">1</span><span class="fw-bold">Pessoa</span></button>
-              <button class="btn text-start step-item" type="button" data-go-step="2"><span class="step-pill me-2">2</span><span class="fw-bold">Consulta</span></button>
+              <button class="btn text-start step-item active" type="button" data-go-step="1"><span class="step-pill me-2">1</span><span class="fw-bold">Consulta</span></button>
+              <button class="btn text-start step-item" type="button" data-go-step="2"><span class="step-pill me-2">2</span><span class="fw-bold">Data e local</span></button>
               <button class="btn text-start step-item" type="button" data-go-step="3"><span class="step-pill me-2">3</span><span class="fw-bold">Profissional</span></button>
-              <button class="btn text-start step-item" type="button" data-go-step="4"><span class="step-pill me-2">4</span><span class="fw-bold">Data e local</span></button>
-              <button class="btn text-start step-item" type="button" data-go-step="5"><span class="step-pill me-2">5</span><span class="fw-bold">Confirmar</span></button>
+              <button class="btn text-start step-item" type="button" data-go-step="4"><span class="step-pill me-2">4</span><span class="fw-bold">Confirmar</span></button>
             </div>
           </div>
         </section>
 
-        <form id="appointmentForm" class="row g-4">
-          <div class="col-12 col-xl-8">
-            <section class="booking-step active" data-step="1">
-              <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4 p-lg-5">
-                  <h2 class="h3 fw-bold mb-3">Quem será atendido?</h2>
-                  <p class="text-muted fs-5 mb-4">Isso ajuda o sistema a mostrar histórico, alertas e preferências corretas para a consulta.</p>
+        <form id="appointmentForm">
+          <section class="booking-step active" data-step="1">
+            <div class="row g-4">
+              <div class="col-12 col-xl-8">
+                <div class="card border-0 shadow-sm rounded-4">
+                  <div class="card-body p-4 p-lg-5">
+                    <h2 class="h3 fw-bold mb-3">Que tipo de consulta você precisa?</h2>
+                    <p class="text-muted fs-5 mb-4">A consulta será agendada para o perfil idoso ativo. Não é necessário escolher outra pessoa.</p>
 
-                  <div class="row g-3">
-                    <div class="col-12 col-md-6">
-                      <div class="card h-100 border selection-card selected" data-select-group="person" data-value="Jaqueline Damian" tabindex="0" role="button">
-                        <div class="card-body p-4">
-                          <div class="d-flex align-items-center gap-3 mb-3">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold hc-avatar-initials-sm">JD</div>
-                            <div>
-                              <h3 class="h5 fw-bold mb-1">Jaqueline Damian</h3>
-                              <p class="mb-0 text-muted">Minha conta</p>
-                            </div>
-                          </div>
-                          <p class="mb-0">Consulta para acompanhamento próprio.</p>
-                        </div>
+                    <div class="row g-3 mb-4">
+                      <div class="col-12 col-md-6">
+                        <label for="appointmentReason" class="form-label fs-5">Motivo principal</label>
+                        <select id="appointmentReason" class="form-select form-select-lg">
+                          <option value="Rotina">Rotina e acompanhamento</option>
+                          <option value="Sintomas recentes">Sintomas recentes</option>
+                          <option value="Retorno">Retorno de consulta</option>
+                          <option value="Receita ou exames">Receita ou exames</option>
+                          <option value="Não sei o que preciso">Não sei o que preciso</option>
+                        </select>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label for="appointmentPriority" class="form-label fs-5">Prioridade</label>
+                        <select id="appointmentPriority" class="form-select form-select-lg">
+                          <option value="Normal">Normal</option>
+                          <option value="Preferencial">Preferencial</option>
+                          <option value="Urgente">Urgente, mas sem emergência</option>
+                        </select>
                       </div>
                     </div>
 
-                    <div class="col-12 col-md-6">
-                      <div class="card h-100 border selection-card" data-select-group="person" data-value="Maria" tabindex="0" role="button">
-                        <div class="card-body p-4">
-                          <div class="d-flex align-items-center gap-3 mb-3">
-                            <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold hc-avatar-initials-sm">DM</div>
-                            <div>
-                              <h3 class="h5 fw-bold mb-1">Maria</h3>
-                              <p class="mb-0 text-muted">Pessoa acompanhada</p>
-                            </div>
-                          </div>
-                          <p class="mb-0">Usar histórico, medicamentos e alertas cadastrados.</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-12">
-                      <a href="permissoes-convidar.html" class="btn btn-outline-primary btn-lg w-100">Cadastrar nova pessoa acompanhada</a>
+                    <div class="row g-3" id="specialtyCards">
+                      <div class="col-12 col-md-6"><div class="card h-100 border selection-card selected" data-specialty-card="Geriatria" tabindex="0" role="button"><div class="card-body p-4"><h3 class="h5 fw-bold">Geriatria</h3><p class="mb-0 text-muted">Acompanhamento integral da pessoa idosa.</p></div></div></div>
+                      <div class="col-12 col-md-6"><div class="card h-100 border selection-card" data-specialty-card="Enfermagem" tabindex="0" role="button"><div class="card-body p-4"><h3 class="h5 fw-bold">Enfermagem</h3><p class="mb-0 text-muted">Cuidados, orientações, curativos e rotina.</p></div></div></div>
+                      <div class="col-12 col-md-6"><div class="card h-100 border selection-card" data-specialty-card="Fisioterapia" tabindex="0" role="button"><div class="card-body p-4"><h3 class="h5 fw-bold">Fisioterapia</h3><p class="mb-0 text-muted">Mobilidade, dor, recuperação e prevenção.</p></div></div></div>
+                      <div class="col-12 col-md-6"><div class="card h-100 border selection-card" data-specialty-card="Psicologia" tabindex="0" role="button"><div class="card-body p-4"><h3 class="h5 fw-bold">Psicologia</h3><p class="mb-0 text-muted">Saúde emocional, ansiedade e acolhimento.</p></div></div></div>
+                      <div class="col-12 col-md-6"><div class="card h-100 border selection-card" data-specialty-card="Nutrição" tabindex="0" role="button"><div class="card-body p-4"><h3 class="h5 fw-bold">Nutrição</h3><p class="mb-0 text-muted">Plano alimentar e acompanhamento nutricional.</p></div></div></div>
+                      <div class="col-12 col-md-6"><div class="card h-100 border selection-card" data-specialty-card="Cuidador" tabindex="0" role="button"><div class="card-body p-4"><h3 class="h5 fw-bold">Cuidador</h3><p class="mb-0 text-muted">Apoio domiciliar para rotina e segurança.</p></div></div></div>
                     </div>
                   </div>
                 </div>
               </div>
-            </section>
 
-            <section class="booking-step" data-step="2">
-              <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4 p-lg-5">
-                  <h2 class="h3 fw-bold mb-3">Que tipo de consulta você precisa?</h2>
-                  <p class="text-muted fs-5 mb-4">Você pode escolher uma especialidade ou usar a opção de orientação se ainda não souber.</p>
+              <aside class="col-12 col-xl-4">
+                <div class="card border-0 shadow-sm rounded-4 sticky-xl-top hc-sticky-summary"><div class="card-body p-4"><h2 class="h4 fw-bold mb-3">Resumo</h2><div class="vstack gap-3" id="sideSummary1"></div></div></div>
+              </aside>
+            </div>
+          </section>
 
-                  <div class="row g-3 mb-4">
-                    <div class="col-12 col-md-6">
-                      <label for="appointmentReason" class="form-label fs-5">Motivo principal</label>
-                      <select id="appointmentReason" class="form-select form-select-lg">
-                        <option value="Rotina">Rotina e acompanhamento</option>
-                        <option value="Sintomas recentes">Sintomas recentes</option>
-                        <option value="Retorno">Retorno de consulta</option>
-                        <option value="Receita ou exames">Receita ou exames</option>
-                        <option value="Não sei o que preciso">Não sei o que preciso</option>
-                      </select>
-                    </div>
-                    <div class="col-12 col-md-6">
-                      <label for="appointmentPriority" class="form-label fs-5">Prioridade</label>
-                      <select id="appointmentPriority" class="form-select form-select-lg">
-                        <option value="Normal">Normal</option>
-                        <option value="Preferencial">Preferencial</option>
-                        <option value="Urgente">Urgente, mas sem emergência</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="row g-3">
-                    <div class="col-12 col-md-6">
-                      <div class="card h-100 border selection-card selected" data-select-group="specialty" data-value="Geriatria" tabindex="0" role="button"><div class="card-body p-4"><h3 class="h5 fw-bold">Geriatria</h3><p class="mb-0 text-muted">Acompanhamento integral da pessoa idosa.</p></div></div>
-                    </div>
-                    <div class="col-12 col-md-6">
-                      <div class="card h-100 border selection-card" data-select-group="specialty" data-value="Enfermagem" tabindex="0" role="button"><div class="card-body p-4"><h3 class="h5 fw-bold">Enfermagem</h3><p class="mb-0 text-muted">Cuidados, orientações, curativos e rotina.</p></div></div>
-                    </div>
-                    <div class="col-12 col-md-6">
-                      <div class="card h-100 border selection-card" data-select-group="specialty" data-value="Fisioterapia" tabindex="0" role="button"><div class="card-body p-4"><h3 class="h5 fw-bold">Fisioterapia</h3><p class="mb-0 text-muted">Mobilidade, dor, recuperação e prevenção.</p></div></div>
-                    </div>
-                    <div class="col-12 col-md-6">
-                      <div class="card h-100 border selection-card" data-select-group="specialty" data-value="Psicologia" tabindex="0" role="button"><div class="card-body p-4"><h3 class="h5 fw-bold">Psicologia</h3><p class="mb-0 text-muted">Saúde emocional, ansiedade e acolhimento.</p></div></div>
+          <section class="booking-step" data-step="2">
+            <div class="row g-4">
+              <div class="col-12 col-xl-8">
+                <div class="card border-0 shadow-sm rounded-4">
+                  <div class="card-body p-4 p-lg-5">
+                    <h2 class="h3 fw-bold mb-3">Data, horário e local</h2>
+                    <p class="text-muted fs-5 mb-4">Essas informações vêm antes do profissional porque a plataforma mostra apenas quem está disponível neste horário e região.</p>
+                    <div class="row g-4">
+                      <div class="col-12 col-md-6">
+                        <label for="appointmentDate" class="form-label fs-5">Data</label>
+                        <input class="form-control form-control-lg" type="date" id="appointmentDate" value="2026-06-08" />
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label for="appointmentTime" class="form-label fs-5">Horário</label>
+                        <select class="form-select form-select-lg" id="appointmentTime">
+                          <option>08:30</option>
+                          <option>10:00</option>
+                          <option>13:30</option>
+                          <option>15:00</option>
+                          <option selected>17:30</option>
+                          <option>19:00</option>
+                        </select>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label for="appointmentFormat" class="form-label fs-5">Tipo de atendimento</label>
+                        <select class="form-select form-select-lg" id="appointmentFormat">
+                          <option value="todos">Todos</option>
+                          <option value="Domiciliar" selected>Presencial em domicílio</option>
+                          <option value="Clínica">Presencial na clínica</option>
+                          <option value="Online">Online</option>
+                        </select>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label for="locationSearch" class="form-label fs-5">Local do atendimento</label>
+                        <div class="search-wrapper">
+                          <input class="form-control form-control-lg" id="locationSearch" type="search" placeholder="Buscar endereço com LocationIQ" value="São Caetano do Sul, SP" autocomplete="off" />
+                          <div id="locationSuggestions" class="suggestions-box d-none"></div>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="alert alert-info rounded-4 fs-5 mb-0">
+                          Depois de continuar, o mapa exibirá profissionais disponíveis para <strong id="dateLocalPreview">08/06/2026 às 17:30</strong> perto do local informado.
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </section>
+              <aside class="col-12 col-xl-4"><div class="card border-0 shadow-sm rounded-4 sticky-xl-top hc-sticky-summary"><div class="card-body p-4"><h2 class="h4 fw-bold mb-3">Resumo</h2><div class="vstack gap-3" id="sideSummary2"></div></div></div></aside>
+            </div>
+          </section>
 
-            <section class="booking-step" data-step="3">
-              <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4 p-lg-5">
-                  <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+          <section class="booking-step" data-step="3">
+            <section class="map-booking-shell d-flex">
+              <aside class="professionals-panel" id="professionalsPanel">
+                <div class="p-4">
+                  <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
                     <div>
-                      <h2 class="h3 fw-bold mb-2">Escolha o profissional</h2>
-                      <p class="text-muted fs-5 mb-0">Todos os exemplos abaixo mostram conselho verificado, avaliação e distância.</p>
+                      <h2 class="h3 fw-bold mb-1">Profissionais disponíveis</h2>
+                      <p class="text-muted mb-0">Filtrados por data, horário e local escolhido</p>
                     </div>
-                    <select id="professionalSort" class="form-select form-select-lg hc-consult-sort">
-                      <option value="recommended">Mais recomendado</option>
-                      <option value="distance">Menor distância</option>
-                      <option value="price">Menor preço</option>
-                      <option value="rating">Melhor avaliação</option>
-                    </select>
+                    <button class="btn btn-outline-secondary rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters" aria-expanded="false" aria-controls="advancedFilters"><i class="bi bi-funnel me-1"></i>Filtros</button>
                   </div>
 
-                  <div class="vstack gap-3" id="professionalsList">
-                    <div class="card border selection-card selected professional-card" data-select-group="professional" data-value="Dra. Helena Moraes" data-distance="2.4" data-price="220" data-rating="4.9" tabindex="0" role="button">
-                      <div class="card-body p-4">
-                        <div class="row g-3 align-items-center">
-                          <div class="col-auto"><div class="rounded-circle bg-light border d-flex align-items-center justify-content-center fw-bold hc-avatar-initials-lg">HM</div></div>
-                          <div class="col"><h3 class="h5 fw-bold mb-1">Dra. Helena Moraes</h3><p class="mb-1 text-muted">Geriatra • CRM ativo verificado</p><p class="mb-0">4,9 de 5 • 128 avaliações • 2,4 km</p></div>
-                          <div class="col-12 col-md-auto text-md-end"><strong class="fs-5">R$ 220</strong><p class="mb-0 text-muted">Presencial ou online</p></div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="card border selection-card professional-card" data-select-group="professional" data-value="Enf. Marcos Lima" data-distance="1.1" data-price="160" data-rating="4.8" tabindex="0" role="button">
-                      <div class="card-body p-4">
-                        <div class="row g-3 align-items-center">
-                          <div class="col-auto"><div class="rounded-circle bg-light border d-flex align-items-center justify-content-center fw-bold hc-avatar-initials-lg">ML</div></div>
-                          <div class="col"><h3 class="h5 fw-bold mb-1">Enf. Marcos Lima</h3><p class="mb-1 text-muted">Enfermagem domiciliar • COREN ativo</p><p class="mb-0">4,8 de 5 • 93 avaliações • 1,1 km</p></div>
-                          <div class="col-12 col-md-auto text-md-end"><strong class="fs-5">R$ 160</strong><p class="mb-0 text-muted">Atendimento domiciliar</p></div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="card border selection-card professional-card" data-select-group="professional" data-value="Dra. Ana Beatriz" data-distance="4.8" data-price="190" data-rating="5.0" tabindex="0" role="button">
-                      <div class="card-body p-4">
-                        <div class="row g-3 align-items-center">
-                          <div class="col-auto"><div class="rounded-circle bg-light border d-flex align-items-center justify-content-center fw-bold hc-avatar-initials-lg">AB</div></div>
-                          <div class="col"><h3 class="h5 fw-bold mb-1">Dra. Ana Beatriz</h3><p class="mb-1 text-muted">Psicóloga • CRP ativo verificado</p><p class="mb-0">5,0 de 5 • 74 avaliações • 4,8 km</p></div>
-                          <div class="col-12 col-md-auto text-md-end"><strong class="fs-5">R$ 190</strong><p class="mb-0 text-muted">Online</p></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section class="booking-step" data-step="4">
-              <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4 p-lg-5">
-                  <h2 class="h3 fw-bold mb-3">Data, horário e local</h2>
-                  <p class="text-muted fs-5 mb-4">Escolha o formato do atendimento e veja uma prévia da localização.</p>
-
-                  <div class="row g-4">
-                    <div class="col-12 col-md-6">
-                      <label for="appointmentDate" class="form-label fs-5">Data</label>
-                      <input type="date" id="appointmentDate" class="form-control form-control-lg" value="2026-04-29" />
-                    </div>
-                    <div class="col-12 col-md-6">
-                      <label for="appointmentFormat" class="form-label fs-5">Formato</label>
-                      <select id="appointmentFormat" class="form-select form-select-lg">
-                        <option value="Presencial em domicílio">Presencial em domicílio</option>
-                        <option value="Presencial na clínica">Presencial na clínica</option>
-                        <option value="Online">Online</option>
+                  <div class="row g-3 mb-3">
+                    <div class="col-12">
+                      <label for="specialtySelect" class="form-label fw-semibold">Tipo de consulta</label>
+                      <select class="form-select form-select-lg" id="specialtySelect">
+                        <option value="todos">Todos os tipos</option>
+                        <option value="Geriatria" selected>Geriatria</option>
+                        <option value="Enfermagem">Enfermagem</option>
+                        <option value="Fisioterapia">Fisioterapia</option>
+                        <option value="Psicologia">Psicologia</option>
+                        <option value="Nutrição">Nutrição</option>
+                        <option value="Cuidador">Cuidador</option>
                       </select>
                     </div>
+                  </div>
 
-                    <div class="col-12">
-                      <label class="form-label fs-5">Horários disponíveis</label>
-                      <div class="d-flex flex-wrap gap-2" id="timeSlots">
-                        <button type="button" class="btn btn-outline-primary btn-lg time-slot selected" data-time="08:30">08:30</button>
-                        <button type="button" class="btn btn-outline-primary btn-lg time-slot" data-time="10:00">10:00</button>
-                        <button type="button" class="btn btn-outline-primary btn-lg time-slot" data-time="13:30">13:30</button>
-                        <button type="button" class="btn btn-outline-primary btn-lg time-slot" data-time="15:00">15:00</button>
-                        <button type="button" class="btn btn-outline-primary btn-lg time-slot" data-time="17:30">17:30</button>
-                      </div>
-                    </div>
+                  <div class="input-group input-group-lg mb-3">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input class="form-control" id="professionalSearch" type="search" placeholder="Buscar por nome, especialidade..." />
+                  </div>
 
-                    <div class="col-12">
-                      <label for="appointmentAddress" class="form-label fs-5">Endereço ou observação do local</label>
-                      <input type="text" id="appointmentAddress" class="form-control form-control-lg" value="Rua das Acácias, 120 - Santos, SP" />
-                    </div>
-
-                    <div class="col-12">
-                      <div class="rounded-4 border map-placeholder p-4">
-                        <div class="map-line route-line-a"></div>
-                        <div class="map-line route-line-b"></div>
-                        <span class="map-pin route-pin-a"></span>
-                        <span class="map-pin bg-success route-pin-b"></span>
-                        <span class="map-pin bg-danger route-pin-c"></span>
-                        <div class="position-absolute bottom-0 start-0 end-0 p-3 bg-white border-top">
-                          <strong>Prévia do deslocamento:</strong> profissional a 2,4 km • chegada estimada em 12 minutos.
-                        </div>
+                  <div class="collapse mb-3" id="advancedFilters">
+                    <div class="card card-body rounded-4 border-0 bg-light">
+                      <div class="row g-3">
+                        <div class="col-6"><label for="distanceFilter" class="form-label">Distância</label><select id="distanceFilter" class="form-select"><option value="999">Qualquer distância</option><option value="2">Até 2 km</option><option value="5" selected>Até 5 km</option><option value="10">Até 10 km</option></select></div>
+                        <div class="col-6"><label for="priceFilter" class="form-label">Preço</label><select id="priceFilter" class="form-select"><option value="9999">Qualquer preço</option><option value="160">Até R$ 160</option><option value="220" selected>Até R$ 220</option><option value="300">Até R$ 300</option></select></div>
+                        <div class="col-6"><label for="ratingFilter" class="form-label">Avaliação mínima</label><select id="ratingFilter" class="form-select"><option value="0">Todas</option><option value="4.5" selected>4,5+</option><option value="4.8">4,8+</option></select></div>
+                        <div class="col-6"><label for="sortFilter" class="form-label">Ordenar por</label><select id="sortFilter" class="form-select"><option value="recommended">Recomendados</option><option value="distance">Menor distância</option><option value="price">Menor preço</option><option value="rating">Melhor avaliação</option></select></div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </section>
 
-            <section class="booking-step" data-step="5">
-              <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4 p-lg-5">
-                  <h2 class="h3 fw-bold mb-3">Confirme o agendamento</h2>
-                  <p class="text-muted fs-5 mb-4">Revise os dados antes de concluir. Depois disso, a consulta aparecerá na agenda.</p>
-
-                  <div class="row g-3 mb-4">
-                    <div class="col-12 col-md-6"><div class="p-3 bg-light rounded-4"><p class="summary-label">Pessoa atendida</p><strong id="confirmPerson">Jaqueline Damian</strong></div></div>
-                    <div class="col-12 col-md-6"><div class="p-3 bg-light rounded-4"><p class="summary-label">Especialidade</p><strong id="confirmSpecialty">Geriatria</strong></div></div>
-                    <div class="col-12 col-md-6"><div class="p-3 bg-light rounded-4"><p class="summary-label">Profissional</p><strong id="confirmProfessional">Dra. Helena Moraes</strong></div></div>
-                    <div class="col-12 col-md-6"><div class="p-3 bg-light rounded-4"><p class="summary-label">Data e horário</p><strong id="confirmDateTime">29/04/2026 às 08:30</strong></div></div>
-                    <div class="col-12"><div class="p-3 bg-light rounded-4"><p class="summary-label">Local</p><strong id="confirmLocation">Presencial em domicílio • Rua das Acácias, 120 - Santos, SP</strong></div></div>
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <strong id="resultCount">0 profissionais</strong>
+                    <button type="button" class="btn btn-link text-decoration-none p-0" id="clearFilters">Limpar filtros</button>
                   </div>
 
-                  <div class="alert alert-info rounded-4 fs-5">
-                    O sistema enviará lembrete para você e poderá notificar familiares autorizados, se houver permissão ativa.
-                  </div>
-
-                  <button type="submit" class="btn btn-success btn-lg w-100">Confirmar consulta</button>
+                  <div class="vstack gap-3" id="professionalsList"></div>
+                  <div class="empty-state-card d-none" id="emptyState"><h3 class="h5 fw-bold">Nenhum profissional encontrado</h3><p class="text-muted mb-3">Tente ampliar a distância, trocar o horário ou limpar os filtros.</p><button type="button" class="btn btn-primary" id="emptyClearFilters">Limpar filtros</button></div>
                 </div>
-              </div>
-            </section>
+              </aside>
 
-            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-4">
-              <button type="button" class="btn btn-outline-secondary btn-lg" id="prevBtn">Voltar</button>
-              <button type="button" class="btn btn-primary btn-lg" id="nextBtn">Continuar</button>
+              <section class="map-panel" aria-label="Mapa de profissionais disponíveis">
+                <div id="professionalsMap"></div>
+                <div class="map-search-area"><button type="button" class="btn btn-light btn-lg rounded-pill shadow-sm border" id="searchThisArea"><i class="bi bi-geo-alt text-primary me-2"></i>Buscar nesta área</button></div>
+                <div class="map-type-toggle"><div class="btn-group" role="group" aria-label="Tipo de mapa"><button class="btn btn-light active" type="button" id="mapTypeDefault">Mapa</button><button class="btn btn-light" type="button" id="mapTypeSatellite">Satélite</button></div></div>
+                <div class="floating-bottom-filters">
+                  <div class="d-flex gap-2 align-items-center">
+                    <button class="filter-chip" type="button" data-chip-specialty="todos"><i class="bi bi-grid-3x3-gap me-2"></i>Todos</button>
+                    <button class="filter-chip active" type="button" data-chip-specialty="Geriatria"><i class="bi bi-heart-pulse text-primary me-2"></i>Geriatria</button>
+                    <button class="filter-chip" type="button" data-chip-specialty="Enfermagem"><i class="bi bi-person-heart text-success me-2"></i>Enfermagem</button>
+                    <button class="filter-chip" type="button" data-chip-specialty="Fisioterapia"><i class="bi bi-person-walking text-success me-2"></i>Fisioterapia</button>
+                    <button class="filter-chip" type="button" data-chip-specialty="Psicologia"><i class="bi bi-chat-heart text-primary me-2"></i>Psicologia</button>
+                    <button class="filter-chip" type="button" data-chip-specialty="Nutrição"><i class="bi bi-egg-fried text-warning me-2"></i>Nutrição</button>
+                    <button class="filter-chip" type="button" data-chip-specialty="Cuidador"><i class="bi bi-house-heart text-danger me-2"></i>Cuidador</button>
+                  </div>
+                </div>
+              </section>
+            </section>
+          </section>
+
+          <section class="booking-step" data-step="4">
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4 p-lg-5">
+                <h2 class="h3 fw-bold mb-3">Confirme o agendamento</h2>
+                <p class="text-muted fs-5 mb-4">Revise os dados antes de concluir. Depois disso, a consulta aparecerá na agenda.</p>
+                <div class="row g-3 mb-4">
+                  <div class="col-12 col-md-6"><div class="p-3 bg-light rounded-4"><p class="summary-label">Tipo</p><strong id="confirmSpecialty">Geriatria</strong></div></div>
+                  <div class="col-12 col-md-6"><div class="p-3 bg-light rounded-4"><p class="summary-label">Data e horário</p><strong id="confirmDateTime">08/06/2026 às 17:30</strong></div></div>
+                  <div class="col-12"><div class="p-3 bg-light rounded-4"><p class="summary-label">Local</p><strong id="confirmLocation">São Caetano do Sul, SP</strong></div></div>
+                  <div class="col-12"><div class="p-3 bg-light rounded-4"><p class="summary-label">Profissional</p><strong id="confirmProfessional">Selecione um profissional</strong></div></div>
+                </div>
+                <div class="alert alert-info rounded-4 fs-5">O sistema enviará lembrete e adicionará a consulta à sua agenda.</div>
+                <button type="submit" class="btn btn-success btn-lg w-100">Confirmar consulta</button>
+              </div>
             </div>
+          </section>
+
+          <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-4">
+            <button type="button" class="btn btn-outline-secondary btn-lg" id="prevBtn">Voltar</button>
+            <button type="button" class="btn btn-primary btn-lg" id="nextBtn">Continuar</button>
           </div>
-
-          <aside class="col-12 col-xl-4">
-            <div class="card border-0 shadow-sm rounded-4 sticky-xl-top hc-sticky-summary">
-              <div class="card-body p-4">
-                <h2 class="h4 fw-bold mb-3">Resumo</h2>
-                <div class="vstack gap-3">
-                  <div><p class="summary-label">Pessoa</p><strong id="summaryPerson">Jaqueline Damian</strong></div>
-                  <div><p class="summary-label">Tipo</p><strong id="summarySpecialty">Geriatria</strong></div>
-                  <div><p class="summary-label">Profissional</p><strong id="summaryProfessional">Dra. Helena Moraes</strong></div>
-                  <div><p class="summary-label">Quando</p><strong id="summaryDateTime">29/04/2026 às 08:30</strong></div>
-                  <div><p class="summary-label">Formato</p><strong id="summaryFormat">Presencial em domicílio</strong></div>
-                </div>
-                <hr />
-                <a href="consultas.html" class="btn btn-outline-primary w-100">Ver minhas consultas</a>
-              </div>
-            </div>
-          </aside>
         </form>
       </div>
     </main>
   </div>
 
+  <div id="appFooter"></div>
+
   <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-4 border-0 shadow">
-        <div class="modal-header border-0">
-          <h2 class="modal-title h4 fw-bold" id="successModalLabel">Consulta agendada</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body fs-5">
-          Tudo certo. A consulta foi adicionada à agenda e os lembretes foram ativados.
-        </div>
-        <div class="modal-footer border-0">
-          <a href="consultas.html" class="btn btn-primary btn-lg">Voltar para consultas</a>
-          <a href="agenda.html" class="btn btn-outline-primary btn-lg">Ver agenda</a>
-        </div>
-      </div>
-    </div>
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content rounded-4 border-0 shadow"><div class="modal-header border-0"><h2 class="modal-title h4 fw-bold" id="successModalLabel">Consulta agendada</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div><div class="modal-body fs-5" id="successText">Tudo certo. A consulta foi adicionada à agenda.</div><div class="modal-footer border-0"><a href="consultas.html" class="btn btn-primary btn-lg">Voltar para consultas</a><a href="agenda.html" class="btn btn-outline-primary btn-lg">Ver agenda</a></div></div></div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const state = {
-      step: 1,
-      person: 'Jaqueline Damian',
-      specialty: 'Geriatria',
-      professional: 'Dra. Helena Moraes',
-      time: '08:30'
-    };
+    const LOCATIONIQ_KEY = "COLE_SUA_CHAVE_LOCATIONIQ_AQUI";
 
-    const steps = document.querySelectorAll('.booking-step');
-    const stepButtons = document.querySelectorAll('[data-go-step]');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
+    const state = { step: 1, selectedProfessionalId: null, userLocation: [-23.6229, -46.5548], locationLabel: "São Caetano do Sul, SP", mapReady: false };
 
-    function formatDate(dateValue) {
-      if (!dateValue) return 'Data não selecionada';
-      const [year, month, day] = dateValue.split('-');
-      return `${day}/${month}/${year}`;
+    const professionals = [
+      { id: 1, name: "Dra. Helena Moraes", specialty: "Geriatria", council: "CRM ativo", rating: 4.9, reviews: 128, distance: 1.2, price: 220, format: ["Domiciliar", "Clínica", "Online"], slots: ["08:30", "10:00", "17:30"], lat: -23.6205, lng: -46.5521, photo: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=160&q=80", color: "pin-geriatra", icon: "bi-heart-pulse", note: "Atendimento geriátrico e plano de cuidado." },
+      { id: 2, name: "Enf. Marcos Lima", specialty: "Enfermagem", council: "COREN ativo", rating: 4.8, reviews: 93, distance: 1.5, price: 160, format: ["Domiciliar"], slots: ["10:00", "13:30", "17:30"], lat: -23.6242, lng: -46.5590, photo: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=160&q=80", color: "pin-enfermagem", icon: "bi-person-heart", note: "Cuidados, orientação e curativos em casa." },
+      { id: 3, name: "Juliana Martins", specialty: "Fisioterapia", council: "CREFITO ativo", rating: 5.0, reviews: 74, distance: 2.1, price: 180, format: ["Domiciliar", "Clínica"], slots: ["08:30", "15:00", "17:30"], lat: -23.6291, lng: -46.5482, photo: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=160&q=80", color: "pin-fisioterapia", icon: "bi-person-walking", note: "Mobilidade, dor e reabilitação funcional." },
+      { id: 4, name: "Dra. Camila Oliveira", specialty: "Psicologia", council: "CRP ativo", rating: 5.0, reviews: 128, distance: 2.3, price: 190, format: ["Online", "Clínica"], slots: ["13:30", "15:00", "17:30", "19:00"], lat: -23.6160, lng: -46.5488, photo: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=160&q=80", color: "pin-psicologia", icon: "bi-chat-heart", note: "Acolhimento emocional e ansiedade." },
+      { id: 5, name: "Dra. Patrícia Souza", specialty: "Nutrição", council: "CRN ativo", rating: 4.9, reviews: 96, distance: 2.7, price: 150, format: ["Domiciliar", "Online"], slots: ["08:30", "10:00", "17:30"], lat: -23.6149, lng: -46.5630, photo: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=160&q=80", color: "pin-nutricao", icon: "bi-egg-fried", note: "Plano alimentar para rotina e saúde metabólica." },
+      { id: 6, name: "Carlos Henrique", specialty: "Cuidador", council: "Certificado verificado", rating: 4.7, reviews: 61, distance: 3.0, price: 130, format: ["Domiciliar"], slots: ["08:30", "13:30", "15:00"], lat: -23.6308, lng: -46.5601, photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=160&q=80", color: "pin-cuidador", icon: "bi-house-heart", note: "Apoio domiciliar para rotina e segurança." },
+      { id: 7, name: "Dr. Roberto Nunes", specialty: "Geriatria", council: "CRM ativo", rating: 4.8, reviews: 84, distance: 3.4, price: 260, format: ["Clínica", "Online"], slots: ["10:00", "15:00", "17:30"], lat: -23.6177, lng: -46.5404, photo: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=160&q=80", color: "pin-geriatra", icon: "bi-heart-pulse", note: "Avaliação clínica e prevenção de quedas." },
+      { id: 8, name: "Enf. Aline Rocha", specialty: "Enfermagem", council: "COREN ativo", rating: 4.9, reviews: 117, distance: 3.8, price: 170, format: ["Domiciliar"], slots: ["08:30", "17:30", "19:00"], lat: -23.6122, lng: -46.5526, photo: "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?auto=format&fit=crop&w=160&q=80", color: "pin-enfermagem", icon: "bi-person-heart", note: "Administração de medicamentos e sinais vitais." },
+      { id: 9, name: "Fernanda Costa", specialty: "Fisioterapia", council: "CREFITO ativo", rating: 4.9, reviews: 88, distance: 4.2, price: 210, format: ["Domiciliar"], slots: ["10:00", "13:30", "17:30"], lat: -23.6358, lng: -46.5516, photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=160&q=80", color: "pin-fisioterapia", icon: "bi-person-walking", note: "Reabilitação, equilíbrio e fortalecimento." },
+      { id: 10, name: "Dra. Larissa Prado", specialty: "Psicologia", council: "CRP ativo", rating: 4.8, reviews: 79, distance: 4.5, price: 175, format: ["Online"], slots: ["15:00", "17:30", "19:00"], lat: -23.6105, lng: -46.5665, photo: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?auto=format&fit=crop&w=160&q=80", color: "pin-psicologia", icon: "bi-chat-heart", note: "Escuta qualificada para idosos e familiares." },
+      { id: 11, name: "Dra. Beatriz Ferraz", specialty: "Nutrição", council: "CRN ativo", rating: 4.7, reviews: 57, distance: 5.2, price: 145, format: ["Clínica", "Online"], slots: ["08:30", "13:30", "15:00"], lat: -23.6078, lng: -46.5449, photo: "https://images.unsplash.com/photo-1592621385612-4d7129426394?auto=format&fit=crop&w=160&q=80", color: "pin-nutricao", icon: "bi-egg-fried", note: "Nutrição para diabetes, pressão e rotina alimentar." },
+      { id: 12, name: "Mariana Alves", specialty: "Cuidador", council: "Certificado verificado", rating: 4.9, reviews: 103, distance: 5.8, price: 120, format: ["Domiciliar"], slots: ["08:30", "10:00", "13:30", "17:30"], lat: -23.6412, lng: -46.5675, photo: "https://images.unsplash.com/photo-1590650153855-d9e808231d41?auto=format&fit=crop&w=160&q=80", color: "pin-cuidador", icon: "bi-house-heart", note: "Acompanhamento em casa e apoio em consultas." },
+      { id: 13, name: "Dr. Paulo Mendes", specialty: "Geriatria", council: "CRM ativo", rating: 4.6, reviews: 46, distance: 6.4, price: 300, format: ["Clínica"], slots: ["10:00", "15:00"], lat: -23.6030, lng: -46.5606, photo: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=160&q=80", color: "pin-geriatra", icon: "bi-heart-pulse", note: "Consulta clínica completa e prescrição." },
+      { id: 14, name: "Fisio Rafael Torres", specialty: "Fisioterapia", council: "CREFITO ativo", rating: 4.8, reviews: 68, distance: 6.8, price: 165, format: ["Domiciliar", "Clínica"], slots: ["08:30", "17:30", "19:00"], lat: -23.6438, lng: -46.5400, photo: "https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?auto=format&fit=crop&w=160&q=80", color: "pin-fisioterapia", icon: "bi-person-walking", note: "Fisioterapia neurológica e funcional." }
+    ];
+
+    const steps = document.querySelectorAll(".booking-step");
+    const stepButtons = document.querySelectorAll("[data-go-step]");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const specialtySelect = document.getElementById("specialtySelect");
+    const formatSelect = document.getElementById("appointmentFormat");
+    const dateInput = document.getElementById("appointmentDate");
+    const timeSelect = document.getElementById("appointmentTime");
+    const locationSearch = document.getElementById("locationSearch");
+    const suggestionsEl = document.getElementById("locationSuggestions");
+    const distanceFilter = document.getElementById("distanceFilter");
+    const priceFilter = document.getElementById("priceFilter");
+    const ratingFilter = document.getElementById("ratingFilter");
+    const sortFilter = document.getElementById("sortFilter");
+    const professionalSearch = document.getElementById("professionalSearch");
+    const listEl = document.getElementById("professionalsList");
+    const emptyState = document.getElementById("emptyState");
+    const resultCount = document.getElementById("resultCount");
+
+    let map, defaultTiles, satelliteTiles, userMarker, routeLine;
+    const markers = new Map();
+
+    function formatCurrency(value) { return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }); }
+    function formatDate(dateValue) { const [year, month, day] = dateValue.split("-"); return `${day}/${month}/${year}`; }
+    function normalize(text) { return String(text || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+    function selectedSpecialtyText() { return specialtySelect.value === "todos" ? "Todos os tipos" : specialtySelect.value; }
+
+    function setStep(step) {
+      state.step = Math.max(1, Math.min(4, step));
+      steps.forEach(item => item.classList.toggle("active", Number(item.dataset.step) === state.step));
+      stepButtons.forEach(button => {
+        const value = Number(button.dataset.goStep);
+        button.classList.toggle("active", value === state.step);
+        button.classList.toggle("done", value < state.step);
+      });
+      const progress = state.step * 25;
+      progressBar.style.width = progress + "%";
+      progressBar.parentElement.setAttribute("aria-valuenow", progress);
+      progressText.textContent = `Etapa ${state.step} de 4`;
+      prevBtn.disabled = state.step === 1;
+      nextBtn.classList.toggle("d-none", state.step === 4);
+      updateSummary();
+      if (state.step === 3) setTimeout(initMapIfNeeded, 120);
+      document.getElementById("conteudo-principal").focus({ preventScroll: true });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    stepButtons.forEach(button => button.addEventListener("click", () => setStep(Number(button.dataset.goStep))));
+    prevBtn.addEventListener("click", () => setStep(state.step - 1));
+    nextBtn.addEventListener("click", () => setStep(state.step + 1));
+
+    document.querySelectorAll("[data-specialty-card]").forEach(card => {
+      card.addEventListener("click", () => {
+        document.querySelectorAll("[data-specialty-card]").forEach(item => item.classList.remove("selected"));
+        card.classList.add("selected");
+        specialtySelect.value = card.dataset.specialtyCard;
+        syncChips();
+        renderAll();
+        updateSummary();
+      });
+      card.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); card.click(); } });
+    });
+
+    function getLocationIQTileUrl() {
+      if (!LOCATIONIQ_KEY || LOCATIONIQ_KEY.includes("COLE_SUA_CHAVE")) return null;
+      return `https://tiles.locationiq.com/v3/streets/r/{z}/{x}/{y}.png?key=${LOCATIONIQ_KEY}`;
+    }
+
+    function initMapIfNeeded() {
+      if (state.mapReady) { map.invalidateSize(); renderAll(); return; }
+      map = L.map("professionalsMap", { zoomControl: false }).setView(state.userLocation, 14);
+      L.control.zoom({ position: "bottomright" }).addTo(map);
+      defaultTiles = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; OpenStreetMap" }).addTo(map);
+      satelliteTiles = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { maxZoom: 17, attribution: "&copy; OpenTopoMap" });
+      const locationIQTileUrl = getLocationIQTileUrl();
+      if (locationIQTileUrl) { map.removeLayer(defaultTiles); L.tileLayer(locationIQTileUrl, { maxZoom: 18, attribution: "&copy; LocationIQ & OpenStreetMap" }).addTo(map); }
+      initUserMarker();
+      bindMapButtons();
+      state.mapReady = true;
+      setTimeout(() => map.invalidateSize(), 100);
+      renderAll();
+    }
+
+    function userIcon() { return L.divIcon({ className: "", html: '<div class="user-location-marker"></div>', iconSize: [42, 42], iconAnchor: [21, 21] }); }
+    function markerIcon(pro) { return L.divIcon({ className: "", html: `<div class="map-pin-custom ${pro.color}"><i class="bi ${pro.icon}"></i></div>`, iconSize: [42, 42], iconAnchor: [21, 42], popupAnchor: [0, -38] }); }
+    function initUserMarker() { if (!map) return; if (userMarker) map.removeLayer(userMarker); userMarker = L.marker(state.userLocation, { icon: userIcon(), interactive: false }).addTo(map); }
+
+    function getFilteredProfessionals() {
+      const specialty = specialtySelect.value;
+      const format = formatSelect.value;
+      const time = timeSelect.value;
+      const maxDistance = Number(distanceFilter.value);
+      const maxPrice = Number(priceFilter.value);
+      const minRating = Number(ratingFilter.value);
+      const term = normalize(professionalSearch.value);
+      let results = professionals.filter(pro => {
+        const matchSpecialty = specialty === "todos" || pro.specialty === specialty;
+        const matchFormat = format === "todos" || pro.format.includes(format);
+        const matchTime = pro.slots.includes(time);
+        const matchDistance = pro.distance <= maxDistance;
+        const matchPrice = pro.price <= maxPrice;
+        const matchRating = pro.rating >= minRating;
+        const matchTerm = !term || normalize([pro.name, pro.specialty, pro.council, pro.note].join(" ")).includes(term);
+        return matchSpecialty && matchFormat && matchTime && matchDistance && matchPrice && matchRating && matchTerm;
+      });
+      const sortType = sortFilter.value;
+      results.sort((a,b) => sortType === "distance" ? a.distance - b.distance : sortType === "price" ? a.price - b.price : sortType === "rating" ? b.rating - a.rating : (b.rating * 10 - b.distance) - (a.rating * 10 - a.distance));
+      return results;
+    }
+
+    function createProfessionalCard(pro) {
+      return `<article class="professional-card p-3 ${state.selectedProfessionalId === pro.id ? 'selected' : ''}" tabindex="0" role="button" data-professional-id="${pro.id}"><div class="d-flex gap-3 align-items-start"><img class="professional-photo" src="${pro.photo}" alt="Foto de ${pro.name}" /><div class="flex-grow-1 min-w-0"><div class="d-flex justify-content-between gap-2 align-items-start mb-1"><div><h3 class="h5 fw-bold mb-1">${pro.name}</h3><a href="profissional-perfil.html" class="text-decoration-none fw-semibold">${pro.specialty}</a></div><span class="available-badge">Disponível</span></div><p class="meta-line mb-1"><i class="bi bi-patch-check text-primary me-1"></i>${pro.council}</p><p class="mb-1"><i class="bi bi-star-fill rating-star me-1"></i>${pro.rating.toFixed(1).replace('.', ',')} <span class="text-muted">(${pro.reviews} avaliações)</span></p><p class="distance-line mb-1"><i class="bi bi-geo-alt me-1"></i>${pro.distance.toFixed(1).replace('.', ',')} km de você • ${Math.round(pro.distance * 7 + 4)} min</p><p class="distance-line mb-2"><i class="bi bi-camera-video me-1"></i>${pro.format.join(' ou ')}</p><div class="d-flex justify-content-between align-items-center gap-2"><strong>${formatCurrency(pro.price)}</strong><i class="bi bi-chevron-right text-muted fs-5"></i></div></div></div></article>`;
+    }
+
+    function popupContent(pro) {
+      return `<div class="popup-card"><div class="d-flex gap-3 align-items-start mb-3"><img class="professional-photo" src="${pro.photo}" alt="Foto de ${pro.name}" /><div class="flex-grow-1"><div class="d-flex justify-content-between gap-2 align-items-start"><div><h3 class="h5 fw-bold mb-1">${pro.name}</h3><a href="profissional-perfil.html" class="text-decoration-none fw-semibold">${pro.specialty}</a></div><span class="available-badge">Disponível</span></div><p class="mb-1"><i class="bi bi-star-fill rating-star me-1"></i>${pro.rating.toFixed(1).replace('.', ',')} <span class="text-muted">(${pro.reviews} avaliações)</span></p><p class="distance-line mb-1"><i class="bi bi-geo-alt me-1"></i>${pro.distance.toFixed(1).replace('.', ',')} km de você • ${Math.round(pro.distance * 7 + 4)} min</p><p class="distance-line mb-0">${pro.note}</p></div></div><div class="d-grid gap-2 d-sm-flex"><a href="profissional-perfil.html" class="btn btn-primary flex-fill">Ver perfil</a><button type="button" class="btn btn-outline-primary flex-fill" onclick="selectProfessional(${pro.id}, true)">Selecionar</button></div></div>`;
+    }
+
+    function renderList(results) {
+      listEl.innerHTML = results.map(createProfessionalCard).join("");
+      resultCount.textContent = `${results.length} profissional${results.length === 1 ? '' : 'is'}`;
+      emptyState.classList.toggle("d-none", results.length > 0);
+    }
+
+    function renderMarkers(results) {
+      if (!map) return;
+      markers.forEach(marker => map.removeLayer(marker));
+      markers.clear();
+      if (routeLine) map.removeLayer(routeLine);
+      routeLine = null;
+      results.forEach(pro => {
+        const marker = L.marker([pro.lat, pro.lng], { icon: markerIcon(pro), title: pro.name }).addTo(map).bindPopup(popupContent(pro));
+        marker.on("click", () => selectProfessional(pro.id, false));
+        markers.set(pro.id, marker);
+      });
+      const boundsPoints = results.map(pro => [pro.lat, pro.lng]);
+      boundsPoints.push(state.userLocation);
+      if (boundsPoints.length > 1) map.fitBounds(boundsPoints, { padding: [70, 70], maxZoom: 14 });
+    }
+
+    function selectProfessional(id, closePopup) {
+      const pro = professionals.find(item => item.id === Number(id));
+      if (!pro) return;
+      state.selectedProfessionalId = pro.id;
+      document.querySelectorAll(".professional-card").forEach(card => card.classList.toggle("selected", Number(card.dataset.professionalId) === pro.id));
+      updateSummary();
+      if (map) {
+        drawRoute(pro);
+        const marker = markers.get(pro.id);
+        if (marker) { map.setView([pro.lat, pro.lng], 15, { animate: true }); if (!closePopup) marker.openPopup(); }
+      }
+    }
+    window.selectProfessional = selectProfessional;
+
+    function drawRoute(pro) {
+      if (!map) return;
+      if (routeLine) map.removeLayer(routeLine);
+      routeLine = L.polyline([state.userLocation, [pro.lat, pro.lng]], { color: "#0d6efd", weight: 4, opacity: .85, dashArray: "8 8" }).addTo(map);
+    }
+
+    function renderAll() {
+      const results = getFilteredProfessionals();
+      if (!results.some(pro => pro.id === state.selectedProfessionalId)) state.selectedProfessionalId = results[0]?.id || null;
+      if (listEl) renderList(results);
+      if (map) renderMarkers(results);
+      if (state.selectedProfessionalId) selectProfessional(state.selectedProfessionalId, true);
+      updateSummary();
     }
 
     function updateSummary() {
-      const date = document.getElementById('appointmentDate').value;
-      const format = document.getElementById('appointmentFormat').value;
-      const address = document.getElementById('appointmentAddress').value;
-      const dateTime = `${formatDate(date)} às ${state.time}`;
-
-      document.getElementById('summaryPerson').textContent = state.person;
-      document.getElementById('summarySpecialty').textContent = state.specialty;
-      document.getElementById('summaryProfessional').textContent = state.professional;
-      document.getElementById('summaryDateTime').textContent = dateTime;
-      document.getElementById('summaryFormat').textContent = format;
-
-      document.getElementById('confirmPerson').textContent = state.person;
-      document.getElementById('confirmSpecialty').textContent = state.specialty;
-      document.getElementById('confirmProfessional').textContent = state.professional;
-      document.getElementById('confirmDateTime').textContent = dateTime;
-      document.getElementById('confirmLocation').textContent = `${format} • ${address}`;
+      const selected = professionals.find(pro => pro.id === state.selectedProfessionalId);
+      const professionalText = selected ? `${selected.name} • ${selected.distance.toFixed(1).replace('.', ',')} km • ${formatCurrency(selected.price)}` : "Selecione um profissional";
+      const html = `<div><p class="summary-label">Tipo</p><strong>${selectedSpecialtyText()}</strong></div><div><p class="summary-label">Quando</p><strong>${formatDate(dateInput.value)} às ${timeSelect.value}</strong></div><div><p class="summary-label">Formato</p><strong>${formatSelect.options[formatSelect.selectedIndex].text}</strong></div><div><p class="summary-label">Local</p><strong>${state.locationLabel}</strong></div><div class="p-3 bg-light rounded-4"><p class="summary-label">Profissional</p><strong>${professionalText}</strong></div>`;
+      const side1 = document.getElementById("sideSummary1");
+      const side2 = document.getElementById("sideSummary2");
+      if (side1) side1.innerHTML = html;
+      if (side2) side2.innerHTML = html;
+      const preview = document.getElementById("dateLocalPreview");
+      if (preview) preview.textContent = `${formatDate(dateInput.value)} às ${timeSelect.value}`;
+      const cs = document.getElementById("confirmSpecialty"); if (cs) cs.textContent = selectedSpecialtyText();
+      const cd = document.getElementById("confirmDateTime"); if (cd) cd.textContent = `${formatDate(dateInput.value)} às ${timeSelect.value}`;
+      const cl = document.getElementById("confirmLocation"); if (cl) cl.textContent = `${formatSelect.options[formatSelect.selectedIndex].text} • ${state.locationLabel}`;
+      const cp = document.getElementById("confirmProfessional"); if (cp) cp.textContent = professionalText;
     }
 
-    function setStep(step) {
-      state.step = Math.max(1, Math.min(5, step));
-      steps.forEach(item => item.classList.toggle('active', Number(item.dataset.step) === state.step));
-      stepButtons.forEach(button => {
-        const value = Number(button.dataset.goStep);
-        button.classList.toggle('active', value === state.step);
-        button.classList.toggle('done', value < state.step);
-      });
-      const progress = state.step * 20;
-      progressBar.classList.remove('hc-progress-20', 'hc-progress-40', 'hc-progress-60', 'hc-progress-80', 'hc-progress-100');
-      progressBar.classList.add(`hc-progress-${progress}`);
-      progressBar.parentElement.setAttribute('aria-valuenow', progress);
-      progressText.textContent = `Etapa ${state.step} de 5`;
-      prevBtn.disabled = state.step === 1;
-      nextBtn.classList.toggle('d-none', state.step === 5);
+    function syncChips() {
+      document.querySelectorAll("[data-chip-specialty]").forEach(chip => chip.classList.toggle("active", chip.dataset.chipSpecialty === specialtySelect.value));
+    }
+
+    function clearFilters() {
+      specialtySelect.value = "todos";
+      distanceFilter.value = "10";
+      priceFilter.value = "9999";
+      ratingFilter.value = "0";
+      sortFilter.value = "recommended";
+      professionalSearch.value = "";
+      syncChips();
+      renderAll();
+    }
+
+    [specialtySelect, formatSelect, dateInput, timeSelect].forEach(el => el.addEventListener("change", () => { renderAll(); updateSummary(); }));
+    [distanceFilter, priceFilter, ratingFilter, sortFilter].forEach(el => el.addEventListener("change", renderAll));
+    professionalSearch.addEventListener("input", renderAll);
+    document.getElementById("clearFilters").addEventListener("click", clearFilters);
+    document.getElementById("emptyClearFilters").addEventListener("click", clearFilters);
+
+    document.querySelectorAll("[data-chip-specialty]").forEach(chip => chip.addEventListener("click", () => { specialtySelect.value = chip.dataset.chipSpecialty; syncChips(); renderAll(); }));
+    listEl.addEventListener("click", event => { const card = event.target.closest("[data-professional-id]"); if (card) selectProfessional(card.dataset.professionalId, false); });
+    listEl.addEventListener("keydown", event => { if (event.key !== "Enter" && event.key !== " ") return; const card = event.target.closest("[data-professional-id]"); if (!card) return; event.preventDefault(); selectProfessional(card.dataset.professionalId, false); });
+
+    function bindMapButtons() {
+      document.getElementById("searchThisArea").addEventListener("click", () => { const center = map.getCenter(); state.userLocation = [center.lat, center.lng]; state.locationLabel = "Área selecionada no mapa"; locationSearch.value = state.locationLabel; initUserMarker(); renderAll(); });
+      document.getElementById("mapTypeDefault").addEventListener("click", function() { if (satelliteTiles && map.hasLayer(satelliteTiles)) map.removeLayer(satelliteTiles); if (!map.hasLayer(defaultTiles)) defaultTiles.addTo(map); this.classList.add("active"); document.getElementById("mapTypeSatellite").classList.remove("active"); });
+      document.getElementById("mapTypeSatellite").addEventListener("click", function() { if (map.hasLayer(defaultTiles)) map.removeLayer(defaultTiles); satelliteTiles.addTo(map); this.classList.add("active"); document.getElementById("mapTypeDefault").classList.remove("active"); });
+    }
+
+    let autocompleteTimer = null;
+    locationSearch.addEventListener("input", () => {
+      clearTimeout(autocompleteTimer);
+      const query = locationSearch.value.trim();
+      if (query.length < 3) { suggestionsEl.classList.add("d-none"); return; }
+      autocompleteTimer = setTimeout(() => searchLocationIQ(query), 350);
+    });
+
+    async function searchLocationIQ(query) {
+      if (!LOCATIONIQ_KEY || LOCATIONIQ_KEY.includes("COLE_SUA_CHAVE")) {
+        suggestionsEl.innerHTML = `<button type="button" class="suggestion-item" data-lat="-23.6229" data-lon="-46.5548" data-label="São Caetano do Sul, SP">São Caetano do Sul, SP</button><button type="button" class="suggestion-item" data-lat="-23.5505" data-lon="-46.6333" data-label="São Paulo, SP">São Paulo, SP</button><button type="button" class="suggestion-item" data-lat="-23.9618" data-lon="-46.3322" data-label="Santos, SP">Santos, SP</button>`;
+        suggestionsEl.classList.remove("d-none"); return;
+      }
+      const url = new URL("https://api.locationiq.com/v1/autocomplete");
+      url.searchParams.set("key", LOCATIONIQ_KEY); url.searchParams.set("q", query); url.searchParams.set("limit", "5"); url.searchParams.set("countrycodes", "br"); url.searchParams.set("normalizeaddress", "1"); url.searchParams.set("format", "json");
+      try {
+        const response = await fetch(url.toString());
+        if (!response.ok) throw new Error("Falha ao buscar endereço");
+        const data = await response.json();
+        suggestionsEl.innerHTML = data.map(item => { const label = item.display_name || item.name; return `<button type="button" class="suggestion-item" data-lat="${item.lat}" data-lon="${item.lon}" data-label="${label.replace(/"/g, '&quot;')}">${label}</button>`; }).join("");
+        suggestionsEl.classList.toggle("d-none", data.length === 0);
+      } catch (error) { suggestionsEl.innerHTML = `<div class="p-3 text-muted">Não foi possível buscar agora. Verifique a chave da LocationIQ.</div>`; suggestionsEl.classList.remove("d-none"); }
+    }
+
+    suggestionsEl.addEventListener("click", event => {
+      const item = event.target.closest(".suggestion-item"); if (!item) return;
+      state.userLocation = [Number(item.dataset.lat), Number(item.dataset.lon)]; state.locationLabel = item.dataset.label; locationSearch.value = item.dataset.label; suggestionsEl.classList.add("d-none");
+      if (map) { initUserMarker(); map.setView(state.userLocation, 14); renderAll(); }
       updateSummary();
-      document.getElementById('conteudo-principal').focus({ preventScroll: true });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    document.querySelectorAll('.selection-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const group = card.dataset.selectGroup;
-        document.querySelectorAll(`[data-select-group="${group}"]`).forEach(item => item.classList.remove('selected'));
-        card.classList.add('selected');
-        if (group === 'person') state.person = card.dataset.value;
-        if (group === 'specialty') state.specialty = card.dataset.value;
-        if (group === 'professional') state.professional = card.dataset.value;
-        updateSummary();
-      });
-      card.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          card.click();
-        }
-      });
     });
 
-    document.querySelectorAll('.time-slot').forEach(button => {
-      button.addEventListener('click', () => {
-        document.querySelectorAll('.time-slot').forEach(item => item.classList.remove('selected'));
-        button.classList.add('selected');
-        state.time = button.dataset.time;
-        updateSummary();
-      });
-    });
-
-    document.getElementById('professionalSort').addEventListener('change', event => {
-      const list = document.getElementById('professionalsList');
-      const cards = Array.from(list.querySelectorAll('.professional-card'));
-      const sortType = event.target.value;
-      cards.sort((a, b) => {
-        if (sortType === 'distance') return Number(a.dataset.distance) - Number(b.dataset.distance);
-        if (sortType === 'price') return Number(a.dataset.price) - Number(b.dataset.price);
-        if (sortType === 'rating') return Number(b.dataset.rating) - Number(a.dataset.rating);
-        return 0;
-      });
-      cards.forEach(card => list.appendChild(card));
-    });
-
-    document.getElementById('appointmentDate').addEventListener('change', updateSummary);
-    document.getElementById('appointmentFormat').addEventListener('change', updateSummary);
-    document.getElementById('appointmentAddress').addEventListener('input', updateSummary);
-
-    stepButtons.forEach(button => button.addEventListener('click', () => setStep(Number(button.dataset.goStep))));
-    prevBtn.addEventListener('click', () => setStep(state.step - 1));
-    nextBtn.addEventListener('click', () => setStep(state.step + 1));
-
-    document.getElementById('appointmentForm').addEventListener('submit', event => {
+    document.getElementById("appointmentForm").addEventListener("submit", event => {
       event.preventDefault();
-      updateSummary();
-      const modal = new bootstrap.Modal(document.getElementById('successModal'));
-      modal.show();
+      const selected = professionals.find(pro => pro.id === state.selectedProfessionalId);
+      if (!selected) { setStep(3); return; }
+      document.getElementById("successText").textContent = `Consulta com ${selected.name} agendada para ${formatDate(dateInput.value)} às ${timeSelect.value}, em ${state.locationLabel}.`;
+      new bootstrap.Modal(document.getElementById("successModal")).show();
     });
 
+    syncChips();
     updateSummary();
     setStep(1);
   </script>
-  <script src="../../js/pages/consultas-profile.js"></script>
+
   <script src="../../js/app-shell.js?v=20260524"></script>
   <script src="../../js/profile-switcher.js?v=20260524d"></script>
   <script src="../../js/header.js"></script>
