@@ -87,6 +87,85 @@
     .hc-soft-success { background: rgba(25, 135, 84, .12); }
     .hc-soft-danger { background: rgba(220, 53, 69, .10); }
     .hc-soft-info { background: rgba(13, 202, 240, .12); }
+
+
+    /* Correção da rotina no modo de alto contraste.
+       O app pode ativar contraste por classe, atributo ou tema escuro;
+       por isso os seletores abaixo cobrem os nomes mais comuns e um fallback via JS. */
+    .hc-idoso-routine-card .hc-idoso-list-item {
+      display: flex;
+    }
+
+    body.high-contrast .hc-idoso-routine-card,
+    body.hc-high-contrast .hc-idoso-routine-card,
+    body.hc-contrast .hc-idoso-routine-card,
+    body.contrast .hc-idoso-routine-card,
+    body.contrast-mode .hc-idoso-routine-card,
+    body.alto-contraste .hc-idoso-routine-card,
+    body[data-theme="high-contrast"] .hc-idoso-routine-card,
+    body[data-theme="contrast"] .hc-idoso-routine-card,
+    body[data-bs-theme="dark"] .hc-idoso-routine-card,
+    html[data-bs-theme="dark"] .hc-idoso-routine-card,
+    body[data-contrast="true"] .hc-idoso-routine-card,
+    body[data-accessibility-contrast="high"] .hc-idoso-routine-card,
+    .high-contrast .hc-idoso-routine-card,
+    .hc-high-contrast .hc-idoso-routine-card,
+    .hc-contrast .hc-idoso-routine-card,
+    .contrast .hc-idoso-routine-card,
+    .contrast-mode .hc-idoso-routine-card,
+    .alto-contraste .hc-idoso-routine-card,
+    .hc-force-contrast-fix .hc-idoso-routine-card {
+      background: #121212 !important;
+      border: 1px solid #6f7785 !important;
+      color: #ffffff !important;
+    }
+
+    body.high-contrast .hc-idoso-routine-card .hc-idoso-list-item,
+    body.hc-high-contrast .hc-idoso-routine-card .hc-idoso-list-item,
+    body.hc-contrast .hc-idoso-routine-card .hc-idoso-list-item,
+    body.contrast .hc-idoso-routine-card .hc-idoso-list-item,
+    body.contrast-mode .hc-idoso-routine-card .hc-idoso-list-item,
+    body.alto-contraste .hc-idoso-routine-card .hc-idoso-list-item,
+    body[data-theme="high-contrast"] .hc-idoso-routine-card .hc-idoso-list-item,
+    body[data-theme="contrast"] .hc-idoso-routine-card .hc-idoso-list-item,
+    body[data-bs-theme="dark"] .hc-idoso-routine-card .hc-idoso-list-item,
+    html[data-bs-theme="dark"] .hc-idoso-routine-card .hc-idoso-list-item,
+    body[data-contrast="true"] .hc-idoso-routine-card .hc-idoso-list-item,
+    body[data-accessibility-contrast="high"] .hc-idoso-routine-card .hc-idoso-list-item,
+    .high-contrast .hc-idoso-routine-card .hc-idoso-list-item,
+    .hc-high-contrast .hc-idoso-routine-card .hc-idoso-list-item,
+    .hc-contrast .hc-idoso-routine-card .hc-idoso-list-item,
+    .contrast .hc-idoso-routine-card .hc-idoso-list-item,
+    .contrast-mode .hc-idoso-routine-card .hc-idoso-list-item,
+    .alto-contraste .hc-idoso-routine-card .hc-idoso-list-item,
+    .hc-force-contrast-fix .hc-idoso-routine-card .hc-idoso-list-item {
+      background: #1b1b1b !important;
+      border: 1px solid #8f98a8 !important;
+      color: #ffffff !important;
+    }
+
+    body.high-contrast .hc-idoso-routine-card .text-muted,
+    body.hc-high-contrast .hc-idoso-routine-card .text-muted,
+    body.hc-contrast .hc-idoso-routine-card .text-muted,
+    body.contrast .hc-idoso-routine-card .text-muted,
+    body.contrast-mode .hc-idoso-routine-card .text-muted,
+    body.alto-contraste .hc-idoso-routine-card .text-muted,
+    body[data-theme="high-contrast"] .hc-idoso-routine-card .text-muted,
+    body[data-theme="contrast"] .hc-idoso-routine-card .text-muted,
+    body[data-bs-theme="dark"] .hc-idoso-routine-card .text-muted,
+    html[data-bs-theme="dark"] .hc-idoso-routine-card .text-muted,
+    body[data-contrast="true"] .hc-idoso-routine-card .text-muted,
+    body[data-accessibility-contrast="high"] .hc-idoso-routine-card .text-muted,
+    .high-contrast .hc-idoso-routine-card .text-muted,
+    .hc-high-contrast .hc-idoso-routine-card .text-muted,
+    .hc-contrast .hc-idoso-routine-card .text-muted,
+    .contrast .hc-idoso-routine-card .text-muted,
+    .contrast-mode .hc-idoso-routine-card .text-muted,
+    .alto-contraste .hc-idoso-routine-card .text-muted,
+    .hc-force-contrast-fix .hc-idoso-routine-card .text-muted {
+      color: #f1f5f9 !important;
+      opacity: 1 !important;
+    }
   </style>
 </head>
 
@@ -205,7 +284,7 @@
 
         <section class="row g-4">
           <div class="col-12 col-xl-7">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card border-0 shadow-sm rounded-4 h-100 hc-idoso-routine-card">
               <div class="card-body p-4">
                 <h2 class="h4 fw-bold mb-3">Minha rotina de hoje</h2>
                 <div class="d-grid gap-3">
@@ -277,6 +356,35 @@
           button.classList.add("active");
           button.setAttribute("aria-pressed", "true");
         });
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      function applyRoutineContrastFix() {
+        const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+        const rgb = (bodyBg.match(/\d+/g) || []).slice(0, 3).map(Number);
+        const luminance = rgb.length === 3 ? (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) : 255;
+        const hasContrastFlag = document.body.className.toLowerCase().includes("contrast") ||
+          document.documentElement.className.toLowerCase().includes("contrast") ||
+          document.body.dataset.theme === "contrast" ||
+          document.body.dataset.theme === "high-contrast" ||
+          document.body.dataset.bsTheme === "dark" ||
+          document.documentElement.dataset.bsTheme === "dark" ||
+          document.body.dataset.contrast === "true" ||
+          document.body.dataset.accessibilityContrast === "high";
+
+        document.body.classList.toggle("hc-force-contrast-fix", hasContrastFlag || luminance < 80);
+      }
+
+      applyRoutineContrastFix();
+      new MutationObserver(applyRoutineContrastFix).observe(document.body, {
+        attributes: true,
+        attributeFilter: ["class", "data-theme", "data-bs-theme", "data-contrast", "data-accessibility-contrast"]
+      });
+      new MutationObserver(applyRoutineContrastFix).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class", "data-theme", "data-bs-theme", "data-contrast", "data-accessibility-contrast"]
       });
     });
   </script>

@@ -12,6 +12,272 @@
   <link rel="stylesheet" href="../../css/profile-switcher.css" />
   <link rel="stylesheet" href="../../css/sidebar.css" />
   <link rel="stylesheet" href="../../css/main.css" />
+
+  <style>
+    :root {
+      --hc-primary: #0d6efd;
+      --hc-soft-primary: rgba(13, 110, 253, 0.08);
+      --hc-soft-success: rgba(25, 135, 84, 0.10);
+      --hc-soft-warning: rgba(255, 193, 7, 0.18);
+      --hc-soft-danger: rgba(220, 53, 69, 0.10);
+      --hc-soft-info: rgba(13, 202, 240, 0.12);
+      --hc-border: rgba(15, 23, 42, 0.10);
+      --hc-text: #1f2937;
+      --hc-muted: #6c757d;
+    }
+
+    .dashboard-page {
+      color: var(--hc-text);
+    }
+
+    .page-eyebrow {
+      color: var(--hc-muted);
+      font-size: 1.05rem;
+      margin-bottom: .25rem;
+    }
+
+    .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--hc-soft-primary);
+      color: var(--hc-primary);
+      font-size: 1.45rem;
+      flex: 0 0 auto;
+    }
+
+    .metric-card {
+      min-height: 148px;
+    }
+
+    .metric-card h2,
+    .metric-card .metric-value {
+      font-size: clamp(1.65rem, 2.4vw, 2.15rem);
+      line-height: 1.1;
+    }
+
+    .next-appointment-card {
+      border: 1px solid rgba(13, 110, 253, .22) !important;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+
+    .patient-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--hc-soft-primary);
+      color: var(--hc-primary);
+      font-weight: 800;
+      font-size: 1.2rem;
+      flex: 0 0 auto;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: .4rem;
+    }
+
+    .status-confirmada { background: #198754; }
+    .status-realizada { background: #0d6efd; }
+    .status-cancelada { background: #dc3545; }
+    .status-aberta { background: #ffc107; }
+
+    .appointment-item,
+    .request-item,
+    .recent-patient-item,
+    .alert-item {
+      border: 1px solid var(--hc-border);
+      background: #fff;
+      border-radius: 1rem;
+    }
+
+    .appointment-item:hover,
+    .request-item:hover,
+    .recent-patient-item:hover,
+    .alert-item:hover {
+      border-color: rgba(13, 110, 253, .35);
+    }
+
+    .calendar-grid-week {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(120px, 1fr));
+      gap: .75rem;
+      overflow-x: auto;
+      padding-bottom: .25rem;
+    }
+
+    .calendar-day-card {
+      min-width: 120px;
+      border: 1px solid var(--hc-border);
+      border-radius: 1rem;
+      background: #fff;
+      padding: .9rem;
+    }
+
+    .calendar-day-card.today {
+      border-color: rgba(13, 110, 253, .45);
+      background: #f8fbff;
+    }
+
+    .calendar-event {
+      border-radius: .8rem;
+      padding: .55rem .65rem;
+      font-size: .9rem;
+      line-height: 1.25;
+      margin-top: .55rem;
+      border: 1px solid transparent;
+    }
+
+    .calendar-event.confirmada {
+      background: var(--hc-soft-success);
+      border-color: rgba(25, 135, 84, .2);
+    }
+
+    .calendar-event.realizada {
+      background: var(--hc-soft-primary);
+      border-color: rgba(13, 110, 253, .2);
+    }
+
+    .calendar-event.cancelada {
+      background: var(--hc-soft-danger);
+      border-color: rgba(220, 53, 69, .2);
+      text-decoration: line-through;
+    }
+
+    .calendar-event.aberta {
+      background: var(--hc-soft-warning);
+      border-color: rgba(255, 193, 7, .35);
+    }
+
+    .calendar-month-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(82px, 1fr));
+      gap: .5rem;
+    }
+
+    .month-cell {
+      min-height: 86px;
+      border: 1px solid var(--hc-border);
+      border-radius: .9rem;
+      padding: .55rem;
+      background: #fff;
+      font-size: .9rem;
+    }
+
+    .month-cell.muted {
+      background: #f8f9fa;
+      color: #adb5bd;
+    }
+
+    .month-marker {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: .2rem;
+    }
+
+    .filter-chip {
+      border: 1px solid var(--hc-border);
+      background: #fff;
+      border-radius: 999px;
+      padding: .45rem .85rem;
+      font-size: .95rem;
+      color: var(--hc-text);
+    }
+
+    .filter-chip.active,
+    .filter-chip:hover {
+      border-color: rgba(13, 110, 253, .45);
+      background: var(--hc-soft-primary);
+      color: var(--hc-primary);
+    }
+
+    .rating-pill {
+      background: #fff8e1;
+      color: #8a6400;
+      border: 1px solid rgba(255, 193, 7, .35);
+      border-radius: 999px;
+      padding: .25rem .55rem;
+      font-weight: 700;
+      font-size: .9rem;
+    }
+
+    .map-preview {
+      min-height: 300px;
+      border-radius: 1.25rem;
+      border: 1px solid var(--hc-border);
+      background:
+        linear-gradient(90deg, rgba(13, 110, 253, .07) 1px, transparent 1px),
+        linear-gradient(rgba(13, 110, 253, .07) 1px, transparent 1px),
+        #f8f9fa;
+      background-size: 34px 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .route-line {
+      position: absolute;
+      inset: 26% 16% 22% 12%;
+      border-top: 5px solid rgba(13, 110, 253, .45);
+      border-right: 5px solid rgba(13, 110, 253, .45);
+      border-radius: 0 80px 0 0;
+      transform: rotate(-8deg);
+    }
+
+    .map-pin {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 18px rgba(0,0,0,.12);
+    }
+
+    .map-pin i {
+      transform: rotate(45deg);
+      color: #fff;
+      font-size: 1.1rem;
+    }
+
+    .map-pin.start { left: 16%; top: 58%; background: #198754; }
+    .map-pin.next { right: 22%; top: 24%; background: #0d6efd; }
+    .map-pin.cancel { right: 12%; bottom: 18%; background: #dc3545; }
+
+    .map-card-floating {
+      position: absolute;
+      left: 1rem;
+      right: 1rem;
+      bottom: 1rem;
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--hc-border);
+      border-radius: 1rem;
+      padding: .9rem;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, .08);
+    }
+
+    @media (max-width: 767.98px) {
+      .calendar-month-grid {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+
+      .month-cell {
+        min-height: 74px;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -21,7 +287,7 @@
   <div class="app-layout">
     <div id="appSidebar"></div>
 
-    <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
+    <main class="app-main app-main-with-sidebar dashboard-page" id="conteudo-principal" tabindex="-1">
       <div class="container py-4">
         <div class="toast-container position-fixed top-0 end-0 p-3">
           <div id="appToast" class="toast align-items-center border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
@@ -36,28 +302,599 @@
           <div class="card-body p-4 p-lg-5">
             <div class="row align-items-center g-4">
               <div class="col-12 col-lg-8">
-                <p class="text-muted fs-5 mb-1">Dashboard profissional</p>
+                <p class="page-eyebrow">Dashboard profissional</p>
                 <h1 class="fw-bold mb-3">Resumo do seu módulo profissional</h1>
-                <p class="text-muted fs-5 mb-0">Acompanhe agenda, solicitações, validação, perfis e financeiro em uma visão simples.</p>
+                <p class="text-muted fs-5 mb-0">Acompanhe agenda, solicitações, pacientes, avaliações e financeiro em uma visão simples.</p>
               </div>
               <div class="col-12 col-lg-4">
                 <div class="d-grid gap-2">
                   <a href="atendimentos.html" class="btn btn-primary btn-lg"><i class="bi bi-calendar2-week me-2"></i>Abrir agenda</a>
-                  <a href="meus-perfis.html" class="btn btn-outline-primary btn-lg"><i class="bi bi-person-vcard me-2"></i>Meus perfis</a>
+                  <a href="solicitacoes.html" class="btn btn-outline-primary btn-lg"><i class="bi bi-inbox me-2"></i>Ver solicitações</a>
                 </div>
               </div>
             </div>
           </div>
         </section>
-        <section class="row g-3 mb-4">
-          <div class="col-12 col-md-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><i class="bi bi-calendar-check fs-3"></i><p class="text-muted mb-1 mt-2">Hoje</p><h2 class="fw-bold">3</h2></div></div></div>
-          <div class="col-12 col-md-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><i class="bi bi-inbox fs-3"></i><p class="text-muted mb-1 mt-2">Solicitações</p><h2 class="fw-bold">5</h2></div></div></div>
-          <div class="col-12 col-md-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><i class="bi bi-cash-coin fs-3"></i><p class="text-muted mb-1 mt-2">A receber</p><h2 class="fw-bold">R$ 1.240</h2></div></div></div>
-          <div class="col-12 col-md-3"><div class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><i class="bi bi-shield-check fs-3"></i><p class="text-muted mb-1 mt-2">Validação</p><h2 class="fw-bold fs-4">Em análise</h2></div></div></div>
+
+        <section class="row g-3 mb-4" aria-label="Indicadores do profissional">
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 metric-card h-100">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div>
+                    <p class="text-muted mb-1">Consultas hoje</p>
+                    <h2 class="fw-bold mb-1">3</h2>
+                    <small class="text-success fw-semibold"><i class="bi bi-arrow-up-short"></i> 1 visita domiciliar</small>
+                  </div>
+                  <span class="icon-box"><i class="bi bi-calendar-check"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 metric-card h-100">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div>
+                    <p class="text-muted mb-1">Aguardando confirmação</p>
+                    <h2 class="fw-bold mb-1">5</h2>
+                    <small class="text-muted">2 próximas de até 5 km</small>
+                  </div>
+                  <span class="icon-box"><i class="bi bi-inbox"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 metric-card h-100">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div>
+                    <p class="text-muted mb-1">A receber</p>
+                    <h2 class="fw-bold mb-1">R$ 1.240</h2>
+                    <small class="text-muted">7 atendimentos concluídos</small>
+                  </div>
+                  <span class="icon-box"><i class="bi bi-cash-coin"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 metric-card h-100">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div>
+                    <p class="text-muted mb-1">Sua avaliação</p>
+                    <h2 class="fw-bold mb-1">4,9</h2>
+                    <small class="text-muted">48 avaliações recebidas</small>
+                  </div>
+                  <span class="icon-box"><i class="bi bi-star"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
-        <section class="row g-4">
-          <div class="col-12 col-lg-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h2 class="h4 mb-3">Próximos atendimentos</h2><div class="d-grid gap-3"><div class="p-3 bg-light rounded-4">08:00 • Dona Maria • Avaliação geriátrica</div><div class="p-3 bg-light rounded-4">10:30 • Sr. Antônio • Fisioterapia</div></div></div></div></div>
-          <div class="col-12 col-lg-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h2 class="h4 mb-3">Ações</h2><div class="d-grid gap-2"><a class="btn btn-outline-primary" href="solicitacoes.html">Ver solicitações</a><a class="btn btn-outline-primary" href="financeiro.html">Abrir financeiro</a><a class="btn btn-outline-primary" href="validacao.html">Acompanhar validação</a></div></div></div></div>
+
+        <section class="card border-0 shadow-sm rounded-4 next-appointment-card mb-4" aria-labelledby="proxima-consulta-titulo">
+          <div class="card-body p-4 p-lg-5">
+            <div class="d-flex flex-column flex-xl-row justify-content-between gap-4">
+              <div class="d-flex flex-column flex-md-row gap-3 gap-md-4">
+                <div class="patient-avatar" aria-hidden="true">MS</div>
+                <div>
+                  <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                    <span class="badge text-bg-primary rounded-pill">Próxima consulta</span>
+                    <span class="badge text-bg-light border rounded-pill"><span class="status-dot status-confirmada"></span>Confirmada</span>
+                  </div>
+                  <h2 class="h3 fw-bold mb-2" id="proxima-consulta-titulo">Maria Souza, 72 anos</h2>
+                  <p class="text-muted fs-5 mb-3">Fisioterapia domiciliar • Recuperação pós-operatória • Paciente avaliado: <strong>4,7</strong></p>
+
+                  <div class="row g-3">
+                    <div class="col-6 col-lg-auto">
+                      <small class="text-muted d-block">Data</small>
+                      <strong>Hoje, 14/06</strong>
+                    </div>
+                    <div class="col-6 col-lg-auto">
+                      <small class="text-muted d-block">Horário</small>
+                      <strong>14:30</strong>
+                    </div>
+                    <div class="col-6 col-lg-auto">
+                      <small class="text-muted d-block">Distância</small>
+                      <strong>3,2 km</strong>
+                    </div>
+                    <div class="col-6 col-lg-auto">
+                      <small class="text-muted d-block">Valor</small>
+                      <strong>R$ 180,00</strong>
+                    </div>
+                    <div class="col-12 col-lg-auto">
+                      <small class="text-muted d-block">Endereço</small>
+                      <strong>Rua das Palmeiras, 120</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2 align-self-xl-center" style="min-width: 220px;">
+                <a href="perfil-paciente.html" class="btn btn-primary btn-lg"><i class="bi bi-person-lines-fill me-2"></i>Ver perfil</a>
+                <button type="button" class="btn btn-outline-primary" onclick="mostrarToast('Rota aberta para a próxima consulta.')"><i class="bi bi-geo-alt me-2"></i>Abrir rota</button>
+                <button type="button" class="btn btn-outline-success" onclick="mostrarToast('Atendimento iniciado com segurança.')"><i class="bi bi-play-circle me-2"></i>Iniciar atendimento</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4 mb-4">
+          <div class="col-12 col-xl-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Agenda de próximas consultas</h2>
+                    <p class="text-muted mb-0">Visualize consultas agendadas, realizadas, canceladas e em aberto.</p>
+                  </div>
+                  <div class="btn-group align-self-lg-start" role="group" aria-label="Alternar visualização da agenda">
+                    <button class="btn btn-primary" type="button" data-calendar-view="day">Dia</button>
+                    <button class="btn btn-outline-primary" type="button" data-calendar-view="week">Semana</button>
+                    <button class="btn btn-outline-primary" type="button" data-calendar-view="month">Mês</button>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-4" aria-label="Filtros da agenda">
+                  <button class="filter-chip active" type="button" data-agenda-filter="todos">Todos</button>
+                  <button class="filter-chip" type="button" data-agenda-filter="confirmada"><span class="status-dot status-confirmada"></span>Agendadas</button>
+                  <button class="filter-chip" type="button" data-agenda-filter="realizada"><span class="status-dot status-realizada"></span>Realizadas</button>
+                  <button class="filter-chip" type="button" data-agenda-filter="cancelada"><span class="status-dot status-cancelada"></span>Canceladas</button>
+                  <button class="filter-chip" type="button" data-agenda-filter="aberta"><span class="status-dot status-aberta"></span>Em aberto</button>
+                </div>
+
+                <div id="calendarDayView" class="calendar-view">
+                  <div class="d-grid gap-3">
+                    <article class="appointment-item p-3" data-status="confirmada">
+                      <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                        <div>
+                          <span class="badge text-bg-success rounded-pill mb-2">Agendada</span>
+                          <h3 class="h5 fw-bold mb-1">08:00 • Antônio Lima</h3>
+                          <p class="text-muted mb-0">Avaliação geriátrica • 81 anos • 6,4 km • R$ 220</p>
+                        </div>
+                        <div class="d-flex gap-2 align-items-start">
+                          <a class="btn btn-sm btn-outline-primary" href="perfil-paciente.html">Perfil</a>
+                          <button class="btn btn-sm btn-outline-secondary" type="button" onclick="mostrarToast('Detalhes da consulta abertos.')">Detalhes</button>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="appointment-item p-3" data-status="confirmada">
+                      <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                        <div>
+                          <span class="badge text-bg-success rounded-pill mb-2">Agendada</span>
+                          <h3 class="h5 fw-bold mb-1">14:30 • Maria Souza</h3>
+                          <p class="text-muted mb-0">Fisioterapia domiciliar • 72 anos • 3,2 km • R$ 180</p>
+                        </div>
+                        <div class="d-flex gap-2 align-items-start">
+                          <a class="btn btn-sm btn-primary" href="perfil-paciente.html">Próxima</a>
+                          <button class="btn btn-sm btn-outline-primary" type="button" onclick="mostrarToast('Rota aberta para Maria Souza.')">Rota</button>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="appointment-item p-3" data-status="realizada">
+                      <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                        <div>
+                          <span class="badge text-bg-primary rounded-pill mb-2">Realizada</span>
+                          <h3 class="h5 fw-bold mb-1">Ontem • Helena Prado</h3>
+                          <p class="text-muted mb-0">Cuidados pós-alta • 78 anos • avaliação registrada</p>
+                        </div>
+                        <div class="d-flex gap-2 align-items-start">
+                          <button class="btn btn-sm btn-outline-primary" type="button" onclick="mostrarToast('Resumo do atendimento aberto.')">Resumo</button>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="appointment-item p-3" data-status="cancelada">
+                      <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                        <div>
+                          <span class="badge text-bg-danger rounded-pill mb-2">Cancelada</span>
+                          <h3 class="h5 fw-bold mb-1">Sexta • Roberto Nunes</h3>
+                          <p class="text-muted mb-0">Consulta de enfermagem • cancelada pelo paciente</p>
+                        </div>
+                        <div class="d-flex gap-2 align-items-start">
+                          <button class="btn btn-sm btn-outline-secondary" type="button" onclick="mostrarToast('Motivo do cancelamento aberto.')">Motivo</button>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+
+                <div id="calendarWeekView" class="calendar-view d-none">
+                  <div class="calendar-grid-week">
+                    <div class="calendar-day-card today">
+                      <strong>Hoje</strong>
+                      <small class="text-muted d-block">14/06</small>
+                      <div class="calendar-event confirmada"><strong>08:00</strong><br>Antônio</div>
+                      <div class="calendar-event confirmada"><strong>14:30</strong><br>Maria</div>
+                    </div>
+                    <div class="calendar-day-card">
+                      <strong>Seg</strong>
+                      <small class="text-muted d-block">15/06</small>
+                      <div class="calendar-event aberta"><strong>10:00</strong><br>Solicitação</div>
+                    </div>
+                    <div class="calendar-day-card">
+                      <strong>Ter</strong>
+                      <small class="text-muted d-block">16/06</small>
+                      <div class="calendar-event realizada"><strong>09:00</strong><br>Helena</div>
+                    </div>
+                    <div class="calendar-day-card">
+                      <strong>Qua</strong>
+                      <small class="text-muted d-block">17/06</small>
+                      <div class="calendar-event confirmada"><strong>15:00</strong><br>Osvaldo</div>
+                    </div>
+                    <div class="calendar-day-card">
+                      <strong>Qui</strong>
+                      <small class="text-muted d-block">18/06</small>
+                      <div class="calendar-event cancelada"><strong>11:00</strong><br>Roberto</div>
+                    </div>
+                    <div class="calendar-day-card">
+                      <strong>Sex</strong>
+                      <small class="text-muted d-block">19/06</small>
+                      <div class="calendar-event confirmada"><strong>08:30</strong><br>Cecília</div>
+                    </div>
+                    <div class="calendar-day-card">
+                      <strong>Sáb</strong>
+                      <small class="text-muted d-block">20/06</small>
+                      <div class="calendar-event aberta"><strong>13:00</strong><br>Nova solicitação</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="calendarMonthView" class="calendar-view d-none">
+                  <div class="calendar-month-grid" aria-label="Agenda mensal simplificada">
+                    <div class="month-cell muted">1</div>
+                    <div class="month-cell muted">2</div>
+                    <div class="month-cell">3</div>
+                    <div class="month-cell">4</div>
+                    <div class="month-cell">5 <div class="mt-2"><span class="month-marker status-realizada"></span>1 realizada</div></div>
+                    <div class="month-cell">6</div>
+                    <div class="month-cell">7</div>
+                    <div class="month-cell">8</div>
+                    <div class="month-cell">9 <div class="mt-2"><span class="month-marker status-cancelada"></span>1 cancelada</div></div>
+                    <div class="month-cell">10</div>
+                    <div class="month-cell">11</div>
+                    <div class="month-cell">12 <div class="mt-2"><span class="month-marker status-confirmada"></span>2 agendadas</div></div>
+                    <div class="month-cell">13</div>
+                    <div class="month-cell border-primary">14 <div class="mt-2"><span class="month-marker status-confirmada"></span>3 hoje</div></div>
+                    <div class="month-cell">15 <div class="mt-2"><span class="month-marker status-aberta"></span>1 aberta</div></div>
+                    <div class="month-cell">16</div>
+                    <div class="month-cell">17 <div class="mt-2"><span class="month-marker status-confirmada"></span>1 agendada</div></div>
+                    <div class="month-cell">18</div>
+                    <div class="month-cell">19 <div class="mt-2"><span class="month-marker status-confirmada"></span>1 agendada</div></div>
+                    <div class="month-cell">20</div>
+                    <div class="month-cell">21</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-xl-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Rota do dia</h2>
+                    <p class="text-muted mb-0">Próximas visitas e deslocamentos.</p>
+                  </div>
+                  <span class="badge text-bg-light border rounded-pill">9,6 km</span>
+                </div>
+
+                <div class="map-preview" role="img" aria-label="Mapa ilustrativo com rota das consultas do dia">
+                  <div class="route-line"></div>
+                  <div class="map-pin start"><i class="bi bi-house"></i></div>
+                  <div class="map-pin next"><i class="bi bi-geo-alt-fill"></i></div>
+                  <div class="map-pin cancel"><i class="bi bi-x-lg"></i></div>
+                  <div class="map-card-floating">
+                    <div class="d-flex justify-content-between gap-2">
+                      <div>
+                        <strong>Próxima parada</strong>
+                        <p class="text-muted mb-0 small">Maria Souza • 3,2 km • 18 min</p>
+                      </div>
+                      <button class="btn btn-sm btn-outline-primary" type="button" onclick="mostrarToast('Rota do dia aberta.')">Abrir</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-3">
+                  <button class="btn btn-outline-primary" type="button" onclick="mostrarToast('Todas as rotas foram carregadas.')"><i class="bi bi-signpost-2 me-2"></i>Ver todas as rotas</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4" aria-labelledby="solicitacoes-titulo">
+          <div class="card-body p-4">
+            <div class="d-flex flex-column flex-xl-row justify-content-between gap-3 mb-4">
+              <div>
+                <h2 class="h4 fw-bold mb-1" id="solicitacoes-titulo">Consultas aguardando confirmação</h2>
+                <p class="text-muted mb-0">Analise os dados do paciente antes de aceitar ou recusar o atendimento.</p>
+              </div>
+              <a href="solicitacoes.html" class="btn btn-outline-primary align-self-xl-start"><i class="bi bi-list-check me-2"></i>Ver todas</a>
+            </div>
+
+            <div class="row g-2 mb-4">
+              <div class="col-12 col-md-6 col-xl-3">
+                <label class="form-label" for="filtroDistancia">Distância</label>
+                <select class="form-select" id="filtroDistancia">
+                  <option value="todos">Todas</option>
+                  <option value="5">Até 5 km</option>
+                  <option value="10">Até 10 km</option>
+                  <option value="20">Até 20 km</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 col-xl-3">
+                <label class="form-label" for="filtroIdade">Idade</label>
+                <select class="form-select" id="filtroIdade">
+                  <option value="todos">Todas</option>
+                  <option value="60-69">60 a 69 anos</option>
+                  <option value="70-79">70 a 79 anos</option>
+                  <option value="80+">80 anos ou mais</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 col-xl-3">
+                <label class="form-label" for="filtroServico">Serviço</label>
+                <select class="form-select" id="filtroServico">
+                  <option value="todos">Todos</option>
+                  <option value="fisioterapia">Fisioterapia</option>
+                  <option value="enfermagem">Enfermagem</option>
+                  <option value="geriatria">Avaliação geriátrica</option>
+                  <option value="nutricao">Nutrição</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 col-xl-3">
+                <label class="form-label" for="filtroAvaliacao">Avaliação do paciente</label>
+                <select class="form-select" id="filtroAvaliacao">
+                  <option value="todos">Todas</option>
+                  <option value="4.5">4,5 ou mais</option>
+                  <option value="4.0">4,0 ou mais</option>
+                  <option value="novo">Paciente novo</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="d-grid gap-3" id="requestsList">
+              <article class="request-item p-3 p-lg-4" data-distance="3.8" data-age="72" data-service="fisioterapia" data-rating="4.8">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-lg-4">
+                    <div class="d-flex gap-3 align-items-center">
+                      <div class="patient-avatar">AL</div>
+                      <div>
+                        <h3 class="h5 fw-bold mb-1">Ana Lúcia Pereira</h3>
+                        <p class="text-muted mb-1">72 anos • Paciente avaliado</p>
+                        <span class="rating-pill"><i class="bi bi-star-fill me-1"></i>4,8</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-lg-2">
+                    <small class="text-muted d-block">Serviço</small>
+                    <strong>Fisioterapia</strong>
+                  </div>
+                  <div class="col-6 col-lg-2">
+                    <small class="text-muted d-block">Data e horário</small>
+                    <strong>15/06 • 10:00</strong>
+                  </div>
+                  <div class="col-6 col-lg-1">
+                    <small class="text-muted d-block">Distância</small>
+                    <strong>3,8 km</strong>
+                  </div>
+                  <div class="col-6 col-lg-1">
+                    <small class="text-muted d-block">Valor</small>
+                    <strong>R$ 180</strong>
+                  </div>
+                  <div class="col-12 col-lg-2">
+                    <div class="d-grid gap-2">
+                      <button class="btn btn-primary btn-sm" type="button" onclick="confirmarSolicitacao(this)">Aceitar</button>
+                      <a href="perfil-paciente.html" class="btn btn-outline-secondary btn-sm">Ver perfil</a>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="request-item p-3 p-lg-4" data-distance="9.4" data-age="84" data-service="enfermagem" data-rating="4.2">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-lg-4">
+                    <div class="d-flex gap-3 align-items-center">
+                      <div class="patient-avatar">CM</div>
+                      <div>
+                        <h3 class="h5 fw-bold mb-1">Carlos Menezes</h3>
+                        <p class="text-muted mb-1">84 anos • Paciente avaliado</p>
+                        <span class="rating-pill"><i class="bi bi-star-fill me-1"></i>4,2</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-lg-2">
+                    <small class="text-muted d-block">Serviço</small>
+                    <strong>Enfermagem</strong>
+                  </div>
+                  <div class="col-6 col-lg-2">
+                    <small class="text-muted d-block">Data e horário</small>
+                    <strong>16/06 • 08:30</strong>
+                  </div>
+                  <div class="col-6 col-lg-1">
+                    <small class="text-muted d-block">Distância</small>
+                    <strong>9,4 km</strong>
+                  </div>
+                  <div class="col-6 col-lg-1">
+                    <small class="text-muted d-block">Valor</small>
+                    <strong>R$ 210</strong>
+                  </div>
+                  <div class="col-12 col-lg-2">
+                    <div class="d-grid gap-2">
+                      <button class="btn btn-primary btn-sm" type="button" onclick="confirmarSolicitacao(this)">Aceitar</button>
+                      <a href="perfil-paciente.html" class="btn btn-outline-secondary btn-sm">Ver perfil</a>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="request-item p-3 p-lg-4" data-distance="2.1" data-age="68" data-service="geriatria" data-rating="0">
+                <div class="row g-3 align-items-center">
+                  <div class="col-12 col-lg-4">
+                    <div class="d-flex gap-3 align-items-center">
+                      <div class="patient-avatar">RN</div>
+                      <div>
+                        <h3 class="h5 fw-bold mb-1">Rosa Nascimento</h3>
+                        <p class="text-muted mb-1">68 anos • Primeiro atendimento</p>
+                        <span class="badge text-bg-light border rounded-pill">Paciente novo</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-lg-2">
+                    <small class="text-muted d-block">Serviço</small>
+                    <strong>Avaliação geriátrica</strong>
+                  </div>
+                  <div class="col-6 col-lg-2">
+                    <small class="text-muted d-block">Data e horário</small>
+                    <strong>17/06 • 15:00</strong>
+                  </div>
+                  <div class="col-6 col-lg-1">
+                    <small class="text-muted d-block">Distância</small>
+                    <strong>2,1 km</strong>
+                  </div>
+                  <div class="col-6 col-lg-1">
+                    <small class="text-muted d-block">Valor</small>
+                    <strong>R$ 250</strong>
+                  </div>
+                  <div class="col-12 col-lg-2">
+                    <div class="d-grid gap-2">
+                      <button class="btn btn-primary btn-sm" type="button" onclick="confirmarSolicitacao(this)">Aceitar</button>
+                      <a href="perfil-paciente.html" class="btn btn-outline-secondary btn-sm">Ver perfil</a>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="alert alert-light border rounded-4 mt-3 mb-0 d-none" id="emptyRequests" role="status">
+              Nenhuma solicitação encontrada com os filtros selecionados.
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-4 mb-4">
+          <div class="col-12 col-xl-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Pacientes recentes</h2>
+                    <p class="text-muted mb-0">Últimos atendimentos e notas registradas pelo profissional.</p>
+                  </div>
+                  <a href="pacientes.html" class="btn btn-outline-primary btn-sm">Ver pacientes</a>
+                </div>
+
+                <div class="d-grid gap-3">
+                  <article class="recent-patient-item p-3">
+                    <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                      <div class="d-flex gap-3 align-items-center">
+                        <div class="patient-avatar">HP</div>
+                        <div>
+                          <h3 class="h5 fw-bold mb-1">Helena Prado</h3>
+                          <p class="text-muted mb-0">Último atendimento: ontem • Cuidados pós-alta</p>
+                        </div>
+                      </div>
+                      <div class="text-md-end">
+                        <small class="text-muted d-block">Nota do profissional</small>
+                        <strong>Boa adesão ao plano</strong>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="recent-patient-item p-3">
+                    <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                      <div class="d-flex gap-3 align-items-center">
+                        <div class="patient-avatar">ON</div>
+                        <div>
+                          <h3 class="h5 fw-bold mb-1">Osvaldo Neri</h3>
+                          <p class="text-muted mb-0">Próxima consulta: 17/06 • Fisioterapia respiratória</p>
+                        </div>
+                      </div>
+                      <div class="text-md-end">
+                        <small class="text-muted d-block">Nota do profissional</small>
+                        <strong>Atenção à saturação</strong>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-xl-5">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <h2 class="h4 fw-bold mb-3">Alertas e pendências</h2>
+                <div class="d-grid gap-3">
+                  <div class="alert-item p-3 d-flex gap-3">
+                    <span class="icon-box"><i class="bi bi-chat-dots"></i></span>
+                    <div>
+                      <strong>3 mensagens não lidas</strong>
+                      <p class="text-muted mb-0">Pacientes aguardam retorno sobre preparo e remarcação.</p>
+                    </div>
+                  </div>
+                  <div class="alert-item p-3 d-flex gap-3">
+                    <span class="icon-box"><i class="bi bi-file-earmark-medical"></i></span>
+                    <div>
+                      <strong>2 exames enviados</strong>
+                      <p class="text-muted mb-0">Resultados anexados antes da consulta de hoje.</p>
+                    </div>
+                  </div>
+                  <div class="alert-item p-3 d-flex gap-3">
+                    <span class="icon-box"><i class="bi bi-arrow-repeat"></i></span>
+                    <div>
+                      <strong>1 reagendamento pendente</strong>
+                      <p class="text-muted mb-0">Solicitação precisa ser respondida até o fim do dia.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4">
+          <div class="col-12 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Recebido no mês</p>
+                <h2 class="h4 fw-bold mb-0">R$ 3.860</h2>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Ticket médio</p>
+                <h2 class="h4 fw-bold mb-0">R$ 193</h2>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Consultas concluídas</p>
+                <h2 class="h4 fw-bold mb-0">20</h2>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <p class="text-muted mb-1">Validação</p>
+                <h2 class="h4 fw-bold mb-0">Em análise</h2>
+              </div>
+            </div>
+          </div>
         </section>
       </div>
     </main>
@@ -65,22 +902,122 @@
 
   <div id="appFooter"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+
+  <script>
     function mostrarToast(mensagem) {
       document.getElementById("toastMessage").textContent = mensagem;
       bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
     }
 
+    function confirmarSolicitacao(botao) {
+      const card = botao.closest(".request-item");
+      if (!card) return;
 
+      botao.classList.remove("btn-primary");
+      botao.classList.add("btn-success");
+      botao.innerHTML = '<i class="bi bi-check2-circle me-1"></i>Aceita';
+      botao.disabled = true;
+      mostrarToast("Solicitação aceita e adicionada à agenda.");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const viewButtons = document.querySelectorAll("[data-calendar-view]");
+      const views = {
+        day: document.getElementById("calendarDayView"),
+        week: document.getElementById("calendarWeekView"),
+        month: document.getElementById("calendarMonthView")
+      };
+
+      viewButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          const selectedView = button.getAttribute("data-calendar-view");
+
+          viewButtons.forEach(function (item) {
+            item.classList.remove("btn-primary");
+            item.classList.add("btn-outline-primary");
+          });
+
+          button.classList.add("btn-primary");
+          button.classList.remove("btn-outline-primary");
+
+          Object.keys(views).forEach(function (key) {
+            views[key].classList.toggle("d-none", key !== selectedView);
+          });
+        });
+      });
+
+      const agendaFilterButtons = document.querySelectorAll("[data-agenda-filter]");
+      const appointmentItems = document.querySelectorAll(".appointment-item");
+
+      agendaFilterButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          const status = button.getAttribute("data-agenda-filter");
+
+          agendaFilterButtons.forEach(function (item) {
+            item.classList.remove("active");
+          });
+
+          button.classList.add("active");
+
+          appointmentItems.forEach(function (item) {
+            const itemStatus = item.getAttribute("data-status");
+            item.classList.toggle("d-none", status !== "todos" && itemStatus !== status);
+          });
+        });
+      });
+
+      const filtroDistancia = document.getElementById("filtroDistancia");
+      const filtroIdade = document.getElementById("filtroIdade");
+      const filtroServico = document.getElementById("filtroServico");
+      const filtroAvaliacao = document.getElementById("filtroAvaliacao");
+      const requestCards = document.querySelectorAll("#requestsList .request-item");
+      const emptyRequests = document.getElementById("emptyRequests");
+
+      function requestPassesFilters(card) {
+        const distance = Number(card.dataset.distance);
+        const age = Number(card.dataset.age);
+        const service = card.dataset.service;
+        const rating = Number(card.dataset.rating);
+
+        const distanceValue = filtroDistancia.value;
+        const ageValue = filtroIdade.value;
+        const serviceValue = filtroServico.value;
+        const ratingValue = filtroAvaliacao.value;
+
+        const distanceOk = distanceValue === "todos" || distance <= Number(distanceValue);
+        const serviceOk = serviceValue === "todos" || service === serviceValue;
+
+        let ageOk = true;
+        if (ageValue === "60-69") ageOk = age >= 60 && age <= 69;
+        if (ageValue === "70-79") ageOk = age >= 70 && age <= 79;
+        if (ageValue === "80+") ageOk = age >= 80;
+
+        let ratingOk = true;
+        if (ratingValue === "4.5") ratingOk = rating >= 4.5;
+        if (ratingValue === "4.0") ratingOk = rating >= 4.0;
+        if (ratingValue === "novo") ratingOk = rating === 0;
+
+        return distanceOk && ageOk && serviceOk && ratingOk;
+      }
+
+      function applyRequestFilters() {
+        let visibleCount = 0;
+
+        requestCards.forEach(function (card) {
+          const visible = requestPassesFilters(card);
+          card.classList.toggle("d-none", !visible);
+          if (visible) visibleCount += 1;
+        });
+
+        emptyRequests.classList.toggle("d-none", visibleCount > 0);
+      }
+
+      [filtroDistancia, filtroIdade, filtroServico, filtroAvaliacao].forEach(function (select) {
+        select.addEventListener("change", applyRequestFilters);
+      });
+    });
   </script>
 
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-
-
-});
-</script>
   <script src="../../js/app-shell.js?v=20260524"></script>
   <script src="../../js/profile-switcher.js?v=20260524d"></script>
   <script src="../../js/header.js"></script>

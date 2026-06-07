@@ -82,12 +82,6 @@
       background: #fff;
     }
 
-    .hc-time {
-      font-size: 1.65rem;
-      font-weight: 800;
-      letter-spacing: -.03em;
-    }
-
     .hc-touch-btn {
       min-height: 3.35rem;
       font-size: 1.02rem;
@@ -112,6 +106,54 @@
       color: #0d6efd;
       font-weight: 800;
       flex: 0 0 auto;
+    }
+
+    .hc-vital-value {
+      font-size: clamp(1.65rem, 3vw, 2.25rem);
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -.04em;
+    }
+
+    .hc-status-dot {
+      width: .75rem;
+      height: .75rem;
+      border-radius: 50%;
+      display: inline-block;
+      flex: 0 0 auto;
+    }
+
+    .hc-status-ok { background: #198754; }
+    .hc-status-attention { background: #ffc107; }
+    .hc-status-danger { background: #dc3545; }
+
+    .hc-mini-chart {
+      display: flex;
+      align-items: end;
+      gap: .35rem;
+      height: 3.75rem;
+      padding-top: .5rem;
+    }
+
+    .hc-mini-chart span {
+      flex: 1;
+      min-width: .45rem;
+      border-radius: .5rem .5rem 0 0;
+      background: rgba(13, 110, 253, .24);
+    }
+
+    .hc-person-card {
+      border-left: .35rem solid rgba(13, 110, 253, .45) !important;
+    }
+
+    .hc-average-tabs .btn {
+      min-height: 2.85rem;
+      font-weight: 700;
+    }
+
+    .hc-reading-table td,
+    .hc-reading-table th {
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -149,19 +191,391 @@
           </div>
         </section>
 
-        <section class="card border-0 shadow-sm rounded-4 mb-4">
+        <section class="card border-0 shadow-sm rounded-4 mb-4 hc-familiar-hero">
           <div class="card-body p-4 p-lg-5">
-            <span class="hc-familiar-kicker"><i class="bi bi-activity" aria-hidden="true"></i>Sinais vitais</span>
-            <h1 class="fw-bold hc-familiar-title mb-3">Monitoramento familiar de saúde</h1>
-            <p class="text-muted hc-familiar-lead mb-0">Acompanhe pressão, frequência cardíaca, glicemia e temperatura de forma simples.</p>
+            <div class="row align-items-center g-4">
+              <div class="col-12 col-xl-8">
+                <span class="hc-familiar-kicker"><i class="bi bi-activity" aria-hidden="true"></i>Sinais vitais das pessoas cuidadas</span>
+                <h1 class="fw-bold hc-familiar-title mb-3">Monitoramento familiar de Dona Maria e Sr. João</h1>
+                <p class="text-muted hc-familiar-lead mb-0">Acompanhe pressão, batimentos, glicemia, saturação, temperatura e sono em uma visão única, com médias por período e pontos de atenção destacados.</p>
+              </div>
+              <div class="col-12 col-xl-4">
+                <div class="d-grid gap-3">
+                  <button class="btn btn-primary btn-lg hc-touch-btn" type="button" data-toast="Medição manual registrada como exemplo."><i class="bi bi-plus-circle me-2" aria-hidden="true"></i>Registrar medição</button>
+                  <a href="/pages/familiar/dispositivos.html" class="btn btn-outline-primary btn-lg hc-touch-btn"><i class="bi bi-smartwatch me-2" aria-hidden="true"></i>Ver dispositivos</a>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section class="row g-3">
-          <div class="col-12 col-md-6 col-xl-3"><article class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><p class="text-muted mb-1">Pressão</p><h2 class="fw-bold">12/8</h2><p class="mb-0">Dona Maria · normal</p></div></article></div>
-          <div class="col-12 col-md-6 col-xl-3"><article class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><p class="text-muted mb-1">Batimentos</p><h2 class="fw-bold">76 bpm</h2><p class="mb-0">Sr. João · estável</p></div></article></div>
-          <div class="col-12 col-md-6 col-xl-3"><article class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><p class="text-muted mb-1">Glicemia</p><h2 class="fw-bold">98</h2><p class="mb-0">Dona Maria · em jejum</p></div></article></div>
-          <div class="col-12 col-md-6 col-xl-3"><article class="card border-0 shadow-sm rounded-4"><div class="card-body p-4"><p class="text-muted mb-1">Temperatura</p><h2 class="fw-bold">36,5°</h2><p class="mb-0">Sem febre</p></div></article></div>
+        <section class="row g-3 mb-4" aria-label="Resumo rápido dos sinais vitais">
+          <div class="col-12 col-md-6 col-xl-3">
+            <article class="card border-0 shadow-sm rounded-4 hc-big-card">
+              <div class="card-body p-4">
+                <span class="hc-icon-box mb-3"><i class="bi bi-heart-pulse" aria-hidden="true"></i></span>
+                <p class="text-muted mb-1">Status geral</p>
+                <h2 class="fw-bold h3">1 atenção</h2>
+                <p class="mb-0">Sono da Dona Maria ficou abaixo do ideal.</p>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <article class="card border-0 shadow-sm rounded-4 hc-big-card">
+              <div class="card-body p-4">
+                <span class="hc-icon-box mb-3"><i class="bi bi-droplet-half" aria-hidden="true"></i></span>
+                <p class="text-muted mb-1">Saturação</p>
+                <h2 class="fw-bold h3">96%</h2>
+                <p class="mb-0">Menor registro do dia: Sr. João às 08:20.</p>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <article class="card border-0 shadow-sm rounded-4 hc-big-card">
+              <div class="card-body p-4">
+                <span class="hc-icon-box mb-3"><i class="bi bi-thermometer-half" aria-hidden="true"></i></span>
+                <p class="text-muted mb-1">Temperatura</p>
+                <h2 class="fw-bold h3">Normal</h2>
+                <p class="mb-0">Sem febre nas últimas medições.</p>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <article class="card border-0 shadow-sm rounded-4 hc-big-card">
+              <div class="card-body p-4">
+                <span class="hc-icon-box mb-3"><i class="bi bi-bell" aria-hidden="true"></i></span>
+                <p class="text-muted mb-1">Alertas ativos</p>
+                <h2 class="fw-bold h3">2 avisos</h2>
+                <p class="mb-0">Glicemia pós-refeição e sono irregular.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="row g-4 mb-4" aria-label="Relatórios por pessoa cuidada">
+          <div class="col-12 col-xl-12">
+            <article class="card border-0 shadow-sm rounded-4 h-100 hc-person-card">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-4">
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="hc-avatar">DM</span>
+                    <div>
+                      <h2 class="h4 fw-bold mb-1">Dona Maria</h2>
+                      <p class="text-muted mb-0">Mãe · 78 anos · última leitura às 12:10</p>
+                    </div>
+                  </div>
+                  <span class="badge text-bg-warning rounded-pill px-3 py-2">Atenção leve</span>
+                </div>
+
+                <section class="hc-list-item hc-soft-primary mb-4" aria-label="Médias de sinais vitais da Dona Maria">
+                  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+                    <div>
+                      <h3 class="h5 fw-bold mb-1">Médias da Dona Maria</h3>
+                      <p class="text-muted mb-0" data-average-description="maria">Resumo calculado com base nas últimas 24 horas.</p>
+                    </div>
+                    <div class="btn-group hc-average-tabs" role="group" aria-label="Selecionar período da média da Dona Maria">
+                      <button type="button" class="btn btn-primary active" data-person-average="maria" data-average-period="dia" aria-pressed="true">Último dia</button>
+                      <button type="button" class="btn btn-outline-primary" data-person-average="maria" data-average-period="semana" aria-pressed="false">Semana</button>
+                      <button type="button" class="btn btn-outline-primary" data-person-average="maria" data-average-period="mes" aria-pressed="false">Mês</button>
+                    </div>
+                  </div>
+                  <div class="row g-3">
+                    <div class="col-12 col-sm-6 col-lg-3">
+                      <div class="bg-white rounded-4 p-3 h-100 border">
+                        <p class="text-muted small mb-1">Pressão média</p>
+                        <strong class="fs-4" data-average-field="maria.pressao">13/8</strong>
+                        <div class="small text-success mt-1" data-average-field="maria.pressaoStatus">Normal</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                      <div class="bg-white rounded-4 p-3 h-100 border">
+                        <p class="text-muted small mb-1">Batimentos médios</p>
+                        <strong class="fs-4"><span data-average-field="maria.batimentos">82</span> bpm</strong>
+                        <div class="small text-success mt-1" data-average-field="maria.batimentosStatus">Estável</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                      <div class="bg-white rounded-4 p-3 h-100 border">
+                        <p class="text-muted small mb-1">Glicemia média</p>
+                        <strong class="fs-4"><span data-average-field="maria.glicemia">118</span> mg/dL</strong>
+                        <div class="small text-warning mt-1" data-average-field="maria.glicemiaStatus">Atenção após almoço</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                      <div class="bg-white rounded-4 p-3 h-100 border">
+                        <p class="text-muted small mb-1">Sono médio</p>
+                        <strong class="fs-4" data-average-field="maria.sono">5h50</strong>
+                        <div class="small text-warning mt-1" data-average-field="maria.sonoStatus">Fragmentado</div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap mb-3">
+                  <h3 class="h5 fw-bold mb-0">Últimas medições da Dona Maria</h3>
+                  <span class="badge text-bg-light border rounded-pill px-3 py-2">Leitura atual</span>
+                </div>
+
+                <div class="row g-3 mb-4">
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Pressão</p>
+                      <strong class="fs-4">13/8</strong>
+                      <div class="small text-success mt-1"><span class="hc-status-dot hc-status-ok me-1"></span>Normal</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Batimentos</p>
+                      <strong class="fs-4">82 bpm</strong>
+                      <div class="small text-success mt-1"><span class="hc-status-dot hc-status-ok me-1"></span>Estável</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Glicemia</p>
+                      <strong class="fs-4">118</strong>
+                      <div class="small text-warning mt-1"><span class="hc-status-dot hc-status-attention me-1"></span>Pós-almoço</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Saturação</p>
+                      <strong class="fs-4">97%</strong>
+                      <div class="small text-success mt-1"><span class="hc-status-dot hc-status-ok me-1"></span>Boa</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Temperatura</p>
+                      <strong class="fs-4">36,6°</strong>
+                      <div class="small text-success mt-1"><span class="hc-status-dot hc-status-ok me-1"></span>Sem febre</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Sono</p>
+                      <strong class="fs-4">5h50</strong>
+                      <div class="small text-warning mt-1"><span class="hc-status-dot hc-status-attention me-1"></span>Fragmentado</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hc-list-item hc-soft-warning mb-3">
+                  <strong>Ponto de atenção:</strong> sono abaixo da média nos últimos 3 dias. Recomenda-se observar cansaço, tontura ou confusão ao longo do dia.
+                </div>
+
+                <div class="hc-mini-chart mb-3" aria-label="Tendência de batimentos da Dona Maria">
+                  <span style="height:45%"></span><span style="height:58%"></span><span style="height:52%"></span><span style="height:70%"></span><span style="height:64%"></span><span style="height:60%"></span><span style="height:68%"></span>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                  <a class="btn btn-outline-primary" href="/pages/familiar/perfil-pessoa.html">Ver perfil</a>
+                  <a class="btn btn-outline-primary" href="/pages/familiar/sono.html">Ver sono</a>
+                  <button class="btn btn-outline-secondary" type="button" data-toast="Relatório da Dona Maria preparado para compartilhamento.">Compartilhar relatório</button>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-xl-12">
+            <article class="card border-0 shadow-sm rounded-4 h-100 hc-person-card">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-4">
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="hc-avatar">SJ</span>
+                    <div>
+                      <h2 class="h4 fw-bold mb-1">Sr. João</h2>
+                      <p class="text-muted mb-0">Pai · 82 anos · última leitura às 11:45</p>
+                    </div>
+                  </div>
+                  <span class="badge text-bg-success rounded-pill px-3 py-2">Estável</span>
+                </div>
+
+                <section class="hc-list-item hc-soft-success mb-4" aria-label="Médias de sinais vitais do Sr. João">
+                  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+                    <div>
+                      <h3 class="h5 fw-bold mb-1">Médias do Sr. João</h3>
+                      <p class="text-muted mb-0" data-average-description="joao">Resumo calculado com base nas últimas 24 horas.</p>
+                    </div>
+                    <div class="btn-group hc-average-tabs" role="group" aria-label="Selecionar período da média do Sr. João">
+                      <button type="button" class="btn btn-primary active" data-person-average="joao" data-average-period="dia" aria-pressed="true">Último dia</button>
+                      <button type="button" class="btn btn-outline-primary" data-person-average="joao" data-average-period="semana" aria-pressed="false">Semana</button>
+                      <button type="button" class="btn btn-outline-primary" data-person-average="joao" data-average-period="mes" aria-pressed="false">Mês</button>
+                    </div>
+                  </div>
+                  <div class="row g-3">
+                    <div class="col-12 col-sm-6 col-lg-3">
+                      <div class="bg-white rounded-4 p-3 h-100 border">
+                        <p class="text-muted small mb-1">Pressão média</p>
+                        <strong class="fs-4" data-average-field="joao.pressao">12/7</strong>
+                        <div class="small text-success mt-1" data-average-field="joao.pressaoStatus">Normal</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                      <div class="bg-white rounded-4 p-3 h-100 border">
+                        <p class="text-muted small mb-1">Batimentos médios</p>
+                        <strong class="fs-4"><span data-average-field="joao.batimentos">74</span> bpm</strong>
+                        <div class="small text-success mt-1" data-average-field="joao.batimentosStatus">Estável</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                      <div class="bg-white rounded-4 p-3 h-100 border">
+                        <p class="text-muted small mb-1">Glicemia média</p>
+                        <strong class="fs-4"><span data-average-field="joao.glicemia">96</span> mg/dL</strong>
+                        <div class="small text-success mt-1" data-average-field="joao.glicemiaStatus">Em jejum</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                      <div class="bg-white rounded-4 p-3 h-100 border">
+                        <p class="text-muted small mb-1">Sono médio</p>
+                        <strong class="fs-4" data-average-field="joao.sono">7h10</strong>
+                        <div class="small text-success mt-1" data-average-field="joao.sonoStatus">Regular</div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap mb-3">
+                  <h3 class="h5 fw-bold mb-0">Últimas medições do Sr. João</h3>
+                  <span class="badge text-bg-light border rounded-pill px-3 py-2">Leitura atual</span>
+                </div>
+
+                <div class="row g-3 mb-4">
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Pressão</p>
+                      <strong class="fs-4">12/7</strong>
+                      <div class="small text-success mt-1"><span class="hc-status-dot hc-status-ok me-1"></span>Normal</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Batimentos</p>
+                      <strong class="fs-4">74 bpm</strong>
+                      <div class="small text-success mt-1"><span class="hc-status-dot hc-status-ok me-1"></span>Estável</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Glicemia</p>
+                      <strong class="fs-4">96</strong>
+                      <div class="small text-success mt-1"><span class="hc-status-dot hc-status-ok me-1"></span>Em jejum</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Saturação</p>
+                      <strong class="fs-4">96%</strong>
+                      <div class="small text-success mt-1"><span class="hc-status-dot hc-status-ok me-1"></span>Acompanhar</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Temperatura</p>
+                      <strong class="fs-4">36,4°</strong>
+                      <div class="small text-success mt-1"><span class="hc-status-dot hc-status-ok me-1"></span>Sem febre</div>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-4">
+                    <div class="hc-list-item h-100">
+                      <p class="text-muted small mb-1">Sono</p>
+                      <strong class="fs-4">7h10</strong>
+                      <div class="small text-success mt-1"><span class="hc-status-dot hc-status-ok me-1"></span>Regular</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hc-list-item hc-soft-success mb-3">
+                  <strong>Resumo:</strong> sinais estáveis, sem febre e sem variação importante de pressão. Manter rotina de hidratação e aferição no fim da tarde.
+                </div>
+
+                <div class="hc-mini-chart mb-3" aria-label="Tendência de batimentos do Sr. João">
+                  <span style="height:55%"></span><span style="height:50%"></span><span style="height:53%"></span><span style="height:48%"></span><span style="height:56%"></span><span style="height:52%"></span><span style="height:54%"></span>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                  <a class="btn btn-outline-primary" href="/pages/familiar/perfil-pessoa.html">Ver perfil</a>
+                  <a class="btn btn-outline-primary" href="/pages/familiar/sono.html">Ver sono</a>
+                  <button class="btn btn-outline-secondary" type="button" data-toast="Relatório do Sr. João preparado para compartilhamento.">Compartilhar relatório</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="row g-4" aria-label="Histórico e alertas clínicos">
+          <div class="col-12 col-xl-7">
+            <article class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Últimas medições registradas</h2>
+                    <p class="text-muted mb-0">Histórico recente das pessoas cuidadas.</p>
+                  </div>
+                  <a class="btn btn-outline-primary" href="/pages/familiar/historico-saude.html">Ver histórico</a>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table hc-reading-table align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th scope="col">Pessoa</th>
+                        <th scope="col">Horário</th>
+                        <th scope="col">Medição</th>
+                        <th scope="col">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Dona Maria</td>
+                        <td>12:10</td>
+                        <td>Glicemia 118 mg/dL</td>
+                        <td><span class="badge text-bg-warning">Atenção</span></td>
+                      </tr>
+                      <tr>
+                        <td>Sr. João</td>
+                        <td>11:45</td>
+                        <td>Pressão 12/7</td>
+                        <td><span class="badge text-bg-success">Normal</span></td>
+                      </tr>
+                      <tr>
+                        <td>Dona Maria</td>
+                        <td>08:30</td>
+                        <td>Pressão 13/8</td>
+                        <td><span class="badge text-bg-success">Normal</span></td>
+                      </tr>
+                      <tr>
+                        <td>Sr. João</td>
+                        <td>08:20</td>
+                        <td>Saturação 96%</td>
+                        <td><span class="badge text-bg-success">Acompanhar</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-xl-5">
+            <article class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <h2 class="h4 fw-bold mb-3">Alertas e orientações</h2>
+                <div class="vstack gap-3">
+                  <div class="hc-list-item hc-soft-warning">
+                    <strong>Dona Maria:</strong> sono fragmentado e glicemia mais alta após o almoço. Conferir alimentação e hidratação.
+                  </div>
+                  <div class="hc-list-item hc-soft-info">
+                    <strong>Sr. João:</strong> saturação no limite inferior do esperado para ele. Repetir medição às 18:00.
+                  </div>
+                  <div class="hc-list-item hc-soft-primary">
+                    <strong>Próxima rotina:</strong> medir pressão dos dois após o jantar e confirmar medicamento noturno.
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
         </section>
 
       </div>
@@ -182,10 +596,114 @@
       bootstrap.Toast.getOrCreateInstance(toastEl).show();
     }
 
+    const averageData = {
+      maria: {
+        dia: {
+          descricao: "Resumo calculado com base nas últimas 24 horas.",
+          pressao: "13/8",
+          pressaoStatus: "Normal",
+          batimentos: "82",
+          batimentosStatus: "Estável",
+          glicemia: "118",
+          glicemiaStatus: "Atenção após almoço",
+          sono: "5h50",
+          sonoStatus: "Fragmentado"
+        },
+        semana: {
+          descricao: "Resumo calculado com base nos últimos 7 dias.",
+          pressao: "13/8",
+          pressaoStatus: "Leve variação",
+          batimentos: "80",
+          batimentosStatus: "Sem alteração relevante",
+          glicemia: "111",
+          glicemiaStatus: "Oscilação após refeições",
+          sono: "6h05",
+          sonoStatus: "Abaixo do ideal"
+        },
+        mes: {
+          descricao: "Resumo calculado com base nos últimos 30 dias.",
+          pressao: "12/8",
+          pressaoStatus: "Tendência estável",
+          batimentos: "78",
+          batimentosStatus: "Regular",
+          glicemia: "106",
+          glicemiaStatus: "Controlada com oscilações",
+          sono: "6h32",
+          sonoStatus: "Melhorando aos poucos"
+        }
+      },
+      joao: {
+        dia: {
+          descricao: "Resumo calculado com base nas últimas 24 horas.",
+          pressao: "12/7",
+          pressaoStatus: "Normal",
+          batimentos: "74",
+          batimentosStatus: "Estável",
+          glicemia: "96",
+          glicemiaStatus: "Em jejum",
+          sono: "7h10",
+          sonoStatus: "Regular"
+        },
+        semana: {
+          descricao: "Resumo calculado com base nos últimos 7 dias.",
+          pressao: "12/7",
+          pressaoStatus: "Sem alteração relevante",
+          batimentos: "73",
+          batimentosStatus: "Estável",
+          glicemia: "99",
+          glicemiaStatus: "Dentro do esperado",
+          sono: "7h02",
+          sonoStatus: "Boa regularidade"
+        },
+        mes: {
+          descricao: "Resumo calculado com base nos últimos 30 dias.",
+          pressao: "12/8",
+          pressaoStatus: "Tendência estável",
+          batimentos: "75",
+          batimentosStatus: "Regular",
+          glicemia: "101",
+          glicemiaStatus: "Controlada",
+          sono: "6h58",
+          sonoStatus: "Estável"
+        }
+      }
+    };
+
+    function atualizarMedias(pessoa, periodo) {
+      const personData = averageData[pessoa];
+      if (!personData) return;
+
+      const data = personData[periodo];
+      if (!data) return;
+
+      const description = document.querySelector('[data-average-description="' + pessoa + '"]');
+      if (description) description.textContent = data.descricao;
+
+      Object.keys(data).forEach(function (key) {
+        if (key === "descricao") return;
+        const el = document.querySelector('[data-average-field="' + pessoa + '.' + key + '"]');
+        if (el) el.textContent = data[key];
+      });
+
+      document.querySelectorAll('[data-person-average="' + pessoa + '"]').forEach(function (button) {
+        const isActive = button.dataset.averagePeriod === periodo;
+        button.classList.toggle("btn-primary", isActive);
+        button.classList.toggle("btn-outline-primary", !isActive);
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
       document.querySelectorAll("[data-toast]").forEach(function (button) {
         button.addEventListener("click", function () {
           mostrarToast(button.dataset.toast || "Ação realizada.");
+        });
+      });
+
+      document.querySelectorAll("[data-person-average][data-average-period]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          atualizarMedias(button.dataset.personAverage, button.dataset.averagePeriod);
         });
       });
 

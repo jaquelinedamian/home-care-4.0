@@ -41,12 +41,14 @@
       line-height: 1.55;
     }
 
-    .hc-big-card {
+    .hc-big-card,
+    .hc-care-card {
       min-height: 100%;
       transition: transform .15s ease, box-shadow .15s ease;
     }
 
-    .hc-big-card:hover {
+    .hc-big-card:hover,
+    .hc-care-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 .75rem 2rem rgba(15, 23, 42, .08) !important;
     }
@@ -64,28 +66,11 @@
       flex: 0 0 auto;
     }
 
-    .hc-person-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .55rem .85rem;
-      border-radius: 999px;
-      background: rgba(13, 110, 253, .09);
-      color: #0d6efd;
-      font-weight: 700;
-    }
-
     .hc-list-item {
       border: 1px solid rgba(15, 23, 42, .08);
       border-radius: 1.25rem;
       padding: 1rem;
       background: #fff;
-    }
-
-    .hc-time {
-      font-size: 1.65rem;
-      font-weight: 800;
-      letter-spacing: -.03em;
     }
 
     .hc-touch-btn {
@@ -102,9 +87,9 @@
     .hc-soft-purple { background: rgba(111, 66, 193, .10); }
 
     .hc-avatar {
-      width: 3rem;
-      height: 3rem;
-      border-radius: 1rem;
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 1.1rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -112,6 +97,90 @@
       color: #0d6efd;
       font-weight: 800;
       flex: 0 0 auto;
+    }
+
+    .hc-avatar.danger {
+      background: rgba(220, 53, 69, .10);
+      color: #dc3545;
+    }
+
+    .hc-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      border-radius: 999px;
+      padding: .4rem .7rem;
+      font-weight: 700;
+      font-size: .92rem;
+    }
+
+    .hc-mini-metric {
+      border: 1px solid rgba(15, 23, 42, .08);
+      border-radius: 1rem;
+      padding: .9rem;
+      background: #fff;
+      height: 100%;
+    }
+
+    .hc-mini-metric strong {
+      display: block;
+      font-size: 1.15rem;
+      line-height: 1.2;
+    }
+
+    .hc-mini-metric span {
+      color: #6c757d;
+      font-size: .95rem;
+    }
+
+    .hc-section-label {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: .75rem;
+    }
+
+    .hc-report-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .8rem;
+    }
+
+    .hc-report-item {
+      border-radius: 1rem;
+      padding: .9rem;
+      border: 1px solid rgba(15, 23, 42, .08);
+      background: rgba(248, 249, 250, .82);
+    }
+
+    .hc-report-item i {
+      color: #0d6efd;
+      margin-right: .35rem;
+    }
+
+    .hc-report-item small {
+      display: block;
+      color: #6c757d;
+      font-weight: 600;
+      margin-bottom: .25rem;
+    }
+
+    .hc-report-item strong {
+      display: block;
+      line-height: 1.25;
+    }
+
+    .hc-person-actions .btn {
+      min-height: 2.9rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 575.98px) {
+      .hc-report-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -154,8 +223,8 @@
             <div class="row align-items-center g-4">
               <div class="col-12 col-xl-8">
                 <span class="hc-familiar-kicker"><i class="bi bi-heart-pulse" aria-hidden="true"></i>Visão familiar</span>
-                <h1 class="fw-bold hc-familiar-title mb-3">Hoje você acompanha 2 pessoas cuidadas.</h1>
-                <p class="text-muted hc-familiar-lead mb-0">Veja pendências, consultas, medicamentos e sinais importantes sem precisar entrar em várias telas. A prioridade aparece primeiro.</p>
+                <h1 class="fw-bold hc-familiar-title mb-3">Hoje você acompanha sua mãe e seu pai.</h1>
+                <p class="text-muted hc-familiar-lead mb-0">Este painel reúne um mini relatório de cada pessoa cuidada, com sinais vitais, sono, pontos de atenção, agenda, exames, alertas e medicamentos em um só lugar.</p>
               </div>
               <div class="col-12 col-xl-4">
                 <div class="d-grid gap-3">
@@ -167,7 +236,18 @@
           </div>
         </section>
 
-        <section class="row g-3 mb-4" aria-label="Resumo familiar">
+        <section class="row g-3 mb-4" aria-label="Resumo familiar geral">
+          <div class="col-12 col-md-6 col-xl-3">
+            <article class="card border-0 shadow-sm rounded-4 hc-big-card">
+              <div class="card-body p-4">
+                <span class="hc-icon-box mb-3"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></span>
+                <p class="text-muted mb-1">Ponto de atenção</p>
+                <h2 class="fw-bold h3">Dona Maria</h2>
+                <p class="mb-3">Pressão acima da média e sono interrompido na última noite.</p>
+                <a class="btn btn-outline-primary w-100" href="#relatorio-mae">Ver relatório</a>
+              </div>
+            </article>
+          </div>
           <div class="col-12 col-md-6 col-xl-3">
             <article class="card border-0 shadow-sm rounded-4 hc-big-card">
               <div class="card-body p-4">
@@ -184,8 +264,8 @@
               <div class="card-body p-4">
                 <span class="hc-icon-box mb-3"><i class="bi bi-capsule" aria-hidden="true"></i></span>
                 <p class="text-muted mb-1">Medicamentos</p>
-                <h2 class="fw-bold h3">1 pendência</h2>
-                <p class="mb-3">Confirmar dose do período da tarde.</p>
+                <h2 class="fw-bold h3">2 pendências</h2>
+                <p class="mb-3">Uma dose da tarde e reposição de medicamento.</p>
                 <a class="btn btn-outline-primary w-100" href="/pages/familiar/medicamentos.html">Ver medicamentos</a>
               </div>
             </article>
@@ -193,24 +273,103 @@
           <div class="col-12 col-md-6 col-xl-3">
             <article class="card border-0 shadow-sm rounded-4 hc-big-card">
               <div class="card-body p-4">
-                <span class="hc-icon-box mb-3"><i class="bi bi-activity" aria-hidden="true"></i></span>
-                <p class="text-muted mb-1">Sinais vitais</p>
-                <h2 class="fw-bold h3">Estável</h2>
-                <p class="mb-3">Última medição registrada há 2 horas.</p>
-                <a class="btn btn-outline-primary w-100" href="/pages/familiar/sinais-vitais.html">Acompanhar saúde</a>
-              </div>
-            </article>
-          </div>
-          <div class="col-12 col-md-6 col-xl-3">
-            <article class="card border-0 shadow-sm rounded-4 hc-big-card">
-              <div class="card-body p-4">
                 <span class="hc-icon-box mb-3"><i class="bi bi-bell" aria-hidden="true"></i></span>
-                <p class="text-muted mb-1">Alertas</p>
-                <h2 class="fw-bold h3">3 avisos</h2>
-                <p class="mb-3">Exame pendente, vacina próxima e recarga baixa.</p>
+                <p class="text-muted mb-1">Alertas ativos</p>
+                <h2 class="fw-bold h3">4 avisos</h2>
+                <p class="mb-3">Exame liberado, visita, vacina e bateria baixa.</p>
                 <a class="btn btn-outline-primary w-100" href="/pages/familiar/alertas.html">Ver alertas</a>
               </div>
             </article>
+          </div>
+        </section>
+
+        <section class="mb-4" aria-labelledby="titulo-mini-relatorios">
+          <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
+            <div>
+              <h2 class="h4 fw-bold mb-1" id="titulo-mini-relatorios">Mini relatórios das pessoas cuidadas</h2>
+              <p class="text-muted mb-0">Cada card mostra o que o familiar precisa acompanhar sem misturar informações entre mãe e pai.</p>
+            </div>
+            <a href="/pages/familiar/cadastrar-pessoa.html" class="btn btn-primary"><i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Adicionar pessoa</a>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-12 col-xxl-12" id="relatorio-mae">
+              <article class="card border-0 shadow-sm rounded-4 hc-care-card h-100" aria-label="Mini relatório da Dona Maria">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                      <span class="hc-avatar danger">MM</span>
+                      <div>
+                        <h3 class="h4 fw-bold mb-1">Dona Maria</h3>
+                        <p class="text-muted mb-0">Mãe · 78 anos · Mora em casa · Monitoramento ativo</p>
+                      </div>
+                    </div>
+                    <span class="hc-status-badge hc-soft-warning"><i class="bi bi-exclamation-circle" aria-hidden="true"></i>Atenção moderada</span>
+                  </div>
+
+                  <div class="row g-3 mb-4">
+                    <div class="col-6 col-lg-3"><div class="hc-mini-metric"><span>Pressão</span><strong>145/92</strong><small class="text-danger fw-bold">acima</small></div></div>
+                    <div class="col-6 col-lg-3"><div class="hc-mini-metric"><span>Batimentos</span><strong>88 bpm</strong><small class="text-muted">regular</small></div></div>
+                    <div class="col-6 col-lg-3"><div class="hc-mini-metric"><span>Saturação</span><strong>96%</strong><small class="text-muted">normal</small></div></div>
+                    <div class="col-6 col-lg-3"><div class="hc-mini-metric"><span>Sono</span><strong>5h20</strong><small class="text-warning fw-bold">interrompido</small></div></div>
+                  </div>
+
+                  <div class="hc-report-grid mb-4">
+                    <div class="hc-report-item hc-soft-warning"><small><i class="bi bi-flag" aria-hidden="true"></i>Pontos de atenção</small><strong>Pressão elevada pela manhã e queixa de tontura leve.</strong></div>
+                    <div class="hc-report-item"><small><i class="bi bi-calendar2-heart" aria-hidden="true"></i>Próxima consulta</small><strong>Hoje, 15:30 · Fisioterapia domiciliar.</strong></div>
+                    <div class="hc-report-item"><small><i class="bi bi-house-heart" aria-hidden="true"></i>Visita agendada</small><strong>Amanhã, 09:00 · Enfermeira para aferição e curativo.</strong></div>
+                    <div class="hc-report-item hc-soft-info"><small><i class="bi bi-file-earmark-medical" aria-hidden="true"></i>Resultado de exame</small><strong>Hemograma liberado ontem · 1 item para revisão médica.</strong></div>
+                    <div class="hc-report-item hc-soft-danger"><small><i class="bi bi-bell" aria-hidden="true"></i>Alertas</small><strong>Relógio com 18% de bateria e hidratação abaixo da meta.</strong></div>
+                    <div class="hc-report-item"><small><i class="bi bi-capsule" aria-hidden="true"></i>Medicamentos</small><strong>Losartana 12:00 pendente · Sinvastatina 21:00 programada.</strong></div>
+                  </div>
+
+                  <div class="d-flex gap-2 flex-wrap hc-person-actions">
+                    <a class="btn btn-primary" href="/pages/familiar/perfil-pessoa.html"><i class="bi bi-person-lines-fill me-2" aria-hidden="true"></i>Ver perfil</a>
+                    <a class="btn btn-outline-primary" href="/pages/familiar/sinais-vitais.html"><i class="bi bi-activity me-2" aria-hidden="true"></i>Sinais vitais</a>
+                    <a class="btn btn-outline-primary" href="/pages/familiar/exames.html"><i class="bi bi-file-earmark-medical me-2" aria-hidden="true"></i>Exames</a>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-xxl-12" id="relatorio-pai">
+              <article class="card border-0 shadow-sm rounded-4 hc-care-card h-100" aria-label="Mini relatório do Sr. João">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                      <span class="hc-avatar">PJ</span>
+                      <div>
+                        <h3 class="h4 fw-bold mb-1">Sr. João</h3>
+                        <p class="text-muted mb-0">Pai · 82 anos · Mora em casa · Rotina acompanhada</p>
+                      </div>
+                    </div>
+                    <span class="hc-status-badge hc-soft-success"><i class="bi bi-check-circle" aria-hidden="true"></i>Estável</span>
+                  </div>
+
+                  <div class="row g-3 mb-4">
+                    <div class="col-6 col-lg-3"><div class="hc-mini-metric"><span>Pressão</span><strong>128/80</strong><small class="text-muted">normal</small></div></div>
+                    <div class="col-6 col-lg-3"><div class="hc-mini-metric"><span>Batimentos</span><strong>74 bpm</strong><small class="text-muted">regular</small></div></div>
+                    <div class="col-6 col-lg-3"><div class="hc-mini-metric"><span>Saturação</span><strong>97%</strong><small class="text-muted">normal</small></div></div>
+                    <div class="col-6 col-lg-3"><div class="hc-mini-metric"><span>Sono</span><strong>7h10</strong><small class="text-success fw-bold">bom</small></div></div>
+                  </div>
+
+                  <div class="hc-report-grid mb-4">
+                    <div class="hc-report-item"><small><i class="bi bi-flag" aria-hidden="true"></i>Pontos de atenção</small><strong>Leve dor no joelho ao caminhar, sem alerta crítico.</strong></div>
+                    <div class="hc-report-item"><small><i class="bi bi-calendar2-heart" aria-hidden="true"></i>Próxima consulta</small><strong>Sexta, 10:00 · Retorno com cardiologista.</strong></div>
+                    <div class="hc-report-item hc-soft-purple"><small><i class="bi bi-house-heart" aria-hidden="true"></i>Visita agendada</small><strong>Hoje, 18:00 · Cuidador para apoio no banho e jantar.</strong></div>
+                    <div class="hc-report-item hc-soft-success"><small><i class="bi bi-file-earmark-medical" aria-hidden="true"></i>Resultado de exame</small><strong>Eletrocardiograma visualizado · sem alteração relevante.</strong></div>
+                    <div class="hc-report-item hc-soft-info"><small><i class="bi bi-bell" aria-hidden="true"></i>Alertas</small><strong>Vacina contra gripe vence em 7 dias.</strong></div>
+                    <div class="hc-report-item"><small><i class="bi bi-capsule" aria-hidden="true"></i>Medicamentos</small><strong>Metformina confirmada 08:00 · dose 20:00 programada.</strong></div>
+                  </div>
+
+                  <div class="d-flex gap-2 flex-wrap hc-person-actions">
+                    <a class="btn btn-primary" href="/pages/familiar/perfil-pessoa.html"><i class="bi bi-person-lines-fill me-2" aria-hidden="true"></i>Ver perfil</a>
+                    <a class="btn btn-outline-primary" href="/pages/familiar/sinais-vitais.html"><i class="bi bi-activity me-2" aria-hidden="true"></i>Sinais vitais</a>
+                    <a class="btn btn-outline-primary" href="/pages/familiar/agenda.html"><i class="bi bi-calendar-check me-2" aria-hidden="true"></i>Agenda</a>
+                  </div>
+                </div>
+              </article>
+            </div>
           </div>
         </section>
 
@@ -218,30 +377,12 @@
           <div class="col-12 col-xl-7">
             <article class="card border-0 shadow-sm rounded-4 h-100">
               <div class="card-body p-4">
-                <div class="d-flex justify-content-between gap-3 flex-wrap align-items-start mb-3">
-                  <div>
-                    <h2 class="h4 fw-bold mb-1">Pessoas cuidadas</h2>
-                    <p class="text-muted mb-0">Acesse o resumo de cada pessoa acompanhada.</p>
-                  </div>
-                  <a href="/pages/familiar/cadastrar-pessoa.html" class="btn btn-primary"><i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Adicionar</a>
-                </div>
+                <h2 class="h4 fw-bold mb-3">Linha do tempo familiar</h2>
                 <div class="vstack gap-3">
-                  <div class="hc-list-item d-flex align-items-center gap-3 flex-wrap">
-                    <span class="hc-avatar">DM</span>
-                    <div class="flex-grow-1">
-                      <h3 class="h5 fw-bold mb-1">Dona Maria</h3>
-                      <p class="text-muted mb-0">Mãe · 78 anos · 2 cuidados para hoje</p>
-                    </div>
-                    <a class="btn btn-outline-primary" href="/pages/familiar/perfil-pessoa.html">Ver perfil</a>
-                  </div>
-                  <div class="hc-list-item d-flex align-items-center gap-3 flex-wrap">
-                    <span class="hc-avatar">SJ</span>
-                    <div class="flex-grow-1">
-                      <h3 class="h5 fw-bold mb-1">Sr. João</h3>
-                      <p class="text-muted mb-0">Pai · 82 anos · sem alertas críticos</p>
-                    </div>
-                    <a class="btn btn-outline-primary" href="/pages/familiar/perfil-pessoa.html">Ver perfil</a>
-                  </div>
+                  <div class="hc-list-item hc-soft-warning"><strong>12:00</strong> · Confirmar Losartana da Dona Maria.</div>
+                  <div class="hc-list-item hc-soft-info"><strong>15:30</strong> · Acompanhar fisioterapia da Dona Maria.</div>
+                  <div class="hc-list-item hc-soft-purple"><strong>18:00</strong> · Visita do cuidador para o Sr. João.</div>
+                  <div class="hc-list-item hc-soft-success"><strong>20:00</strong> · Confirmar Metformina do Sr. João.</div>
                 </div>
               </div>
             </article>
@@ -249,17 +390,16 @@
           <div class="col-12 col-xl-5">
             <article class="card border-0 shadow-sm rounded-4 h-100">
               <div class="card-body p-4">
-                <h2 class="h4 fw-bold mb-3">Prioridades de hoje</h2>
+                <h2 class="h4 fw-bold mb-3">O que merece sua atenção</h2>
                 <div class="vstack gap-3">
-                  <div class="hc-list-item hc-soft-warning"><strong>12:00</strong> · Confirmar medicamento da Dona Maria.</div>
-                  <div class="hc-list-item hc-soft-info"><strong>15:30</strong> · Acompanhar consulta de fisioterapia.</div>
-                  <div class="hc-list-item hc-soft-success"><strong>18:00</strong> · Conferir sinais vitais do Sr. João.</div>
+                  <div class="hc-list-item hc-soft-danger"><strong>Dona Maria:</strong> pressão acima do padrão. Se repetir, registrar observação e avisar o profissional.</div>
+                  <div class="hc-list-item hc-soft-warning"><strong>Dona Maria:</strong> sono abaixo de 6 horas. Acompanhar humor, tontura e hidratação.</div>
+                  <div class="hc-list-item hc-soft-info"><strong>Sr. João:</strong> vacina próxima do prazo. Agendar aplicação nos próximos dias.</div>
                 </div>
               </div>
             </article>
           </div>
         </section>
-
       </div>
     </main>
   </div>

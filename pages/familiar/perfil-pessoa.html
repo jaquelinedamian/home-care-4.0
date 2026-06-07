@@ -163,33 +163,258 @@
           </div>
         </section>
 
-        <section class="row g-3">
+        <section class="row g-3 mb-4" aria-label="Resumo clínico da pessoa cuidada">
+          <div class="col-12 col-md-6 col-xl-3">
+            <article class="card border-0 shadow-sm rounded-4 hc-big-card h-100">
+              <div class="card-body p-4">
+                <span class="hc-icon-box mb-3"><i class="bi bi-activity" aria-hidden="true"></i></span>
+                <p class="text-muted mb-1">Sinais vitais</p>
+                <h2 class="fw-bold h3 mb-1">Estável</h2>
+                <p class="mb-0">Última atualização hoje às 09:20.</p>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <article class="card border-0 shadow-sm rounded-4 hc-big-card h-100">
+              <div class="card-body p-4">
+                <span class="hc-icon-box mb-3"><i class="bi bi-calendar2-check" aria-hidden="true"></i></span>
+                <p class="text-muted mb-1">Consultas</p>
+                <h2 class="fw-bold h3 mb-1">4 registros</h2>
+                <p class="mb-0">1 próxima consulta e 3 consultas realizadas.</p>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <article class="card border-0 shadow-sm rounded-4 hc-big-card h-100">
+              <div class="card-body p-4">
+                <span class="hc-icon-box mb-3"><i class="bi bi-file-earmark-medical" aria-hidden="true"></i></span>
+                <p class="text-muted mb-1">Exames</p>
+                <h2 class="fw-bold h3 mb-1">2 resultados</h2>
+                <p class="mb-0">Hemograma recebido e glicemia em acompanhamento.</p>
+              </div>
+            </article>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <article class="card border-0 shadow-sm rounded-4 hc-big-card h-100">
+              <div class="card-body p-4">
+                <span class="hc-icon-box mb-3"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></span>
+                <p class="text-muted mb-1">Alergias</p>
+                <h2 class="fw-bold h3 mb-1">Dipirona</h2>
+                <p class="mb-0">Atenção ativa no prontuário familiar.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4">
           <div class="col-12 col-xl-4">
             <article class="card border-0 shadow-sm rounded-4 h-100">
               <div class="card-body p-4">
                 <h2 class="h4 fw-bold mb-3">Dados principais</h2>
-                <p><strong>Condição atual:</strong> acompanhamento domiciliar leve.</p>
-                <p><strong>Alergias:</strong> dipirona.</p>
-                <p><strong>Contato de emergência:</strong> Jaqueline Damian.</p>
-                <p class="mb-0"><strong>Endereço:</strong> São Caetano do Sul, SP.</p>
+                <div class="vstack gap-3">
+                  <div class="hc-list-item">
+                    <span class="text-muted d-block">Pessoa cuidada</span>
+                    <strong>Dona Maria Aparecida</strong><br>
+                    <span>78 anos · mãe · São Caetano do Sul, SP</span>
+                  </div>
+                  <div class="hc-list-item">
+                    <span class="text-muted d-block">Condição atual</span>
+                    <strong>Acompanhamento domiciliar leve</strong><br>
+                    <span>Monitoramento de pressão, glicemia e rotina de medicamentos.</span>
+                  </div>
+                  <div class="hc-list-item hc-soft-danger">
+                    <span class="text-muted d-block">Alergias registradas</span>
+                    <strong>Dipirona</strong><br>
+                    <span>Evitar administração sem orientação profissional.</span>
+                  </div>
+                  <div class="hc-list-item">
+                    <span class="text-muted d-block">Contato de emergência</span>
+                    <strong>Jaqueline Damian</strong><br>
+                    <span>Familiar responsável pelo acompanhamento.</span>
+                  </div>
+                </div>
               </div>
             </article>
           </div>
+
           <div class="col-12 col-xl-8">
             <article class="card border-0 shadow-sm rounded-4 h-100">
               <div class="card-body p-4">
-                <h2 class="h4 fw-bold mb-3">Ações rápidas</h2>
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Sinais vitais recentes</h2>
+                    <p class="text-muted mb-0">Últimas medições registradas para acompanhamento familiar.</p>
+                  </div>
+                  <a class="btn btn-outline-primary" href="/pages/familiar/sinais-vitais.html"><i class="bi bi-graph-up me-2" aria-hidden="true"></i>Ver histórico completo</a>
+                </div>
+
                 <div class="row g-3">
-                  <div class="col-12 col-md-6"><a class="btn btn-outline-primary w-100 hc-touch-btn" href="/pages/familiar/medicamentos.html"><i class="bi bi-capsule me-2"></i>Medicamentos</a></div>
-                  <div class="col-12 col-md-6"><a class="btn btn-outline-primary w-100 hc-touch-btn" href="/pages/familiar/consultas.html"><i class="bi bi-camera-video me-2"></i>Consultas</a></div>
-                  <div class="col-12 col-md-6"><a class="btn btn-outline-primary w-100 hc-touch-btn" href="/pages/familiar/sinais-vitais.html"><i class="bi bi-activity me-2"></i>Sinais vitais</a></div>
-                  <div class="col-12 col-md-6"><a class="btn btn-outline-primary w-100 hc-touch-btn" href="/pages/familiar/historico.html"><i class="bi bi-clock-history me-2"></i>Histórico</a></div>
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <div class="hc-list-item h-100">
+                      <span class="text-muted d-block">Pressão arterial</span>
+                      <strong class="h4 d-block mb-1">12/8</strong>
+                      <span class="badge text-bg-success">Normal</span>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <div class="hc-list-item h-100">
+                      <span class="text-muted d-block">Batimentos</span>
+                      <strong class="h4 d-block mb-1">76 bpm</strong>
+                      <span class="badge text-bg-success">Estável</span>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <div class="hc-list-item h-100">
+                      <span class="text-muted d-block">Glicemia</span>
+                      <strong class="h4 d-block mb-1">98 mg/dL</strong>
+                      <span class="badge text-bg-success">Em jejum</span>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <div class="hc-list-item h-100">
+                      <span class="text-muted d-block">Temperatura</span>
+                      <strong class="h4 d-block mb-1">36,5 °C</strong>
+                      <span class="badge text-bg-success">Sem febre</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="alert alert-warning rounded-4 border-0 mt-3 mb-0" role="alert">
+                  <strong>Ponto de atenção:</strong> manter acompanhamento da glicemia em jejum durante a semana e confirmar hidratação no período da tarde.
                 </div>
               </div>
             </article>
           </div>
         </section>
 
+        <section class="row g-3 mb-4">
+          <div class="col-12 col-xl-6">
+            <article class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Histórico de consultas</h2>
+                    <p class="text-muted mb-0">Consultas realizadas, agendadas e orientações recebidas.</p>
+                  </div>
+                  <a class="btn btn-outline-primary" href="/pages/familiar/consultas.html">Ver consultas</a>
+                </div>
+                <div class="vstack gap-3">
+                  <div class="hc-list-item hc-soft-info">
+                    <div class="d-flex justify-content-between gap-3 flex-wrap">
+                      <strong>Próxima consulta · Fisioterapia</strong>
+                      <span class="badge text-bg-primary">Hoje · 15:30</span>
+                    </div>
+                    <p class="mb-0 mt-2">Sessão domiciliar para mobilidade, equilíbrio e prevenção de quedas.</p>
+                  </div>
+                  <div class="hc-list-item">
+                    <div class="d-flex justify-content-between gap-3 flex-wrap">
+                      <strong>Clínico geral</strong>
+                      <span class="badge text-bg-success">Realizada</span>
+                    </div>
+                    <p class="mb-0 mt-2">Avaliação de rotina em 02/06/2026. Pressão controlada e medicação mantida.</p>
+                  </div>
+                  <div class="hc-list-item">
+                    <div class="d-flex justify-content-between gap-3 flex-wrap">
+                      <strong>Nutrição</strong>
+                      <span class="badge text-bg-success">Realizada</span>
+                    </div>
+                    <p class="mb-0 mt-2">Ajuste alimentar para controle glicêmico e reforço de hidratação.</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-xl-6">
+            <article class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Exames e resultados</h2>
+                    <p class="text-muted mb-0">Resultados recentes e exames pendentes.</p>
+                  </div>
+                  <a class="btn btn-outline-primary" href="/pages/familiar/exames.html">Ver exames</a>
+                </div>
+                <div class="vstack gap-3">
+                  <div class="hc-list-item hc-soft-success">
+                    <div class="d-flex justify-content-between gap-3 flex-wrap">
+                      <strong>Hemograma completo</strong>
+                      <span class="badge text-bg-success">Resultado recebido</span>
+                    </div>
+                    <p class="mb-0 mt-2">Coletado em 04/06/2026. Resultado disponível para revisão profissional.</p>
+                  </div>
+                  <div class="hc-list-item hc-soft-warning">
+                    <div class="d-flex justify-content-between gap-3 flex-wrap">
+                      <strong>Glicemia de jejum</strong>
+                      <span class="badge text-bg-warning">Acompanhar</span>
+                    </div>
+                    <p class="mb-0 mt-2">Manter medições pela manhã e comparar com orientação nutricional.</p>
+                  </div>
+                  <div class="hc-list-item">
+                    <div class="d-flex justify-content-between gap-3 flex-wrap">
+                      <strong>Urina tipo 1</strong>
+                      <span class="badge text-bg-secondary">Agendado</span>
+                    </div>
+                    <p class="mb-0 mt-2">Coleta prevista para 10/06/2026, no período da manhã.</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4">
+          <div class="col-12 col-xl-6">
+            <article class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Visitas agendadas</h2>
+                    <p class="text-muted mb-0">Profissionais previstos para atendimento domiciliar.</p>
+                  </div>
+                  <a class="btn btn-outline-primary" href="/pages/familiar/agenda.html">Abrir agenda</a>
+                </div>
+                <div class="vstack gap-3">
+                  <div class="hc-list-item hc-soft-info">
+                    <strong>Hoje · 15:30</strong>
+                    <p class="mb-1 mt-2">Fisioterapeuta Camila Rocha</p>
+                    <span class="text-muted">Sessão de mobilidade e prevenção de quedas.</span>
+                  </div>
+                  <div class="hc-list-item">
+                    <strong>Amanhã · 09:00</strong>
+                    <p class="mb-1 mt-2">Técnica de enfermagem Renata Alves</p>
+                    <span class="text-muted">Conferência de sinais vitais e organização de medicamentos.</span>
+                  </div>
+                  <div class="hc-list-item">
+                    <strong>12/06/2026 · 14:00</strong>
+                    <p class="mb-1 mt-2">Nutricionista Paula Mendes</p>
+                    <span class="text-muted">Revisão do plano alimentar e hidratação.</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-xl-6">
+            <article class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-body p-4">
+                <h2 class="h4 fw-bold mb-3">Ações rápidas</h2>
+                <div class="row g-3">
+                  <div class="col-12 col-md-6"><a class="btn btn-outline-primary w-100 hc-touch-btn" href="/pages/familiar/sinais-vitais.html"><i class="bi bi-activity me-2" aria-hidden="true"></i>Sinais vitais</a></div>
+                  <div class="col-12 col-md-6"><a class="btn btn-outline-primary w-100 hc-touch-btn" href="/pages/familiar/consultas.html"><i class="bi bi-camera-video me-2" aria-hidden="true"></i>Consultas</a></div>
+                  <div class="col-12 col-md-6"><a class="btn btn-outline-primary w-100 hc-touch-btn" href="/pages/familiar/exames.html"><i class="bi bi-file-earmark-medical me-2" aria-hidden="true"></i>Exames</a></div>
+                  <div class="col-12 col-md-6"><a class="btn btn-outline-primary w-100 hc-touch-btn" href="/pages/familiar/agenda.html"><i class="bi bi-calendar-heart me-2" aria-hidden="true"></i>Visitas</a></div>
+                  <div class="col-12 col-md-6"><a class="btn btn-outline-danger w-100 hc-touch-btn" href="/pages/familiar/alergias.html"><i class="bi bi-exclamation-octagon me-2" aria-hidden="true"></i>Alergias</a></div>
+                  <div class="col-12 col-md-6"><a class="btn btn-outline-primary w-100 hc-touch-btn" href="/pages/familiar/medicamentos.html"><i class="bi bi-capsule me-2" aria-hidden="true"></i>Medicamentos</a></div>
+                </div>
+
+                <div class="alert alert-info rounded-4 border-0 mt-4 mb-0" role="alert">
+                  <strong>Resumo para o familiar:</strong> o perfil reúne o que é mais importante antes de entrar nos módulos completos, ajudando a entender rapidamente o estado da pessoa cuidada.
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
       </div>
     </main>
   </div>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Perfil do paciente | Home Care 4.0</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/global.css" />
+  <link rel="stylesheet" href="../../css/header.css" />
+  <link rel="stylesheet" href="../../css/profile-switcher.css" />
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+
+  <style>
+    :root {
+      --hc-primary: #0d6efd;
+      --hc-soft-primary: rgba(13, 110, 253, .08);
+      --hc-soft-success: rgba(25, 135, 84, .10);
+      --hc-soft-warning: rgba(255, 193, 7, .18);
+      --hc-soft-danger: rgba(220, 53, 69, .10);
+      --hc-soft-info: rgba(13, 202, 240, .12);
+      --hc-border: rgba(15, 23, 42, .10);
+      --hc-text: #1f2937;
+      --hc-muted: #6c757d;
+    }
+
+    .patient-profile-page { color: var(--hc-text); }
+    .page-eyebrow { color: var(--hc-muted); font-size: 1.05rem; margin-bottom: .25rem; }
+    .icon-box {
+      width: 48px; height: 48px; border-radius: 16px; display: inline-flex;
+      align-items: center; justify-content: center; background: var(--hc-soft-primary);
+      color: var(--hc-primary); font-size: 1.45rem; flex: 0 0 auto;
+    }
+    .patient-avatar-lg {
+      width: 92px; height: 92px; border-radius: 50%; display: inline-flex; align-items: center;
+      justify-content: center; background: var(--hc-soft-primary); color: var(--hc-primary);
+      font-weight: 800; font-size: 1.8rem; flex: 0 0 auto;
+    }
+    .patient-avatar-sm {
+      width: 48px; height: 48px; border-radius: 50%; display: inline-flex; align-items: center;
+      justify-content: center; background: var(--hc-soft-primary); color: var(--hc-primary); font-weight: 800;
+    }
+    .info-tile, .timeline-item, .exam-item, .medicine-item, .surgery-item, .allergy-item, .record-block {
+      border: 1px solid var(--hc-border); border-radius: 1rem; background: #fff;
+    }
+    .info-tile { min-height: 112px; }
+    .record-locked {
+      border: 1px dashed rgba(13,110,253,.35); background: linear-gradient(180deg, #fff 0%, #f8fbff 100%);
+    }
+    .sensitive-card { border: 1px solid rgba(13,110,253,.22) !important; background: #fff; }
+    .filter-chip {
+      border: 1px solid var(--hc-border); background: #fff; border-radius: 999px;
+      padding: .45rem .85rem; font-size: .95rem; color: var(--hc-text);
+    }
+    .filter-chip.active, .filter-chip:hover { border-color: rgba(13,110,253,.45); background: var(--hc-soft-primary); color: var(--hc-primary); }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: .4rem; }
+    .dot-success { background: #198754; } .dot-warning { background: #ffc107; } .dot-danger { background: #dc3545; } .dot-primary { background: #0d6efd; }
+    .vital-card { border: 1px solid var(--hc-border); border-radius: 1rem; background: #fff; }
+    .vital-value { font-size: clamp(1.45rem, 2.3vw, 2rem); line-height: 1.1; font-weight: 800; }
+    .mini-chart {
+      min-height: 120px; border-radius: 1rem; border: 1px solid var(--hc-border);
+      background:
+        linear-gradient(180deg, transparent 24%, rgba(15,23,42,.05) 25%, transparent 26%, transparent 49%, rgba(15,23,42,.05) 50%, transparent 51%, transparent 74%, rgba(15,23,42,.05) 75%, transparent 76%),
+        linear-gradient(90deg, transparent 12%, rgba(13,110,253,.12) 13%, transparent 14%, transparent 36%, rgba(13,110,253,.12) 37%, transparent 38%, transparent 62%, rgba(13,110,253,.12) 63%, transparent 64%, transparent 86%, rgba(13,110,253,.12) 87%, transparent 88%),
+        #fff;
+      position: relative; overflow: hidden;
+    }
+    .mini-chart::after {
+      content: ""; position: absolute; inset: 34px 18px 34px 18px;
+      border-bottom: 4px solid rgba(13,110,253,.75); border-left: 4px solid transparent;
+      transform: skewY(-7deg); border-radius: 999px;
+    }
+    .timeline { position: relative; }
+    .timeline::before { content: ""; position: absolute; left: 18px; top: 8px; bottom: 8px; width: 2px; background: rgba(13,110,253,.16); }
+    .timeline-point { width: 38px; height: 38px; border-radius: 50%; background: var(--hc-soft-primary); color: var(--hc-primary); display: inline-flex; align-items: center; justify-content: center; position: relative; z-index: 2; flex: 0 0 auto; }
+    .permission-badge { background: var(--hc-soft-warning); color: #7a5b00; border: 1px solid rgba(255,193,7,.35); }
+    .lgpd-note { background: #f8f9fa; border: 1px solid var(--hc-border); border-radius: 1rem; }
+    .anchor-menu { position: sticky; top: 88px; z-index: 5; }
+    .record-content.d-none { display: none !important; }
+    @media (max-width: 991px) { .anchor-menu { position: static; } }
+  </style>
+</head>
+
+<body>
+  <div id="appHeader"></div>
+  <div id="appProfileSwitcher"></div>
+
+  <div class="app-layout">
+    <div id="appSidebar"></div>
+
+    <main class="app-main app-main-with-sidebar patient-profile-page" id="conteudo-principal" tabindex="-1">
+      <div class="container py-4">
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+          <div id="appToast" class="toast align-items-center border-0 shadow" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">Ação realizada.</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+          </div>
+        </div>
+
+        <nav aria-label="breadcrumb" class="mb-3">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="dashboard.html">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="solicitacoes.html">Solicitações</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Perfil do paciente</li>
+          </ol>
+        </nav>
+
+        <section class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-lg-5">
+            <div class="row g-4 align-items-center">
+              <div class="col-12 col-lg-8">
+                <div class="d-flex gap-3 align-items-center flex-wrap flex-sm-nowrap">
+                  <div class="patient-avatar-lg" aria-hidden="true">MS</div>
+                  <div>
+                    <p class="page-eyebrow">Perfil do paciente</p>
+                    <h1 class="fw-bold mb-2">Maria Aparecida Souza</h1>
+                    <div class="d-flex gap-2 flex-wrap align-items-center">
+                      <span class="badge text-bg-light border rounded-pill px-3 py-2">78 anos</span>
+                      <span class="badge text-bg-light border rounded-pill px-3 py-2">Feminino</span>
+                      <span class="badge text-bg-light border rounded-pill px-3 py-2">São Caetano do Sul • SP</span>
+                      <span class="badge permission-badge rounded-pill px-3 py-2"><i class="bi bi-shield-lock me-1"></i>Prontuário restrito</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4">
+                <div class="d-grid gap-2">
+                  <button class="btn btn-primary btn-lg" id="btnSolicitarProntuario" type="button"><i class="bi bi-file-earmark-medical me-2"></i>Solicitar acesso ao prontuário</button>
+                  <a class="btn btn-outline-primary btn-lg" href="mensagens.html"><i class="bi bi-chat-dots me-2"></i>Enviar mensagem</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="row g-3 mb-4">
+          <div class="col-12 col-md-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><div class="icon-box mb-3"><i class="bi bi-calendar2-check"></i></div><p class="text-muted mb-1">Consulta solicitada</p><h2 class="h4 fw-bold mb-1">12/06 • 14:00</h2><small class="text-muted">Fisioterapia domiciliar</small></div></div></div>
+          <div class="col-12 col-md-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><div class="icon-box mb-3"><i class="bi bi-geo-alt"></i></div><p class="text-muted mb-1">Distância estimada</p><h2 class="h4 fw-bold mb-1">3,2 km</h2><small class="text-muted">Aproximadamente 12 min</small></div></div></div>
+          <div class="col-12 col-md-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><div class="icon-box mb-3"><i class="bi bi-star"></i></div><p class="text-muted mb-1">Avaliação do paciente</p><h2 class="h4 fw-bold mb-1">4,8</h2><small class="text-muted">Baseada em atendimentos anteriores</small></div></div></div>
+          <div class="col-12 col-md-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><div class="icon-box mb-3"><i class="bi bi-cash-coin"></i></div><p class="text-muted mb-1">Valor do atendimento</p><h2 class="h4 fw-bold mb-1">R$ 180</h2><small class="text-muted">Pagamento via plataforma</small></div></div></div>
+        </section>
+
+        <section class="row g-4 mb-4">
+          <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100 sensitive-card">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between gap-3 flex-wrap align-items-start mb-3">
+                  <div>
+                    <h2 class="h4 fw-bold mb-1">Dados gerais do paciente</h2>
+                    <p class="text-muted mb-0">Informações visíveis antes da liberação do prontuário completo.</p>
+                  </div>
+                  <span class="badge text-bg-success rounded-pill px-3 py-2"><i class="bi bi-check-circle me-1"></i>Cadastro verificado</span>
+                </div>
+                <div class="row g-3">
+                  <div class="col-12 col-md-6"><div class="info-tile p-3"><small class="text-muted">Nome completo</small><p class="fw-bold mb-0">Maria Aparecida Souza</p></div></div>
+                  <div class="col-12 col-md-3"><div class="info-tile p-3"><small class="text-muted">Idade</small><p class="fw-bold mb-0">78 anos</p></div></div>
+                  <div class="col-12 col-md-3"><div class="info-tile p-3"><small class="text-muted">Tipo sanguíneo</small><p class="fw-bold mb-0">O+</p></div></div>
+                  <div class="col-12 col-md-6"><div class="info-tile p-3"><small class="text-muted">Endereço aproximado</small><p class="fw-bold mb-0">Bairro Barcelona, São Caetano do Sul</p></div></div>
+                  <div class="col-12 col-md-6"><div class="info-tile p-3"><small class="text-muted">Serviço solicitado</small><p class="fw-bold mb-0">Fisioterapia domiciliar pós-cirúrgica</p></div></div>
+                  <div class="col-12"><div class="info-tile p-3"><small class="text-muted">Observação do pedido</small><p class="fw-bold mb-0">Paciente relata dor no joelho esquerdo, dificuldade para levantar e necessidade de reabilitação guiada.</p></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 record-locked" id="cardPermissao">
+              <div class="card-body p-4">
+                <div class="icon-box mb-3"><i class="bi bi-lock"></i></div>
+                <h2 class="h4 fw-bold mb-2">Prontuário protegido</h2>
+                <p class="text-muted">O histórico clínico completo só deve ser exibido após solicitação de acesso, respeitando consentimento, finalidade assistencial e rastreabilidade.</p>
+                <div class="lgpd-note p-3 mb-3">
+                  <p class="fw-bold mb-1"><i class="bi bi-shield-check me-2"></i>Exemplo para o TCC</p>
+                  <small class="text-muted">Ao clicar em solicitar, a página simula a liberação do prontuário para demonstrar a centralização das informações de saúde.</small>
+                </div>
+                <button class="btn btn-primary w-100" id="btnSolicitarProntuarioCard" type="button">Solicitar e liberar exemplo</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="record-content d-none" id="prontuarioCompleto">
+          <div class="alert alert-primary border-0 rounded-4 shadow-sm d-flex gap-3 align-items-start" role="status">
+            <i class="bi bi-unlock fs-3"></i>
+            <div>
+              <h2 class="h5 fw-bold mb-1">Acesso ao prontuário liberado para demonstração</h2>
+              <p class="mb-0">Agora o profissional visualiza a história clínica centralizada do paciente: sinais vitais, exames, alergias, internações, cirurgias e medicamentos em uso.</p>
+            </div>
+          </div>
+
+          <div class="anchor-menu card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-3">
+              <div class="d-flex gap-2 flex-wrap">
+                <a class="filter-chip text-decoration-none active" href="#resumo-clinico">Resumo clínico</a>
+                <a class="filter-chip text-decoration-none" href="#sinais-vitais">Sinais vitais</a>
+                <a class="filter-chip text-decoration-none" href="#exames">Exames</a>
+                <a class="filter-chip text-decoration-none" href="#alergias">Alergias</a>
+                <a class="filter-chip text-decoration-none" href="#cirurgias">Cirurgias e internações</a>
+                <a class="filter-chip text-decoration-none" href="#medicamentos">Medicamentos</a>
+                <a class="filter-chip text-decoration-none" href="#linha-do-tempo">Linha do tempo</a>
+              </div>
+            </div>
+          </div>
+
+          <section class="card border-0 shadow-sm rounded-4 mb-4" id="resumo-clinico">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between gap-3 flex-wrap mb-3">
+                <div>
+                  <h2 class="h4 fw-bold mb-1">Resumo clínico integrado</h2>
+                  <p class="text-muted mb-0">Síntese rápida para orientar a decisão do profissional antes do atendimento.</p>
+                </div>
+                <span class="badge text-bg-light border rounded-pill px-3 py-2">Última atualização: hoje, 08:20</span>
+              </div>
+              <div class="row g-3">
+                <div class="col-12 col-lg-4"><div class="record-block p-3 h-100"><h3 class="h6 fw-bold"><i class="bi bi-activity me-2 text-primary"></i>Condição principal</h3><p class="mb-0 text-muted">Pós-operatório de artroplastia parcial do joelho esquerdo, com mobilidade reduzida e necessidade de fisioterapia domiciliar.</p></div></div>
+                <div class="col-12 col-lg-4"><div class="record-block p-3 h-100"><h3 class="h6 fw-bold"><i class="bi bi-heart-pulse me-2 text-primary"></i>Pontos de atenção</h3><p class="mb-0 text-muted">Hipertensão controlada, risco moderado de queda, dor recorrente ao caminhar e oscilação de sono nos últimos 7 dias.</p></div></div>
+                <div class="col-12 col-lg-4"><div class="record-block p-3 h-100"><h3 class="h6 fw-bold"><i class="bi bi-capsule me-2 text-primary"></i>Tratamento atual</h3><p class="mb-0 text-muted">Uso contínuo de anti-hipertensivo, analgésico sob demanda e anticoagulante temporário prescrito no pós-operatório.</p></div></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card border-0 shadow-sm rounded-4 mb-4" id="sinais-vitais">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between gap-3 flex-wrap align-items-start mb-3">
+                <div>
+                  <h2 class="h4 fw-bold mb-1">Histórico de sinais vitais</h2>
+                  <p class="text-muted mb-0">Visualização por período para encontrar anomalias e tendências.</p>
+                </div>
+                <div class="btn-group" role="group" aria-label="Selecionar período dos sinais vitais">
+                  <button class="btn btn-primary" data-periodo="diario" type="button">Diário</button>
+                  <button class="btn btn-outline-primary" data-periodo="semanal" type="button">Semanal</button>
+                  <button class="btn btn-outline-primary" data-periodo="mensal" type="button">Mensal</button>
+                </div>
+              </div>
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-md-6 col-xl-3"><div class="vital-card p-3 h-100"><small class="text-muted">Pressão arterial</small><div class="vital-value" id="pressaoValor">132/84</div><span class="badge text-bg-warning rounded-pill">atenção leve</span></div></div>
+                <div class="col-12 col-md-6 col-xl-3"><div class="vital-card p-3 h-100"><small class="text-muted">Batimentos</small><div class="vital-value" id="batimentosValor">82 bpm</div><span class="badge text-bg-success rounded-pill">estável</span></div></div>
+                <div class="col-12 col-md-6 col-xl-3"><div class="vital-card p-3 h-100"><small class="text-muted">Saturação</small><div class="vital-value" id="saturacaoValor">96%</div><span class="badge text-bg-success rounded-pill">normal</span></div></div>
+                <div class="col-12 col-md-6 col-xl-3"><div class="vital-card p-3 h-100"><small class="text-muted">Sono</small><div class="vital-value" id="sonoValor">5h40</div><span class="badge text-bg-warning rounded-pill">abaixo do ideal</span></div></div>
+              </div>
+              <div class="row g-3">
+                <div class="col-12 col-lg-8"><div class="mini-chart" aria-label="Gráfico demonstrativo de sinais vitais"></div></div>
+                <div class="col-12 col-lg-4"><div class="record-block p-3 h-100"><h3 class="h6 fw-bold">Anomalias detectadas</h3><ul class="text-muted mb-0"><li>Pico de pressão às 07:10 após dor intensa.</li><li>Sono fragmentado nas últimas duas noites.</li><li>Sem queda de saturação registrada.</li></ul></div></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card border-0 shadow-sm rounded-4 mb-4" id="exames">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between gap-3 flex-wrap mb-3"><div><h2 class="h4 fw-bold mb-1">Exames e resultados</h2><p class="text-muted mb-0">Histórico consolidado com status e resumo interpretativo.</p></div><button class="btn btn-outline-primary" type="button"><i class="bi bi-download me-2"></i>Baixar resumo</button></div>
+              <div class="d-grid gap-3">
+                <div class="exam-item p-3"><div class="d-flex justify-content-between gap-3 flex-wrap"><div><h3 class="h6 fw-bold mb-1">Hemograma completo</h3><p class="text-muted mb-0">Coleta em 28/05/2026 • Resultado recebido</p></div><span class="badge text-bg-success rounded-pill align-self-start">sem alteração crítica</span></div><hr><p class="mb-0 text-muted">Hemoglobina dentro do esperado. Leucócitos sem sinal de infecção ativa.</p></div>
+                <div class="exam-item p-3"><div class="d-flex justify-content-between gap-3 flex-wrap"><div><h3 class="h6 fw-bold mb-1">Raio-X de joelho esquerdo</h3><p class="text-muted mb-0">Realizado em 22/05/2026 • Imagem anexada</p></div><span class="badge text-bg-primary rounded-pill align-self-start">pós-operatório</span></div><hr><p class="mb-0 text-muted">Alinhamento preservado. Sem sinais de complicação óssea no laudo anexado.</p></div>
+                <div class="exam-item p-3"><div class="d-flex justify-content-between gap-3 flex-wrap"><div><h3 class="h6 fw-bold mb-1">Glicemia de jejum</h3><p class="text-muted mb-0">Coleta em 18/05/2026 • Resultado recebido</p></div><span class="badge text-bg-warning rounded-pill align-self-start">acompanhar</span></div><hr><p class="mb-0 text-muted">Resultado: 108 mg/dL. Recomendada orientação nutricional e novo controle em 30 dias.</p></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="row g-4 mb-4" id="alergias">
+            <div class="col-12 col-lg-6">
+              <div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h2 class="h4 fw-bold mb-3">Alergias e reações</h2><div class="d-grid gap-3"><div class="allergy-item p-3"><span class="badge text-bg-danger rounded-pill mb-2">alta atenção</span><h3 class="h6 fw-bold mb-1">Dipirona</h3><p class="text-muted mb-0">Relato de urticária e falta de ar após uso. Evitar administração sem avaliação médica.</p></div><div class="allergy-item p-3"><span class="badge text-bg-warning rounded-pill mb-2">atenção</span><h3 class="h6 fw-bold mb-1">Látex</h3><p class="text-muted mb-0">Irritação cutânea em contato prolongado. Preferir materiais sem látex.</p></div></div></div></div>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h2 class="h4 fw-bold mb-3">Condições acompanhadas</h2><div class="d-grid gap-3"><div class="record-block p-3"><h3 class="h6 fw-bold mb-1">Hipertensão arterial</h3><p class="text-muted mb-0">Controlada com medicação contínua. Monitoramento diário recomendado.</p></div><div class="record-block p-3"><h3 class="h6 fw-bold mb-1">Osteoartrite</h3><p class="text-muted mb-0">Histórico de dor articular e limitação funcional em membros inferiores.</p></div></div></div></div>
+            </div>
+          </section>
+
+          <section class="card border-0 shadow-sm rounded-4 mb-4" id="cirurgias">
+            <div class="card-body p-4">
+              <h2 class="h4 fw-bold mb-3">Histórico de cirurgias e internações</h2>
+              <div class="d-grid gap-3">
+                <div class="surgery-item p-3"><div class="d-flex gap-3"><div class="icon-box"><i class="bi bi-hospital"></i></div><div><h3 class="h6 fw-bold mb-1">Internação para artroplastia parcial do joelho esquerdo</h3><p class="text-muted mb-1">Hospital São Lucas • 14/05/2026 a 17/05/2026</p><p class="mb-0 text-muted">Alta com orientação de fisioterapia domiciliar, controle de dor, prevenção de queda e retorno ortopédico em 30 dias.</p></div></div></div>
+                <div class="surgery-item p-3"><div class="d-flex gap-3"><div class="icon-box"><i class="bi bi-clipboard2-pulse"></i></div><div><h3 class="h6 fw-bold mb-1">Cirurgia de catarata</h3><p class="text-muted mb-1">Clínica Oftalmológica Central • 2023</p><p class="mb-0 text-muted">Procedimento sem intercorrências, visão corrigida com acompanhamento anual.</p></div></div></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card border-0 shadow-sm rounded-4 mb-4" id="medicamentos">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between gap-3 flex-wrap mb-3"><div><h2 class="h4 fw-bold mb-1">Medicamentos em uso</h2><p class="text-muted mb-0">Lista de uso contínuo, temporário e sob demanda.</p></div><span class="badge text-bg-light border rounded-pill px-3 py-2">5 medicamentos ativos</span></div>
+              <div class="row g-3">
+                <div class="col-12 col-lg-6"><div class="medicine-item p-3 h-100"><h3 class="h6 fw-bold mb-1">Losartana 50 mg</h3><p class="text-muted mb-1">Uso contínuo • 1 comprimido às 08:00</p><span class="badge text-bg-success rounded-pill">confirmado hoje</span></div></div>
+                <div class="col-12 col-lg-6"><div class="medicine-item p-3 h-100"><h3 class="h6 fw-bold mb-1">Hidroclorotiazida 25 mg</h3><p class="text-muted mb-1">Uso contínuo • 1 comprimido pela manhã</p><span class="badge text-bg-success rounded-pill">em dia</span></div></div>
+                <div class="col-12 col-lg-6"><div class="medicine-item p-3 h-100"><h3 class="h6 fw-bold mb-1">Rivaroxabana 10 mg</h3><p class="text-muted mb-1">Temporário • Pós-operatório por 14 dias</p><span class="badge text-bg-warning rounded-pill">verificar prazo</span></div></div>
+                <div class="col-12 col-lg-6"><div class="medicine-item p-3 h-100"><h3 class="h6 fw-bold mb-1">Paracetamol 750 mg</h3><p class="text-muted mb-1">Sob demanda • Dor, máximo conforme prescrição</p><span class="badge text-bg-light border rounded-pill">uso eventual</span></div></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card border-0 shadow-sm rounded-4 mb-4" id="linha-do-tempo">
+            <div class="card-body p-4">
+              <h2 class="h4 fw-bold mb-3">Linha do tempo do cuidado</h2>
+              <div class="timeline d-grid gap-3">
+                <div class="timeline-item p-3 d-flex gap-3"><div class="timeline-point"><i class="bi bi-calendar-check"></i></div><div><h3 class="h6 fw-bold mb-1">Consulta ortopédica de retorno agendada</h3><p class="text-muted mb-0">20/06/2026 • Avaliação da recuperação pós-operatória.</p></div></div>
+                <div class="timeline-item p-3 d-flex gap-3"><div class="timeline-point"><i class="bi bi-activity"></i></div><div><h3 class="h6 fw-bold mb-1">Pico de pressão registrado</h3><p class="text-muted mb-0">05/06/2026 • 148/92 após episódio de dor. Sem queda de saturação.</p></div></div>
+                <div class="timeline-item p-3 d-flex gap-3"><div class="timeline-point"><i class="bi bi-file-medical"></i></div><div><h3 class="h6 fw-bold mb-1">Exames laboratoriais anexados</h3><p class="text-muted mb-0">28/05/2026 • Hemograma e glicemia disponíveis para consulta.</p></div></div>
+                <div class="timeline-item p-3 d-flex gap-3"><div class="timeline-point"><i class="bi bi-hospital"></i></div><div><h3 class="h6 fw-bold mb-1">Alta hospitalar</h3><p class="text-muted mb-0">17/05/2026 • Alta com plano de cuidado domiciliar e fisioterapia.</p></div></div>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="appFooter"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function mostrarToast(mensagem) {
+      document.getElementById("toastMessage").textContent = mensagem;
+      bootstrap.Toast.getOrCreateInstance(document.getElementById("appToast")).show();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const prontuario = document.getElementById("prontuarioCompleto");
+      const cardPermissao = document.getElementById("cardPermissao");
+      const botoesSolicitar = [document.getElementById("btnSolicitarProntuario"), document.getElementById("btnSolicitarProntuarioCard")].filter(Boolean);
+
+      function liberarProntuario() {
+        prontuario.classList.remove("d-none");
+        cardPermissao.classList.remove("record-locked");
+        cardPermissao.innerHTML = `
+          <div class="card-body p-4">
+            <div class="icon-box mb-3"><i class="bi bi-unlock"></i></div>
+            <h2 class="h4 fw-bold mb-2">Prontuário liberado</h2>
+            <p class="text-muted">Acesso concedido para fins assistenciais. Esta tela simula o registro de consentimento e a visualização centralizada dos dados clínicos.</p>
+            <span class="badge text-bg-success rounded-pill px-3 py-2"><i class="bi bi-check-circle me-1"></i>Acesso registrado</span>
+          </div>`;
+        botoesSolicitar.forEach(btn => {
+          btn.classList.remove("btn-primary");
+          btn.classList.add("btn-outline-success");
+          btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Prontuário liberado';
+          btn.disabled = true;
+        });
+        mostrarToast("Acesso ao prontuário liberado para demonstração.");
+        prontuario.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      botoesSolicitar.forEach(btn => btn.addEventListener("click", liberarProntuario));
+
+      const dadosPeriodo = {
+        diario: { pressao: "132/84", batimentos: "82 bpm", saturacao: "96%", sono: "5h40" },
+        semanal: { pressao: "128/82", batimentos: "79 bpm", saturacao: "97%", sono: "6h10" },
+        mensal: { pressao: "126/80", batimentos: "77 bpm", saturacao: "97%", sono: "6h25" }
+      };
+
+      document.querySelectorAll("[data-periodo]").forEach(botao => {
+        botao.addEventListener("click", function () {
+          document.querySelectorAll("[data-periodo]").forEach(b => {
+            b.classList.remove("btn-primary");
+            b.classList.add("btn-outline-primary");
+          });
+          this.classList.add("btn-primary");
+          this.classList.remove("btn-outline-primary");
+          const periodo = this.dataset.periodo;
+          document.getElementById("pressaoValor").textContent = dadosPeriodo[periodo].pressao;
+          document.getElementById("batimentosValor").textContent = dadosPeriodo[periodo].batimentos;
+          document.getElementById("saturacaoValor").textContent = dadosPeriodo[periodo].saturacao;
+          document.getElementById("sonoValor").textContent = dadosPeriodo[periodo].sono;
+          mostrarToast("Média " + periodo + " carregada.");
+        });
+      });
+    });
+  </script>
+  <script src="../../js/app-shell.js?v=20260524"></script>
+  <script src="../../js/profile-switcher.js?v=20260524d"></script>
+  <script src="../../js/header.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

@@ -76,14 +76,14 @@
         </div>
 
         <div class="row g-4">
-          <div class="col-xl-8">
+          <div class="col-xl-12">
             <form id="formAdicionarMedicamento" novalidate>
 
               <section class="card border-0 shadow-sm rounded-4 etapa-formulario" data-etapa="1">
                 <div class="card-body p-4">
                   <h2 class="h5 mb-1">1. Identificação do medicamento</h2>
                   <p class="text-muted mb-4">
-                    Informe o nome, a dose e para quem esse medicamento será acompanhado.
+                    Informe o nome, a dose e a finalidade do medicamento.
                   </p>
 
                   <div class="row g-3">
@@ -124,17 +124,6 @@
                         <option>Outro</option>
                       </select>
                       <div class="invalid-feedback">Selecione a forma de uso.</div>
-                    </div>
-
-                    <div class="col-md-6">
-                      <label for="pessoaCuidada" class="form-label">Pessoa acompanhada</label>
-                      <select class="form-select" id="pessoaCuidada" required>
-                        <option value="">Selecione</option>
-                        <option>Maria</option>
-                        <option>Antônio</option>
-                        <option>Eu</option>
-                      </select>
-                      <div class="invalid-feedback">Selecione a pessoa acompanhada.</div>
                     </div>
 
                     <div class="col-12">
@@ -220,22 +209,28 @@
                 <div class="card-body p-4">
                   <h2 class="h5 mb-1">3. Horários e lembretes</h2>
                   <p class="text-muted mb-4">
-                    Defina a frequência, os horários e como o sistema deve avisar.
+                    Informe o horário inicial e o número de doses por dia. O sistema gera os horários automaticamente, e você pode editar ou remover cada horário.
                   </p>
 
                   <div class="row g-3">
                     <div class="col-md-6">
-                      <label for="frequencia" class="form-label">Frequência</label>
-                      <select class="form-select" id="frequencia" required>
+                      <label for="horarioInicial" class="form-label">Horário da primeira dose</label>
+                      <input type="time" class="form-control" id="horarioInicial" value="08:00" required />
+                      <div class="invalid-feedback">Informe o horário inicial.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="dosesDiarias" class="form-label">Número de doses por dia</label>
+                      <select class="form-select" id="dosesDiarias" required>
                         <option value="">Selecione</option>
-                        <option value="1x ao dia">1x ao dia</option>
-                        <option value="2x ao dia">2x ao dia</option>
-                        <option value="3x ao dia">3x ao dia</option>
-                        <option value="A cada 8 horas">A cada 8 horas</option>
-                        <option value="A cada 12 horas">A cada 12 horas</option>
-                        <option value="Personalizado">Personalizado</option>
+                        <option value="1">1 dose por dia</option>
+                        <option value="2">2 doses por dia</option>
+                        <option value="3">3 doses por dia</option>
+                        <option value="4">4 doses por dia</option>
+                        <option value="5">5 doses por dia</option>
+                        <option value="6">6 doses por dia</option>
                       </select>
-                      <div class="invalid-feedback">Selecione a frequência.</div>
+                      <div class="invalid-feedback">Informe o número de doses por dia.</div>
                     </div>
 
                     <div class="col-md-6">
@@ -264,28 +259,16 @@
                       <div class="invalid-feedback">Selecione a antecedência.</div>
                     </div>
 
-                    <div class="col-md-6">
-                      <label for="responsavel" class="form-label">Quem será avisado em caso de atraso?</label>
-                      <select class="form-select" id="responsavel" required>
-                        <option value="">Selecione</option>
-                        <option>Somente a pessoa acompanhada</option>
-                        <option>Cuidador principal</option>
-                        <option>Familiar responsável</option>
-                        <option>Todos os responsáveis</option>
-                      </select>
-                      <div class="invalid-feedback">Selecione o responsável.</div>
-                    </div>
-
                     <div class="col-12">
                       <div class="border rounded-4 p-3 bg-light">
                         <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
                           <div>
                             <strong>Horários das doses</strong>
-                            <p class="text-muted small mb-0">Adicione um ou mais horários para o lembrete.</p>
+                            <p class="text-muted small mb-0">Os horários são calculados automaticamente. Você pode editar ou remover qualquer dose.</p>
                           </div>
 
                           <button class="btn btn-outline-primary" type="button" id="btnAdicionarHorario">
-                            + Adicionar horário
+                            + Adicionar dose manual
                           </button>
                         </div>
 
@@ -300,34 +283,32 @@
                 <div class="card-body p-4">
                   <h2 class="h5 mb-1">4. Estoque e revisão</h2>
                   <p class="text-muted mb-4">
-                    Finalize com o controle de estoque e confira se está tudo certo antes de salvar.
+                    O controle de estoque é opcional. Você pode preencher agora ou deixar para completar depois.
                   </p>
 
                   <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                      <label for="estoqueAtual" class="form-label">Quantidade atual em estoque</label>
+                      <label for="estoqueAtual" class="form-label">Quantidade atual em estoque <span class="text-muted fw-normal">(opcional)</span></label>
                       <input
                         type="number"
                         min="0"
                         class="form-control"
                         id="estoqueAtual"
                         placeholder="Ex.: 30"
-                        required
                       />
-                      <div class="invalid-feedback">Informe a quantidade atual.</div>
+                      <div class="form-text">Preencha apenas se quiser controlar o estoque do medicamento.</div>
                     </div>
 
                     <div class="col-md-6">
-                      <label for="estoqueMinimo" class="form-label">Avisar quando restar</label>
+                      <label for="estoqueMinimo" class="form-label">Avisar quando restar <span class="text-muted fw-normal">(opcional)</span></label>
                       <input
                         type="number"
                         min="0"
                         class="form-control"
                         id="estoqueMinimo"
                         placeholder="Ex.: 5"
-                        required
                       />
-                      <div class="invalid-feedback">Informe o estoque mínimo.</div>
+                      <div class="form-text">Deixe em branco se não quiser receber aviso de estoque baixo.</div>
                     </div>
                   </div>
 
@@ -360,53 +341,7 @@
             </form>
           </div>
 
-          <aside class="col-xl-4">
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-              <div class="card-body p-4">
-                <h2 class="h5 mb-3">Resumo do cadastro</h2>
 
-                <div class="d-grid gap-3">
-                  <div>
-                    <small class="text-muted">Medicamento</small>
-                    <p class="mb-0 fw-semibold" id="resumoMedicamento">Ainda não informado</p>
-                  </div>
-
-                  <div>
-                    <small class="text-muted">Pessoa acompanhada</small>
-                    <p class="mb-0 fw-semibold" id="resumoPessoa">Ainda não selecionada</p>
-                  </div>
-
-                  <div>
-                    <small class="text-muted">Como tomar</small>
-                    <p class="mb-0 fw-semibold" id="resumoComoTomar">Ainda não definido</p>
-                  </div>
-
-                  <div>
-                    <small class="text-muted">Horários</small>
-                    <p class="mb-0 fw-semibold" id="resumoHorarios">Nenhum horário adicionado</p>
-                  </div>
-
-                  <div>
-                    <small class="text-muted">Lembrete</small>
-                    <p class="mb-0 fw-semibold" id="resumoLembrete">Ainda não configurado</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card border-0 shadow-sm rounded-4">
-              <div class="card-body p-4">
-                <h2 class="h5 mb-3">O que será criado</h2>
-
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item px-0">Agenda de doses</li>
-                  <li class="list-group-item px-0">Lembretes automáticos</li>
-                  <li class="list-group-item px-0">Registro no histórico</li>
-                  <li class="list-group-item px-0">Alerta de estoque baixo</li>
-                </ul>
-              </div>
-            </div>
-          </aside>
         </div>
       </div>
     </main>
@@ -466,6 +401,11 @@
       return campo ? campo.value.trim() : "";
     }
 
+    function definirTexto(id, texto) {
+      const elemento = document.getElementById(id);
+      if (elemento) elemento.textContent = texto;
+    }
+
     function definirDataHoje() {
       const hoje = new Date().toISOString().split("T")[0];
       document.getElementById("dataInicio").value = hoje;
@@ -480,7 +420,52 @@
         .sort();
     }
 
-    function adicionarHorario(horario = "") {
+    function formatarHora(totalMinutos) {
+      const minutosDia = 24 * 60;
+      const normalizado = ((totalMinutos % minutosDia) + minutosDia) % minutosDia;
+      const horas = String(Math.floor(normalizado / 60)).padStart(2, "0");
+      const minutos = String(normalizado % 60).padStart(2, "0");
+      return `${horas}:${minutos}`;
+    }
+
+    function horaParaMinutos(horario) {
+      const partes = horario.split(":").map(Number);
+      return (partes[0] * 60) + partes[1];
+    }
+
+    function calcularHorariosAutomaticos() {
+      const horarioInicial = valor("horarioInicial");
+      const dosesDiarias = Number(valor("dosesDiarias"));
+
+      if (!horarioInicial || !dosesDiarias) return [];
+
+      const intervalo = Math.floor((24 * 60) / dosesDiarias);
+      const inicio = horaParaMinutos(horarioInicial);
+
+      return Array.from({ length: dosesDiarias }, function (_, index) {
+        return formatarHora(inicio + (intervalo * index));
+      });
+    }
+
+    function gerarHorariosAutomaticos() {
+      const horarios = calcularHorariosAutomaticos();
+      const container = document.getElementById("listaHorarios");
+
+      container.innerHTML = "";
+      contadorHorarios = 0;
+
+      horarios.forEach(function (horario) {
+        adicionarHorario(horario, false);
+      });
+
+      atualizarResumo();
+
+      if (horarios.length) {
+        mostrarToast("Horários gerados automaticamente. Você pode editar ou remover as doses.");
+      }
+    }
+
+    function adicionarHorario(horario = "", atualizar = true) {
       contadorHorarios += 1;
 
       const container = document.getElementById("listaHorarios");
@@ -509,7 +494,7 @@
       `;
 
       container.appendChild(coluna);
-      atualizarResumo();
+      if (atualizar) atualizarResumo();
     }
 
     function atualizarEtapa() {
@@ -528,9 +513,7 @@
       document.getElementById("btnProximo").classList.toggle("d-none", etapaAtual === 4);
       document.getElementById("btnSalvar").classList.toggle("d-none", etapaAtual !== 4);
 
-      if (etapaAtual === 4) {
-        renderizarResumoFinal();
-      }
+      if (etapaAtual === 4) renderizarResumoFinal();
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -551,49 +534,34 @@
 
       if (etapaAtual === 3 && obterHorarios().length === 0) {
         valido = false;
-        mostrarToast("Adicione pelo menos um horário.");
+        mostrarToast("Informe o horário inicial e o número de doses, ou adicione uma dose manualmente.");
       }
 
-      if (!valido) {
-        mostrarToast("Preencha os campos obrigatórios antes de continuar.");
-      }
-
+      if (!valido) mostrarToast("Preencha os campos obrigatórios antes de continuar.");
       return valido;
     }
 
     function atualizarResumo() {
       const nome = valor("nomeMedicamento");
       const dose = valor("dosagemMedicamento");
-      const pessoa = valor("pessoaCuidada");
       const momento = valor("momentoUso");
       const tipo = valor("tipoTratamento");
       const horarios = obterHorarios();
       const alerta = valor("tipoAlerta");
       const antecedencia = valor("antecedencia");
 
-      document.getElementById("resumoMedicamento").textContent =
-        nome ? `${nome}${dose ? " " + dose : ""}` : "Ainda não informado";
+      definirTexto("resumoMedicamento", nome ? `${nome}${dose ? " " + dose : ""}` : "Ainda não informado");
+      definirTexto("resumoComoTomar", tipo || momento ? `${tipo || "Tipo não definido"} • ${momento || "Momento não definido"}` : "Ainda não definido");
+      definirTexto("resumoHorarios", horarios.length ? horarios.join(", ") : "Nenhum horário adicionado");
+      definirTexto("resumoLembrete", alerta ? `${alerta}${antecedencia ? " • " + antecedencia : ""}` : "Ainda não configurado");
 
-      document.getElementById("resumoPessoa").textContent =
-        pessoa || "Ainda não selecionada";
-
-      document.getElementById("resumoComoTomar").textContent =
-        tipo || momento ? `${tipo || "Tipo não definido"} • ${momento || "Momento não definido"}` : "Ainda não definido";
-
-      document.getElementById("resumoHorarios").textContent =
-        horarios.length ? horarios.join(", ") : "Nenhum horário adicionado";
-
-      document.getElementById("resumoLembrete").textContent =
-        alerta ? `${alerta}${antecedencia ? " • " + antecedencia : ""}` : "Ainda não configurado";
-
-      if (etapaAtual === 4) {
-        renderizarResumoFinal();
-      }
+      if (etapaAtual === 4) renderizarResumoFinal();
     }
 
     function renderizarResumoFinal() {
       const usoContinuo = document.getElementById("usoContinuo").checked;
       const horarios = obterHorarios();
+      const dosesDiarias = valor("dosesDiarias");
 
       const cards = [
         {
@@ -602,9 +570,9 @@
           detalhe: valor("formaMedicamento") || "-"
         },
         {
-          titulo: "Pessoa acompanhada",
-          valor: valor("pessoaCuidada") || "-",
-          detalhe: valor("finalidadeMedicamento") || "Sem finalidade informada"
+          titulo: "Finalidade",
+          valor: valor("finalidadeMedicamento") || "Sem finalidade informada",
+          detalhe: "Informação exibida nos detalhes do medicamento"
         },
         {
           titulo: "Tratamento",
@@ -619,17 +587,17 @@
         {
           titulo: "Horários",
           valor: horarios.length ? horarios.join(", ") : "-",
-          detalhe: valor("frequencia") || "-"
+          detalhe: dosesDiarias ? `${dosesDiarias} dose(s) por dia` : "Doses editáveis"
         },
         {
           titulo: "Lembrete",
           valor: valor("tipoAlerta") || "-",
-          detalhe: `${valor("antecedencia") || "-"} • ${valor("responsavel") || "-"}`
+          detalhe: valor("antecedencia") || "-"
         },
         {
           titulo: "Estoque",
-          valor: `${valor("estoqueAtual") || "0"} unidade(s)`,
-          detalhe: `Avisar quando restar ${valor("estoqueMinimo") || "0"}`
+          valor: valor("estoqueAtual") ? `${valor("estoqueAtual")} unidade(s)` : "Não informado",
+          detalhe: valor("estoqueMinimo") ? `Avisar quando restar ${valor("estoqueMinimo")}` : "Sem aviso de estoque baixo"
         },
         {
           titulo: "Orientações",
@@ -659,7 +627,7 @@
       const resultados = [
         {
           titulo: "Medicamento cadastrado",
-          texto: `${valor("nomeMedicamento")} ${valor("dosagemMedicamento")} para ${valor("pessoaCuidada")}.`
+          texto: `${valor("nomeMedicamento")} ${valor("dosagemMedicamento")}.`
         },
         {
           titulo: "Horários configurados",
@@ -670,8 +638,10 @@
           texto: `${valor("tipoAlerta")} • ${valor("antecedencia")}.`
         },
         {
-          titulo: "Estoque monitorado",
-          texto: `Aviso quando restarem ${valor("estoqueMinimo")} unidade(s).`
+          titulo: "Estoque",
+          texto: valor("estoqueAtual") || valor("estoqueMinimo")
+            ? `${valor("estoqueAtual") ? `Quantidade atual: ${valor("estoqueAtual")} unidade(s).` : "Quantidade atual não informada."} ${valor("estoqueMinimo") ? `Aviso quando restarem ${valor("estoqueMinimo")} unidade(s).` : "Sem aviso de estoque baixo."}`
+            : "Controle de estoque não configurado."
         }
       ];
 
@@ -704,7 +674,7 @@
 
     document.getElementById("btnAdicionarHorario").addEventListener("click", function () {
       adicionarHorario();
-      mostrarToast("Horário adicionado.");
+      mostrarToast("Dose manual adicionada.");
     });
 
     document.getElementById("listaHorarios").addEventListener("click", function (event) {
@@ -721,35 +691,8 @@
       }
     });
 
-    document.getElementById("frequencia").addEventListener("change", function () {
-      const container = document.getElementById("listaHorarios");
-      const frequencia = this.value;
-
-      container.innerHTML = "";
-      contadorHorarios = 0;
-
-      if (frequencia === "1x ao dia") {
-        adicionarHorario("08:00");
-      } else if (frequencia === "2x ao dia") {
-        adicionarHorario("08:00");
-        adicionarHorario("20:00");
-      } else if (frequencia === "3x ao dia") {
-        adicionarHorario("08:00");
-        adicionarHorario("14:00");
-        adicionarHorario("20:00");
-      } else if (frequencia === "A cada 8 horas") {
-        adicionarHorario("06:00");
-        adicionarHorario("14:00");
-        adicionarHorario("22:00");
-      } else if (frequencia === "A cada 12 horas") {
-        adicionarHorario("08:00");
-        adicionarHorario("20:00");
-      } else {
-        adicionarHorario("");
-      }
-
-      atualizarResumo();
-    });
+    document.getElementById("horarioInicial").addEventListener("change", gerarHorariosAutomaticos);
+    document.getElementById("dosesDiarias").addEventListener("change", gerarHorariosAutomaticos);
 
     document.getElementById("usoContinuo").addEventListener("change", function () {
       const dataFim = document.getElementById("dataFim");
@@ -769,7 +712,6 @@
         nomeMedicamento: valor("nomeMedicamento"),
         dosagemMedicamento: valor("dosagemMedicamento"),
         formaMedicamento: valor("formaMedicamento"),
-        pessoaCuidada: valor("pessoaCuidada"),
         finalidadeMedicamento: valor("finalidadeMedicamento"),
         tipoTratamento: valor("tipoTratamento"),
         momentoUso: valor("momentoUso"),
@@ -777,10 +719,10 @@
         dataFim: valor("dataFim"),
         usoContinuo: document.getElementById("usoContinuo").checked,
         orientacoes: valor("orientacoes"),
-        frequencia: valor("frequencia"),
+        horarioInicial: valor("horarioInicial"),
+        dosesDiarias: valor("dosesDiarias"),
         tipoAlerta: valor("tipoAlerta"),
         antecedencia: valor("antecedencia"),
-        responsavel: valor("responsavel"),
         horarios: obterHorarios(),
         estoqueAtual: valor("estoqueAtual"),
         estoqueMinimo: valor("estoqueMinimo")
@@ -792,38 +734,29 @@
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
-
       if (!validarEtapa()) return;
-
       renderizarResultadoCadastro();
       modalSucesso.show();
       mostrarToast("Medicamento salvo com sucesso.");
     });
 
     document.body.addEventListener("input", function (event) {
-      if (
-        event.target.matches("input") ||
-        event.target.matches("select") ||
-        event.target.matches("textarea")
-      ) {
+      if (event.target.matches("input") || event.target.matches("select") || event.target.matches("textarea")) {
         event.target.classList.remove("is-invalid");
         atualizarResumo();
       }
     });
 
     document.body.addEventListener("change", function (event) {
-      if (
-        event.target.matches("input") ||
-        event.target.matches("select") ||
-        event.target.matches("textarea")
-      ) {
+      if (event.target.matches("input") || event.target.matches("select") || event.target.matches("textarea")) {
         event.target.classList.remove("is-invalid");
         atualizarResumo();
       }
     });
 
     definirDataHoje();
-    adicionarHorario("08:00");
+    document.getElementById("dosesDiarias").value = "1";
+    gerarHorariosAutomaticos();
     atualizarResumo();
     atualizarEtapa();
   </script>

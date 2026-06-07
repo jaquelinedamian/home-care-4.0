@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Conversa | Home Care 4.0</title>
+  <title>Conversa com profissional | Home Care 4.0</title>
 
   <meta
     name="description"
-    content="Conversa com profissional verificado sobre atendimento agendado na plataforma Home Care 4.0."
+    content="Conversa direta entre a pessoa idosa e profissional verificado sobre atendimento agendado na plataforma Home Care 4.0."
   />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
@@ -17,6 +17,41 @@
   <link rel="stylesheet" href="../../css/profile-switcher.css" />
   <link rel="stylesheet" href="../../css/sidebar.css" />
   <link rel="stylesheet" href="../../css/main.css" />
+
+  <style>
+    .hc-chat-avatar {
+      width: 72px;
+      height: 72px;
+      font-size: 1.4rem;
+      flex: 0 0 auto;
+    }
+
+    .hc-message-avatar {
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+    }
+
+    .hc-chat-panel {
+      min-height: 520px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .hc-chat-bubble {
+      max-width: 78%;
+    }
+
+    .hc-mobile-chat-input {
+      z-index: 1050;
+    }
+
+    @media (max-width: 1199.98px) {
+      body {
+        padding-bottom: 76px;
+      }
+    }
+  </style>
 </head>
 
 <body data-profile-page="idoso" class="hc-idoso-module">
@@ -26,6 +61,7 @@
       localStorage.setItem("homecare-active-profile", "idoso");
     } catch (error) {}
   </script>
+
   <div id="appHeader"></div>
   <div id="appProfileSwitcher"></div>
 
@@ -34,6 +70,14 @@
 
     <main class="app-main app-main-with-sidebar" id="conteudo-principal" tabindex="-1">
       <div class="container py-4">
+
+        <nav aria-label="breadcrumb" class="mb-3">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="dashboard.html">Início</a></li>
+            <li class="breadcrumb-item"><a href="mensagens.html">Mensagens</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Conversa</li>
+          </ol>
+        </nav>
 
         <section class="row mb-4">
           <div class="col-12">
@@ -44,15 +88,14 @@
                   <div class="col-12 col-lg-7">
                     <div class="d-flex align-items-center gap-3">
                       <div
-                        class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold position-relative"
-                        style="width:72px;height:72px;font-size:1.4rem;"
+                        class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold position-relative hc-chat-avatar"
                         aria-hidden="true"
                       >
                         AP
                       </div>
 
                       <div>
-                        <p class="text-muted fs-5 mb-1">Conversa do atendimento</p>
+                        <p class="text-muted fs-5 mb-1">Conversa com profissional</p>
                         <h1 class="h3 fw-bold mb-1">Ana Paula Martins</h1>
                         <p class="text-muted mb-0">
                           Fisioterapeuta • Conselho ativo • <span class="text-success fw-semibold">Online agora</span>
@@ -63,16 +106,16 @@
 
                   <div class="col-12 col-lg-5">
                     <div class="d-grid gap-2 d-lg-flex justify-content-lg-end">
-                      <a href="servicos-atendimentos.html" class="btn btn-outline-primary">
-                        Ver atendimento
+                      <a href="servicos-profissional-detalhes.html" class="btn btn-outline-primary">
+                        Ver perfil profissional
                       </a>
 
-                      <a href="agenda.html" class="btn btn-outline-secondary">
-                        Ver agenda
+                      <a href="consultas-detalhes.html" class="btn btn-outline-secondary">
+                        Ver consulta
                       </a>
 
                       <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
-                        Cancelar
+                        Cancelar consulta
                       </button>
                     </div>
                   </div>
@@ -91,20 +134,20 @@
               <div class="p-4 border-bottom bg-white">
                 <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
                   <div>
-                    <span class="badge text-bg-success fs-6 mb-2">Atendimento confirmado</span>
+                    <span class="badge text-bg-success fs-6 mb-2">Consulta confirmada pelo profissional</span>
                     <h2 class="h5 fw-bold mb-1">Fisioterapia domiciliar</h2>
                     <p class="text-muted mb-0">
-                      Hoje às 15:00 • Antônio Damian • Rua das Flores, 120
+                      Hoje às 15:00 • Atendimento no meu endereço cadastrado
                     </p>
                   </div>
 
                   <div class="d-flex flex-wrap gap-2 align-self-md-start">
-                    <a href="servicos-agendar.html" class="btn btn-outline-primary btn-sm">
+                    <a href="consultas-reagendar.html" class="btn btn-outline-primary btn-sm">
                       Reagendar
                     </a>
 
                     <a
-                      href="https://www.google.com/maps/search/?api=1&query=Rua%20das%20Flores%20120%20S%C3%A3o%20Paulo"
+                      href="https://www.google.com/maps/dir/?api=1&origin=Cl%C3%ADnica%20Home%20Care%204.0%20S%C3%A3o%20Paulo&destination=S%C3%A3o%20Paulo%20SP&travelmode=driving"
                       target="_blank"
                       rel="noopener noreferrer"
                       class="btn btn-outline-secondary btn-sm"
@@ -117,48 +160,45 @@
 
               <div class="px-4 pt-4 bg-light">
                 <div class="alert alert-info rounded-4 mb-0">
-                  Compartilhe apenas informações necessárias para o atendimento. Esta conversa fica vinculada ao histórico do serviço.
+                  Esta conversa é direta com a profissional responsável pelo seu atendimento. Compartilhe apenas informações necessárias para a consulta.
                 </div>
               </div>
 
-              <div class="p-4 bg-light" style="min-height: 520px; max-height: 600px; overflow-y: auto;" id="chatMessages">
+              <div class="p-4 bg-light hc-chat-panel" id="chatMessages">
 
                 <div class="text-center mb-4">
-                  <span class="badge text-bg-light text-dark border">
-                    Hoje
-                  </span>
+                  <span class="badge text-bg-light text-dark border">Hoje</span>
                 </div>
 
                 <div class="mb-4 text-center">
                   <div class="d-inline-block bg-white border rounded-4 px-3 py-2">
                     <small class="text-muted">
-                      Agendamento confirmado. Ana Paula foi notificada.
+                      Consulta confirmada por Ana Paula Martins.
                     </small>
                   </div>
                 </div>
 
                 <div class="d-flex mb-3">
                   <div
-                    class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-2 flex-shrink-0"
-                    style="width:40px;height:40px;"
+                    class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-2 hc-message-avatar"
                     aria-hidden="true"
                   >
                     AP
                   </div>
 
-                  <div class="bg-white border rounded-4 p-3" style="max-width: 78%;">
+                  <div class="bg-white border rounded-4 p-3 hc-chat-bubble">
                     <strong class="d-block mb-1">Ana Paula</strong>
                     <p class="mb-1">
-                      Olá, Jaqueline. Vi o agendamento para hoje às 15:00. O Antônio sente dor ao caminhar ou tem alguma limitação importante?
+                      Olá, Jaqueline. Vi sua consulta para hoje às 15:00. Existe alguma informação que você gostaria de compartilhar antes do atendimento?
                     </p>
                     <small class="text-muted">10:12</small>
                   </div>
                 </div>
 
                 <div class="d-flex justify-content-end mb-3">
-                  <div class="bg-primary text-white rounded-4 p-3" style="max-width: 78%;">
+                  <div class="bg-primary text-white rounded-4 p-3 hc-chat-bubble">
                     <p class="mb-1">
-                      Oi, Ana. Ele usa bengala e tem dificuldade para levantar do sofá. Também sente dor no joelho direito.
+                      Oi, Ana. Tenho dificuldade para levantar do sofá e sinto dor no joelho direito quando caminho.
                     </p>
                     <small class="text-white-50">10:15</small>
                   </div>
@@ -166,17 +206,16 @@
 
                 <div class="d-flex mb-3">
                   <div
-                    class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-2 flex-shrink-0"
-                    style="width:40px;height:40px;"
+                    class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-2 hc-message-avatar"
                     aria-hidden="true"
                   >
                     AP
                   </div>
 
-                  <div class="bg-white border rounded-4 p-3" style="max-width: 78%;">
+                  <div class="bg-white border rounded-4 p-3 hc-chat-bubble">
                     <strong class="d-block mb-1">Ana Paula</strong>
                     <p class="mb-1">
-                      Entendi. Vou levar isso em consideração. Se possível, deixe um espaço livre para fazermos movimentos simples com segurança.
+                      Entendi. Vou considerar isso no atendimento. Se possível, deixe um espaço livre e seguro para fazermos movimentos simples.
                     </p>
                     <small class="text-muted">10:17</small>
                   </div>
@@ -185,7 +224,7 @@
                 <div class="mb-4 text-center">
                   <div class="d-inline-block bg-white border rounded-4 px-3 py-2">
                     <small class="text-muted">
-                      Lembrete: atendimento em casa hoje às 15:00.
+                      Lembrete: sua consulta será hoje às 15:00.
                     </small>
                   </div>
                 </div>
@@ -195,19 +234,23 @@
               <div class="px-3 pt-3 bg-white border-top">
                 <div class="d-flex flex-wrap gap-2">
                   <button type="button" class="btn btn-light border quick-message">
-                    Ele usa bengala
+                    Estou sentindo dor
                   </button>
 
                   <button type="button" class="btn btn-light border quick-message">
-                    Tem dificuldade para levantar
+                    Tenho dificuldade para caminhar
                   </button>
 
                   <button type="button" class="btn btn-light border quick-message">
-                    Prefiro falar por telefone
+                    Preciso reagendar
                   </button>
 
                   <button type="button" class="btn btn-light border quick-message">
-                    Pode chegar 10 minutos antes?
+                    Posso enviar exames?
+                  </button>
+
+                  <button type="button" class="btn btn-light border quick-message">
+                    Gostaria de falar por telefone
                   </button>
                 </div>
               </div>
@@ -249,14 +292,39 @@
 
               <article class="card border-0 shadow-sm rounded-4">
                 <div class="card-body p-4">
-                  <h2 class="h4 fw-bold mb-3">Resumo do atendimento</h2>
+                  <h2 class="h4 fw-bold mb-3">Profissional</h2>
+
+                  <div class="d-flex gap-3 align-items-center mb-3">
+                    <div
+                      class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+                      style="width:64px;height:64px;"
+                      aria-hidden="true"
+                    >
+                      AP
+                    </div>
+                    <div>
+                      <h3 class="h5 fw-bold mb-1">Ana Paula Martins</h3>
+                      <p class="text-muted mb-0">Fisioterapeuta • CREFITO ativo</p>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge text-bg-light border">Avaliação 4,9</span>
+                    <span class="badge text-bg-light border">Atendimento domiciliar</span>
+                    <span class="badge text-bg-light border">Verificada</span>
+                  </div>
+
+                  <a href="servicos-profissional-detalhes.html" class="btn btn-outline-primary w-100">
+                    Ver perfil profissional
+                  </a>
+                </div>
+              </article>
+
+              <article class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                  <h2 class="h4 fw-bold mb-3">Resumo da consulta</h2>
 
                   <div class="vstack gap-3">
-                    <div class="p-3 rounded-4 bg-light">
-                      <strong class="d-block">Pessoa atendida</strong>
-                      <span class="text-muted">Antônio Damian</span>
-                    </div>
-
                     <div class="p-3 rounded-4 bg-light">
                       <strong class="d-block">Data e horário</strong>
                       <span class="text-muted">Hoje às 15:00</span>
@@ -264,12 +332,17 @@
 
                     <div class="p-3 rounded-4 bg-light">
                       <strong class="d-block">Tipo</strong>
-                      <span class="text-muted">Atendimento em casa</span>
+                      <span class="text-muted">Fisioterapia domiciliar</span>
                     </div>
 
                     <div class="p-3 rounded-4 bg-light">
-                      <strong class="d-block">Endereço</strong>
-                      <span class="text-muted">Rua das Flores, 120 — São Paulo, SP</span>
+                      <strong class="d-block">Status</strong>
+                      <span class="text-success fw-semibold">Confirmada pelo profissional</span>
+                    </div>
+
+                    <div class="p-3 rounded-4 bg-light">
+                      <strong class="d-block">Local</strong>
+                      <span class="text-muted">Meu endereço cadastrado</span>
                     </div>
                   </div>
                 </div>
@@ -278,7 +351,7 @@
               <article class="card border-0 shadow-sm rounded-4">
                 <div class="card-body p-4">
                   <div class="d-flex justify-content-between gap-3 mb-3">
-                    <h2 class="h4 fw-bold mb-0">Informações importantes</h2>
+                    <h2 class="h4 fw-bold mb-0">Minhas informações</h2>
 
                     <button
                       type="button"
@@ -293,12 +366,12 @@
                   <div class="vstack gap-3" id="importantInfoList">
                     <div class="p-3 rounded-4 bg-light">
                       <strong class="d-block">Mobilidade</strong>
-                      <span class="text-muted">Usa bengala e precisa de apoio para levantar.</span>
+                      <span class="text-muted">Tenho dificuldade para levantar do sofá.</span>
                     </div>
 
                     <div class="p-3 rounded-4 bg-light">
-                      <strong class="d-block">Dor relatada</strong>
-                      <span class="text-muted">Joelho direito incomoda ao caminhar.</span>
+                      <strong class="d-block">Dor</strong>
+                      <span class="text-muted">Sinto dor no joelho direito ao caminhar.</span>
                     </div>
                   </div>
                 </div>
@@ -309,24 +382,29 @@
                   <h2 class="h4 fw-bold mb-3">Ações rápidas</h2>
 
                   <div class="d-grid gap-2">
-                    <a href="servicos-atendimentos.html" class="btn btn-primary btn-lg">
-                      Ver atendimento
+                    <a href="consultas-detalhes.html" class="btn btn-primary btn-lg">
+                      Ver detalhes da consulta
                     </a>
 
-                    <a href="servicos-agendar.html" class="btn btn-outline-primary btn-lg">
-                      Reagendar
+                    <a href="servicos-profissional-detalhes.html" class="btn btn-outline-primary btn-lg">
+                      Ver perfil profissional
                     </a>
 
-                    <a href="perfil.html" class="btn btn-outline-primary btn-lg">
-                      Perfil de Antônio
+                    <a href="consultas-reagendar.html" class="btn btn-outline-primary btn-lg">
+                      Reagendar consulta
                     </a>
 
-                    <a href="historico.html" class="btn btn-outline-primary btn-lg">
-                      Histórico
+                    <a
+                      href="https://www.google.com/maps/dir/?api=1&origin=Cl%C3%ADnica%20Home%20Care%204.0%20S%C3%A3o%20Paulo&destination=S%C3%A3o%20Paulo%20SP&travelmode=driving"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="btn btn-outline-primary btn-lg"
+                    >
+                      Ver rota
                     </a>
 
                     <button type="button" class="btn btn-outline-danger btn-lg" data-bs-toggle="modal" data-bs-target="#cancelModal">
-                      Cancelar atendimento
+                      Cancelar consulta
                     </button>
                   </div>
                 </div>
@@ -337,10 +415,10 @@
                   <h2 class="h4 fw-bold mb-3">Segurança</h2>
 
                   <ul class="list-unstyled mb-0">
-                    <li class="mb-2">Profissional verificado</li>
-                    <li class="mb-2">Conselho ativo</li>
-                    <li class="mb-2">Conversa vinculada ao atendimento</li>
-                    <li class="mb-0">Registro salvo no histórico</li>
+                    <li class="mb-2"><i class="bi bi-shield-check text-primary me-2" aria-hidden="true"></i>Profissional verificado</li>
+                    <li class="mb-2"><i class="bi bi-patch-check text-primary me-2" aria-hidden="true"></i>Conselho profissional ativo</li>
+                    <li class="mb-2"><i class="bi bi-lock text-primary me-2" aria-hidden="true"></i>Conversa protegida</li>
+                    <li class="mb-0"><i class="bi bi-clock-history text-primary me-2" aria-hidden="true"></i>Registro salvo no histórico</li>
                   </ul>
                 </div>
               </article>
@@ -367,7 +445,7 @@
       <div class="modal-content rounded-4">
         <div class="modal-header">
           <h2 class="modal-title h5 fw-bold" id="cancelModalLabel">
-            Cancelar atendimento?
+            Cancelar consulta?
           </h2>
 
           <button
@@ -380,14 +458,15 @@
 
         <div class="modal-body">
           <p class="text-muted fs-5">
-            O atendimento de hoje às 15:00 será cancelado. A profissional será avisada.
+            A consulta de hoje às 15:00 será cancelada e a profissional receberá um aviso.
           </p>
 
           <label for="cancelReason" class="form-label fs-5">Motivo do cancelamento</label>
           <select class="form-select form-select-lg" id="cancelReason">
+            <option value="">Selecione</option>
             <option>Não poderei estar no local</option>
             <option>Preciso remarcar</option>
-            <option>Problema resolvido</option>
+            <option>Não preciso mais da consulta</option>
             <option>Outro motivo</option>
           </select>
 
@@ -433,7 +512,7 @@
 
         <div class="modal-body">
           <p class="text-muted fs-5">
-            Registre uma informação que ajude a profissional a preparar o atendimento.
+            Registre uma informação sua que ajude a profissional a preparar a consulta.
           </p>
 
           <div class="row g-3">
@@ -441,7 +520,7 @@
               <label for="importantInfoType" class="form-label fs-5">Tipo</label>
               <select class="form-select form-select-lg" id="importantInfoType">
                 <option>Mobilidade</option>
-                <option>Dor relatada</option>
+                <option>Dor</option>
                 <option>Medicamento</option>
                 <option>Alergia</option>
                 <option>Preferência de contato</option>
@@ -455,13 +534,13 @@
                 type="text"
                 class="form-control form-control-lg"
                 id="importantInfoText"
-                placeholder="Ex: sente dor no joelho ao caminhar"
+                placeholder="Ex.: sinto dor no joelho ao caminhar"
               />
             </div>
           </div>
 
           <div class="alert alert-info rounded-4 mt-3 mb-0">
-            Essa informação também pode aparecer no resumo do atendimento.
+            Essa informação será adicionada ao resumo da sua consulta.
           </div>
         </div>
 
@@ -478,7 +557,7 @@
     </div>
   </div>
 
-  <div class="d-xl-none fixed-bottom bg-white border-top p-3" style="z-index: 1050;">
+  <div class="d-xl-none fixed-bottom bg-white border-top p-3 hc-mobile-chat-input">
     <div class="input-group">
       <input
         type="text"
@@ -492,11 +571,19 @@
       </button>
     </div>
   </div>
+
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="pageToast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toastMessage">Ação concluída.</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-
-
-const messageForm = document.getElementById("messageForm");
+  <script>
+    const messageForm = document.getElementById("messageForm");
     const messageInput = document.getElementById("messageInput");
     const mobileMessageInput = document.getElementById("mobileMessageInput");
     const mobileSendBtn = document.getElementById("mobileSendBtn");
@@ -507,6 +594,8 @@ const messageForm = document.getElementById("messageForm");
     const importantInfoType = document.getElementById("importantInfoType");
     const importantInfoText = document.getElementById("importantInfoText");
     const importantInfoList = document.getElementById("importantInfoList");
+    const toastElement = document.getElementById("pageToast");
+    const toastMessage = document.getElementById("toastMessage");
 
     function scrollChatToBottom() {
       chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -518,14 +607,19 @@ const messageForm = document.getElementById("messageForm");
       return div.innerHTML;
     }
 
+    function showToast(message, variant = "success") {
+      toastElement.className = `toast align-items-center text-bg-${variant} border-0`;
+      toastMessage.textContent = message;
+      bootstrap.Toast.getOrCreateInstance(toastElement).show();
+    }
+
     function addUserMessage(text) {
       const safeText = escapeHtml(text);
-
       const wrapper = document.createElement("div");
       wrapper.className = "d-flex justify-content-end mb-3";
 
       wrapper.innerHTML = `
-        <div class="bg-primary text-white rounded-4 p-3" style="max-width: 78%;">
+        <div class="bg-primary text-white rounded-4 p-3 hc-chat-bubble">
           <p class="mb-1">${safeText}</p>
           <small class="text-white-50">Agora</small>
         </div>
@@ -570,9 +664,20 @@ const messageForm = document.getElementById("messageForm");
     });
 
     confirmCancelBtn.addEventListener("click", function () {
-      confirmCancelBtn.textContent = "Atendimento cancelado";
+      const reason = document.getElementById("cancelReason").value;
+
+      if (!reason) {
+        showToast("Selecione um motivo antes de cancelar.", "warning");
+        return;
+      }
+
+      const modal = bootstrap.Modal.getInstance(document.getElementById("cancelModal"));
+      modal.hide();
+
+      confirmCancelBtn.textContent = "Consulta cancelada";
       confirmCancelBtn.classList.remove("btn-danger");
       confirmCancelBtn.classList.add("btn-success");
+      showToast("Cancelamento solicitado. A profissional receberá um aviso.", "danger");
     });
 
     saveImportantInfoBtn.addEventListener("click", function () {
@@ -592,13 +697,13 @@ const messageForm = document.getElementById("messageForm");
       `;
 
       importantInfoList.appendChild(item);
-
       addUserMessage("Informação importante adicionada: " + type + " — " + text);
 
       importantInfoText.value = "";
       saveImportantInfoBtn.textContent = "Informação salva";
       saveImportantInfoBtn.classList.remove("btn-primary");
       saveImportantInfoBtn.classList.add("btn-success");
+      showToast("Informação adicionada ao resumo da consulta.");
 
       setTimeout(function () {
         saveImportantInfoBtn.textContent = "Salvar informação";
